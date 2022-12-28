@@ -4,7 +4,6 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import store from '../store';
 import { getToken } from '@/utils/auth';
 import { baseURL } from '@/config';
-console.log(baseURL)
 
 // 创建axios实例
 const service = axios.create({

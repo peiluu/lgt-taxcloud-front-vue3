@@ -13,7 +13,7 @@
     </el-form-item>
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
-      <el-button type="primary"  @click.native.prevent="handleLogin" class="login-submit">登录</el-button>
+      <el-button type="primary" @click.prevent="handleLogin" class="login-submit">登录</el-button>
     </el-form-item>
     <div class="register-text" @click="register">还没有账号？马上注册</div>
   </el-form>
@@ -22,7 +22,7 @@
 <script>
 import { isvalidUsername } from '@/utils/validate'
 export default {
-  name: 'userlogin',
+  name: 'userLogin',
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
@@ -42,8 +42,8 @@ export default {
     }
     return {
       loginForm: {
-        loginName: '',
-        password: ''
+        loginName: 'admin',
+        password: '123456'
       },
       checked: false,
       code: {
@@ -82,13 +82,14 @@ export default {
         : (this.passwordType = '')
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.$store.dispatch('Login', this.loginForm).then(res => {
-            this.$router.push({ path: '/dashboard/dashboard' })
-          })
-        }
-      })
+      this.$router.push({ path: '/home/home' })
+      // this.$refs.loginForm.validate(valid => {
+      //   if (valid) {
+      //     this.$store.dispatch('Login', this.loginForm).then(res => {
+      //       this.$router.push({ path: '/dashboard/dashboard' })
+      //     })
+      //   }
+      // })
     },
     register() {
       this.$router.push({

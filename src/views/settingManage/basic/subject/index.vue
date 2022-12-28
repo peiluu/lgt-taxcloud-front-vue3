@@ -1,12 +1,15 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-	<div>vue3样板页面 - {{ message }}</div>
-	<el-button @click="fun">点击</el-button>
-	<div v-for="item in list" :key="item.key">
-		<div>{{item.lable}}</div>
+	<div>
+		<div>vue3样板页面 - {{ message }}</div>
+		<el-button @click="fun">点击</el-button>
+		<div v-for="item in list" :key="item.key">
+			<div>{{item.lable}}</div>
+		</div>
+		<LgtMyFocus />
+		<ComTest :msg="message" />
 	</div>
-	<LgtMyFocus />
-	<ComTest :msg="message" />
+	
 </template>
 
 <script setup>

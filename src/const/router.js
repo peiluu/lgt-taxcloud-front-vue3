@@ -97,6 +97,8 @@ export const constantRouterMap = [
 						name: ' 凭证规则设定',
 						// 非菜单路由
 						isNotMenu: true,
+						component: () =>
+							import('@/views/settingManage/system/voucherRules/index'),
 						meta: { title: ' 凭证规则设定', icon: 'dashboard' },
 					},
 				],

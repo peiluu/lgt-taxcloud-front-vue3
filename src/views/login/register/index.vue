@@ -20,7 +20,7 @@
 		<div class="login-border animated fadeInRight">
 			<div class="login-main">
 				<h4 class="login-title">注册</h4>
-				<el-tabs v-model="activeName"> <userInfo></userInfo></el-tabs>
+				<el-tabs> <userInfo></userInfo></el-tabs>
 			</div>
 		</div>
 	</div>

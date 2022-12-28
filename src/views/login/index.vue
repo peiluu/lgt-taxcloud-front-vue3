@@ -16,7 +16,7 @@
       <div class="login-main">
         <h4 class="login-title">登录{{website.title}}
         </h4>
-        <el-tabs v-model="activeName">
+        <el-tabs>
           <!-- <el-tab-pane label="用户密码" name="user"> -->
             <userLogin></userLogin>
           <!-- </el-tab-pane> -->
