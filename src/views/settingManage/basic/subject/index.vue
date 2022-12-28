@@ -9,7 +9,6 @@
 		<LgtMyFocus />
 		<ComTest :msg="message" />
 	</div>
-	
 </template>
 
 <script setup>

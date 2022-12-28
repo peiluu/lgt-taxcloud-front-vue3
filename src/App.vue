@@ -13,10 +13,10 @@
 		</el-config-provider> -->
 
 		<!-- <router-view v-slot="{ Component }">
-			<keep-alive>
-				<component :is="Component" />
-			</keep-alive>
-		</router-view> -->
+				<keep-alive>
+					<component :is="Component" />
+				</keep-alive>	
+			</router-view> -->
 		<router-view v-slot="{ Component }">
 			<keep-alive>
 				<Component :is="Component" />

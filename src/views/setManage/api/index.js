@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function page(data) {
   return request({
-    url: '/user/login',
+    url: '/api/tax/meSubject/findTaxAccountingRule',
     method: 'post',
     data
   })
