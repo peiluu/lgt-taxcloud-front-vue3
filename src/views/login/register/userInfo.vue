@@ -1,23 +1,23 @@
 <template>
   <el-form class="p-register-form" status-icon :rules="loginRules" ref="form" :model="form" label-width="0">
     <el-form-item prop="loginName">
-      <el-input size="small" style="width: 270px" @keyup.enter.native="handleLogin" v-model="form.loginName" auto-complete="off" placeholder="请输入用户名">
+      <el-input style="width: 270px" @keyup.enter.native="handleLogin" v-model="form.loginName" auto-complete="off" placeholder="请输入用户名">
         <i slot="prefix" class="icon-yonghu"></i>
       </el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input size="small" @keyup.enter.native="handleLogin" :type="passwordType" v-model="form.password" auto-complete="off" placeholder="请输入密码">
+      <el-input  @keyup.enter.native="handleLogin" :type="passwordType" v-model="form.password" auto-complete="off" placeholder="请输入密码">
         <i class="el-icon-view el-input__icon" slot="suffix" @click="showPassword"></i>
         <i slot="prefix" class="icon-mima"></i>
       </el-input>
     </el-form-item>
     <el-form-item prop="phone">
-      <el-input size="small" @keyup.enter.native="handleLogin" v-model="form.phone" auto-complete="off" placeholder="请输入手机号码">
+      <el-input  @keyup.enter.native="handleLogin" v-model="form.phone" auto-complete="off" placeholder="请输入手机号码">
         <i slot="prefix" class="icon-shouji"></i>
       </el-input>
     </el-form-item>
     <el-form-item prop="code">
-      <el-input size="small" @keyup.enter.native="handleLogin" v-model="form.code" auto-complete="off" placeholder="请输入验证码">
+      <el-input @keyup.enter.native="handleLogin" v-model="form.code" auto-complete="off" placeholder="请输入验证码">
         <i slot="prefix" class="icon-yanzhengma yanzhengma" style=""></i>
         <template v-slot:append>
           <span @click="handleSend" class="msg-text" :class="[{ display: msgKey }]">{{ msgText }}</span>
@@ -28,7 +28,7 @@
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
       <div class="login-text" @click="backLogin">已有账号？立即登录</div>
-      <el-button type="primary" size="small" @click.native.prevent="handleLogin" class="login-submit">注册</el-button>
+      <el-button type="primary" @click.native.prevent="handleLogin" class="login-submit">注册</el-button>
     </el-form-item>
   </el-form>
 </template>

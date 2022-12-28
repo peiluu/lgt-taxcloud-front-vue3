@@ -1,19 +1,19 @@
 <template>
   <el-form class="login-form" status-icon :rules="loginRules" ref="loginForm" :model="loginForm" label-width="0">
     <el-form-item prop="loginName">
-      <el-input size="small" @keyup.enter.native="handleLogin" v-model="loginForm.loginName" auto-complete="off" placeholder="请输入手机号/纳税人识别号码">
+      <el-input @keyup.enter="handleLogin" v-model="loginForm.loginName" auto-complete="off" placeholder="请输入手机号/纳税人识别号码">
         <i slot="prefix" class="icon-yonghu"></i>
       </el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input size="small" @keyup.enter.native="handleLogin" :type="passwordType" v-model="loginForm.password" auto-complete="off" placeholder="请输入密码">
+      <el-input @keyup.enter.native="handleLogin" :type="passwordType" v-model="loginForm.password" auto-complete="off" placeholder="请输入密码">
         <i class="el-icon-view el-input__icon" slot="suffix" @click="showPassword"></i>
         <i slot="prefix" class="icon-mima"></i>
       </el-input>
     </el-form-item>
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
-      <el-button type="primary" size="small" @click.native.prevent="handleLogin" class="login-submit">登录</el-button>
+      <el-button type="primary"  @click.native.prevent="handleLogin" class="login-submit">登录</el-button>
     </el-form-item>
     <div class="register-text" @click="register">还没有账号？马上注册</div>
   </el-form>
