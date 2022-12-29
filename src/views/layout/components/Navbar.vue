@@ -60,7 +60,7 @@
 import { mapGetters } from 'vuex'
 import nxTopLock from '@/components/nx-top-lock'
 import nxHamburger from '@/components/nx-hamburger'
-import nxFullScreen from '@/components/nx-full-screen/index'
+// import nxFullScreen from '@/components/nx-full-screen/index'
 
 export default {
   name: 'navBar',
@@ -68,7 +68,7 @@ export default {
    
     nxHamburger,
 
-    nxFullScreen,
+    // nxFullScreen,
 
     nxTopLock,
     
