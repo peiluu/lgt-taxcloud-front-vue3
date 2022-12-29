@@ -1,4 +1,5 @@
 <template>
+
   <el-scrollbar wrapClass="scrollbar-wrapper">
     <logo :isCollapse="isCollapse"></logo>
     <el-menu
@@ -32,3 +33,4 @@ export default {
   }
 }
 </script>
+

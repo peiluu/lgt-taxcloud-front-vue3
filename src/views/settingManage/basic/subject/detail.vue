@@ -1,6 +1,6 @@
 <template>
   <div class="p-page">
-    <h3 class="m-title">{{ textMap[updateStatus] || "新增账套" }}</h3>
+    <h3 class="m-title">{{ textMap[updateStatus] || "新增企业" }}</h3>
     <el-form
       :model="form"
       :inline="true"
@@ -10,36 +10,44 @@
       class="detail-form"
       :disabled="updateStatus === 'detail'"
     >
-      <el-form-item label="账套名称" prop="subjectName">
-        <el-input v-model="form.subjectName" placeholder="请输入账套名称" />
-      </el-form-item>
-      <el-form-item label="所属企业" prop="qymc">
-        <el-input v-model="form.qymc" placeholder="请输入所属企业名称" disabled />
+      <el-form-item label="企业名称" prop="qymc">
+        <el-input v-model="form.qymc" placeholder="请输入企业名称" />
       </el-form-item>
 
-      <el-form-item label="启用期间" prop="time">
-        <el-date-picker v-model="form.time" type="month" placeholder="选择日期" />
-      </el-form-item>
-
-      <el-form-item label="本位币" prop="dcdirection">
-        <el-select v-model="form.dcdirection" disabled>
-          <el-option :value="1" label="人民币（RMB）" />
+      <el-form-item label="纳税类型" prop="dcdirection">
+        <el-select v-model="form.dcdsirection" disabled>
+          <el-option :value="1" label="小规模纳税人" />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="会计制度" prop="dcdirection">
-        <el-select v-model="form.dcdirection" disabled>
-          <el-option :value="1" label="小企业会计准则（2013年颁布）" />
+      <el-form-item label="纳税人识别号" prop="nsrsbh">
+        <el-input v-model="form.nsrsbh" placeholder="请输入纳税人识别号" />
+      </el-form-item>
+
+      <el-form-item label="所属行业" prop="nsrsbh">
+        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
+      </el-form-item>
+
+      <el-form-item label="经营地址" prop="dcdirection">
+        <el-select v-model="form.dcdsirection" placeholder="请选择经营地址">
+          <el-option :value="1" label="小规模纳税人" />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="科目体系" prop="dcdirection">
-        <el-select v-model="form.dcdirection" disabled>
-          <el-option :value="1" label="简易科目" />
-        </el-select>
+      <el-form-item label="经营范围" prop="nsrsbh" class="el-form-item-full">
+        <el-input v-model="form.textarea" :rows="3" type="textarea" placeholder=" 请输入经营范围" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="form.status" placeholder="请选择借贷方向">
+
+      <el-form-item label="联系人" prop="nsrsbh">
+        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
+      </el-form-item>
+
+      <el-form-item label="联系电话" prop="nsrsbh">
+        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
+      </el-form-item>
+
+      <el-form-item label="设为默认" prop="status">
+        <el-select v-model="form.status" placeholder>
           <el-option :value="1" label="开启" />
           <el-option :value="2" label="关闭" />
         </el-select>
@@ -54,7 +62,8 @@
 </template>
 
 <script>
-import { addObj, editObj } from "./api/index.js";
+import { addObj, editObj } from "../../api/index.js";
+
 export default {
   name: "setManageDetail",
   data() {
@@ -64,10 +73,10 @@ export default {
         status: 1
       },
       rules: {
-        subjectName: [
+        qymc: [
           {
             required: true,
-            message: "请输入账套名称",
+            message: "请输入企业名称",
             trigger: "blur"
           },
           {
@@ -95,9 +104,9 @@ export default {
       id: "",
       updateStatus: "",
       textMap: {
-        update: "编辑账套",
-        create: "新增账套",
-        detail: "账套详情"
+        update: "编辑企业",
+        create: "新增企业",
+        detail: "企业详情"
       }
     };
   },
@@ -119,7 +128,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.replace({ path: "/setManage/list" });
+      this.$router.replace({ path: "/businessManage/list" });
     },
     // 提交表单
     handleSubmit() {

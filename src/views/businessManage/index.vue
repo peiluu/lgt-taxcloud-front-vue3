@@ -1,14 +1,12 @@
 <template>
   <div class="p-page">
     <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="账套名称" prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="账套名称" v-model="listQuery.name" />
+      <el-form-item label="企业名称" prop="status">
+        <el-input @keyup.enter="handleFilter" placeholder="企业名称" v-model="listQuery.name" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="listQuery.status">
-          <el-option :value="1" label="开启"></el-option>
-          <el-option :value="2" label="关闭"></el-option>
-        </el-select>
+
+      <el-form-item label="纳税人识别号码 " prop="status">
+        <el-input @keyup.enter="handleFilter" placeholder="纳税人识别号码" v-model="listQuery.qymc" />
       </el-form-item>
 
       <el-form-item>
@@ -20,7 +18,7 @@
     <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
       <el-table-column type="index" label="序号" width="65" />
 
-      <el-table-column align="center" label="账套名称">
+      <el-table-column align="center" label="企业名称">
         <template v-slot="scope">
           <el-button
             link
@@ -29,25 +27,19 @@
           >{{scope.row.cateName}}</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="启用时间" prop="time" />
+      <el-table-column align="center" label="纳税类型" prop="time" />
 
-      <el-table-column align="center" label="会计制度">
-        <template v-slot="scope">
-          <span>{{ scope.row.sceneName }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="纳税人识别号码" prop="time" />
 
-      <el-table-column align="center" label="状态">
-        <template v-slot="scope">
-          <el-switch v-model="scope.row.dcdirection" active-value="100" inactive-value="0"></el-switch>
-        </template>
+      <el-table-column align="center" label="标为默认企业">
+        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" @click="handleEnter(scope.row)">进入</el-button>
-          <el-button type="success" @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
           <el-button type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="success" @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
+          <el-button type="primary" @click="handleEnter(scope.row)">切换为默认</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -121,7 +113,7 @@ export default {
 
     handleUpdate(id = "", updateStatus = "") {
       this.$router.push({
-        path: "/setManage/detail",
+        path: "/businessManage/detail",
         query: {
           id,
           updateStatus

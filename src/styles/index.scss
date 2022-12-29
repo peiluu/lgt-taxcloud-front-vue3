@@ -1,10 +1,8 @@
 @import './variables.scss';
 @import './mixin.scss';
-@import './transition.scss';
-@import './element-ui.scss';
-@import './sidebar.scss';
 @import './common.scss';
-@import './btn.scss';
+@import './sidebar.scss';
+
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -69,21 +67,7 @@ a:hover {
   }
 }
 
-//main-container全局样式
-.app-main {
-  min-height: calc(100vh - 50px);
-  padding: 16px;
-  height: 100%;
 
-  background: #f0f2f5;
-  .main-page{
-    background: #fff;
-    padding: 0 16px 16px;
-    box-shadow: 0 2px 12px 0 #F0F2F5;
-    height: 100%;
-
-  }
-}
 
 code {
   background: #eef1f6;
@@ -151,25 +135,4 @@ code {
 
 /*BaseForm*/
 
-.form-box {
-  width: 600px;
-}
 
-.form-box .line {
-  text-align: center;
-}
-
-.el-time-panel__content::after,
-.el-time-panel__content::before {
-  margin-top: -7px;
-}
-
-.el-time-spinner__wrapper .el-scrollbar__wrap:not(.el-scrollbar__wrap--hidden-default) {
-  padding-bottom: 0;
-}
-
-/*sidebar*/
-
-.el-submenu__title i {
-  color: white !important;
-}

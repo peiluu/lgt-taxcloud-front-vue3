@@ -1,10 +1,5 @@
 #app {
-  // 主体区域
-  .main-container {
-    min-height: 100vh;
-    transition: margin-left .28s;
-    margin-left: 210px;
-  } // 侧边栏
+// 侧边栏
   .sidebar-container {
     transition: width 0.28s;
     width: 210px !important;

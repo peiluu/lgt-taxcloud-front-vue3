@@ -1,5 +1,5 @@
 <template>
-	<div class="menu-wrapper">
+	<div>
 		<template v-for="item in routes">
 			<template v-if="!item.hidden && item.children">
 				<router-link
