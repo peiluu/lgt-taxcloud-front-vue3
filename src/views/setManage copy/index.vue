@@ -1,33 +1,22 @@
 <template>
 	<div class="p-page">
-		<el-form class="m-header" :model="listQuery" ref="form" :inline="true">
-			<el-form-item label="账套名称" prop="status">
-				<el-input
-					@keyup.enter="handleFilter"
-					style="width: 240px; margin-right: 24px"
-					class="filter-item"
-					placeholder="账套名称"
-					v-model="listQuery.name"
-				>
-				</el-input>
-			</el-form-item>
-			<el-form-item label="状态" prop="status">
-				<el-select v-model="form.status">
-					<el-option :value="1" label="开启"></el-option>
-					<el-option :value="2" label="关闭"></el-option>
-				</el-select>
-			</el-form-item>
-
-			<el-form-item>
-				<el-button
-					class="filter-item"
-					type="primary"
-					icon="search"
-					@click="handleFilter"
-					>查询</el-button
-				>
-			</el-form-item>
-		</el-form>
+		<div class="m-header">
+			<el-input
+				@keyup.enter="handleFilter"
+				style="width: 240px; margin-right: 16px"
+				class="filter-item"
+				placeholder="账套名称"
+				v-model="listQuery.name"
+			>
+			</el-input>
+			<el-button
+				class="filter-item"
+				type="primary"
+				icon="search"
+				@click="handleFilter"
+				>搜索</el-button
+			>
+		</div>
 
 		<el-button
 			class="filter-item"
@@ -55,7 +44,10 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column align="center" label="启用时间" prop="time">
+			<el-table-column align="center" label="启用时间">
+				<template v-slot="scope">
+					<span>{{ scope.row.subjectName }}</span>
+				</template>
 			</el-table-column>
 
 			<el-table-column align="center" label="会计制度">
@@ -115,7 +107,7 @@ export default {
 	data() {
 		return {
 			form: {},
-			list: [{ cateName: '北京模型有限公司', time: '2022-12' }],
+			list: [{ cateName: '北京模型有限公司' }],
 			total: 0,
 			listLoading: false,
 			listQuery: {
@@ -197,7 +189,7 @@ export default {
 		color: #21baa9;
 		cursor: pointer;
 	}
-	.m-footer {
+	.m-footer{
 		padding-top: 16px;
 		display: flex;
 		justify-content: flex-end;

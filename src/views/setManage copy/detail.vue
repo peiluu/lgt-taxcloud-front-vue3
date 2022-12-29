@@ -5,10 +5,7 @@
     <el-form :model="form" :rules="rules" ref="form" label-width="100px" :disabled="updateStatus === 'detail'">
 
       <el-form-item label="账套名称" prop="subjectName">
-        <el-input v-model="form.subjectName" placeholder="请输入账套名称" />
-      </el-form-item>
-      <el-form-item label="所属企业" prop="subjectName">
-        <el-input v-model="form.subjectName" placeholder="请输入所属企业名称" disabled />
+        <el-input v-model="form.subjectName" placeholder="请输入账套名称" width="200px"></el-input>
       </el-form-item>
 
       <el-form-item label="启用期间" prop="time">
@@ -174,7 +171,7 @@ export default {
  .m-title{
   margin-bottom: 32px;
  }
-  /deep/ .el-input, .el-select{
+  .el-input, .el-select {
    width: 400px;
   }
   .m-footer{

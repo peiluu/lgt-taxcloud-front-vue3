@@ -127,7 +127,9 @@ export default {
 			return (window.innerWidth - 300) / 2;
 		},
 	},
-	created() {},
+	created() {
+		
+	},
 	watch: {
 		dateValue(val) {
 			this.getData(val);

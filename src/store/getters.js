@@ -16,6 +16,5 @@ const getters = {
   cachedViews: state => state.tagsView.cachedViews,
   browserHeaderTitle: state => state.user.browserHeaderTitle,
   errorLogs: state => state.errorLog.logs
-
 }
 export default getters
