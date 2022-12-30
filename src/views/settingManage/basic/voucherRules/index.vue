@@ -1,22 +1,48 @@
 <template>
   <div class="p-page">
     <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="企业名称" prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="企业名称" v-model="listQuery.name" />
+      <el-form-item label="规则名称" prop="status">
+        <el-input @keyup.enter="getList" placeholder="规则名称" v-model="listQuery.name" />
       </el-form-item>
 
-      <el-form-item label="纳税人识别号码 " prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="纳税人识别号码" v-model="listQuery.qymc" />
+      <el-form-item label="业务类别" prop="status">
+        <el-select v-model="listQuery.status">
+          <el-option :value="1" label="开启"></el-option>
+          <el-option :value="2" label="关闭"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="业务类别" prop="status">
+        <el-select v-model="listQuery.status">
+          <el-option :value="1" label="开启"></el-option>
+          <el-option :value="2" label="关闭"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="listQuery.status">
+          <el-option :value="1" label="开启"></el-option>
+          <el-option :value="2" label="关闭"></el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" icon="search" @click="handleFilter">查询</el-button>
+        <el-button type="primary" icon="search" @click="getList">查询</el-button>
       </el-form-item>
     </el-form>
 
-    <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button>
-    <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
-      <el-table-column align="center" type="index" label="序号" width="60" />
+    <div class="m-btns">
+      <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button>
+      <el-button @click="handleUpdate('', 'create')" type="primary">批量删除</el-button>
+    </div>
+
+    <el-table
+      stripe
+      borders
+      :data="list"
+      v-loading.body="listLoading"
+      highlight-current-row
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column align="center" type="selection" label="序号" width="60" />
 
       <el-table-column align="center" label="企业名称">
         <template v-slot="scope">
@@ -37,9 +63,9 @@
 
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template v-slot="scope">
+          <el-button type="primary" link @click="handleEnter(scope.row)">启停</el-button>
           <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
-          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="primary" link @click="handleEnter(scope.row)">切换为默认</el-button>
+          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -92,15 +118,21 @@ export default {
         this.listLoading = false;
       });
     },
-
+    // 重置表单
+    reset() {
+      this.listQuery = {
+        pageIndex: 1,
+        pageSize: 10
+      };
+      this.getList();
+    },
+    handleSelectionChange(val) {
+      console.log(val);
+    },
     handleAddChange(value) {
       this.form.subjectId =
         value && value.length ? value[value.length - 1] : "";
       this.$refs.cascaderRef.dropDownVisible = false;
-    },
-
-    handleFilter() {
-      this.getList();
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
@@ -113,7 +145,7 @@ export default {
 
     handleUpdate(id = "", updateStatus = "") {
       this.$router.push({
-        path: "/businessManage/detail",
+        path: "/basic/voucherRulesDetail",
         query: {
           id,
           updateStatus
@@ -142,3 +174,11 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.m-btns {
+  float: right;
+  .el-button {
+    margin: 0 0 16px 16px;
+  }
+}
+</style>

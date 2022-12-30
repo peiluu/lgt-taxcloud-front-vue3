@@ -14,11 +14,11 @@
 
     <el-form :model="listQuery" ref="form" :inline="true">
       <el-form-item label="编码" prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="编码" v-model="listQuery.name" />
+        <el-input @keyup.enter="getList" placeholder="编码" v-model="listQuery.name" />
       </el-form-item>
 
       <el-form-item label="名称" prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="名称" v-model="listQuery.qymc" />
+        <el-input @keyup.enter="getList" placeholder="名称" v-model="listQuery.qymc" />
       </el-form-item>
 
       <el-form-item label="状态" prop="status">
@@ -36,7 +36,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" icon="search" @click="handleFilter">查询</el-button>
+        <el-button type="primary" icon="search" @click="getList">查询</el-button>
       </el-form-item>
     </el-form>
 
@@ -137,7 +137,8 @@ export default {
         type: 1
       },
       dialogFormVisible: false,
-      dialogStatus: ""
+      dialogStatus: "",
+      deleteList: []
     };
   },
   watch: {
@@ -163,10 +164,6 @@ export default {
         value && value.length ? value[value.length - 1] : "";
       this.$refs.cascaderRef.dropDownVisible = false;
     },
-
-    handleFilter() {
-      this.getList();
-    },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
       this.getList();
@@ -182,7 +179,7 @@ export default {
     },
 
     handleSelectionChange(val) {
-      console.log(val);
+      this.deleteList = val;
     },
     handleDelete(row) {
       this.$confirm("你确定要删除这行内容吗?", "提示", {

@@ -105,7 +105,6 @@ export const constantRouterMap = [
       {
         path: "/basic",
         name: "基础设置",
-        component: () => import("@/views/settingManage/basic/subject/index"),
         meta: { title: "基础设置", icon: "dashboard" },
         // 三级菜单嵌套
         children: [
@@ -116,23 +115,26 @@ export const constantRouterMap = [
               import("@/views/settingManage/basic/subject/index"),
             meta: { title: "科目设置", icon: "dashboard" },
           },
-          // {
-          //   path: "voucherRules",
-          //   name: " 凭证规则设定",
-          //   // 非菜单路由
-          //   isNotMenu: true,
-          //   component: () =>
-          //     import("@/views/settingManage/system/voucherRules/index"),
-          //   meta: { title: " 凭证规则设定", icon: "dashboard" },
-          // },
+          {
+            path: "voucherRulesList",
+            name: "凭证规则设定",
+            component: () =>
+              import("@/views/settingManage/basic/voucherRules/index"),
+            meta: { title: " 凭证规则设定", icon: "dashboard" },
+          },
+          {
+            path: "voucherRulesDetail",
+            name: "凭证规则详情",
+            hidden: true,
+            component: () =>
+              import("@/views/settingManage/basic/voucherRules/detail"),
+            meta: { title: " 凭证规则详情", icon: "dashboard" },
+          },
         ],
       },
       {
         path: "/rules",
         name: "规则设置",
-        // 非菜单路由
-        isNotMenu: true,
-        component: () => import("@/views/settingManage/basic/subject/index"),
         meta: { title: "规则设置", icon: "dashboard" },
         children: [
           {
@@ -147,10 +149,6 @@ export const constantRouterMap = [
       {
         path: "/system",
         name: "系统设置",
-        // 非菜单路由
-        isNotMenu: true,
-        component: () =>
-          import("@/views/settingManage/system/operationLog/index"),
         meta: { title: "系统设置", icon: "dashboard" },
         children: [
           {

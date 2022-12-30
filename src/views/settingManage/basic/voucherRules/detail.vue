@@ -1,6 +1,6 @@
 <template>
   <div class="p-page">
-    <h3 class="m-title">{{ textMap[updateStatus] || "新增企业" }}</h3>
+    <h3 class="m-title">{{ textMap[updateStatus] || "新增凭证规则" }}</h3>
     <el-form
       :model="form"
       :inline="true"
@@ -10,49 +10,74 @@
       class="detail-form"
       :disabled="updateStatus === 'detail'"
     >
-      <el-form-item label="企业名称" prop="qymc">
-        <el-input v-model="form.qymc" placeholder="请输入企业名称" />
+      <el-form-item label="规则名称" prop="qymc">
+        <el-input v-model="form.qymc" placeholder="请输入规则名称" />
       </el-form-item>
 
-      <el-form-item label="纳税类型" prop="dcdirection">
+      <el-form-item label="业务类别" prop="dcdirection">
+        <el-select v-model="form.dcdsirection" placeholder="请选择业务类别">
+          <el-option :value="1" label="小规模纳税人" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="原始凭证类别" prop="dcdirection">
+        <el-select v-model="form.dcdsirection" placeholder="请选择原始凭证类别">
+          <el-option :value="1" label="小规模纳税人" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="币种" prop="dcdirection">
         <el-select v-model="form.dcdsirection" disabled>
           <el-option :value="1" label="小规模纳税人" />
         </el-select>
       </el-form-item>
-
-      <el-form-item label="纳税人识别号" prop="nsrsbh">
-        <el-input v-model="form.nsrsbh" placeholder="请输入纳税人识别号" />
-      </el-form-item>
-
-      <el-form-item label="所属行业" prop="nsrsbh">
-        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
-      </el-form-item>
-
-      <el-form-item label="经营地址" prop="dcdirection">
-        <el-select v-model="form.dcdsirection" placeholder="请选择经营地址">
-          <el-option :value="1" label="小规模纳税人" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="经营范围" prop="nsrsbh" class="el-form-item-full">
-        <el-input v-model="form.textarea" :rows="3" type="textarea" placeholder=" 请输入经营范围" />
-      </el-form-item>
-
-      <el-form-item label="联系人" prop="nsrsbh">
-        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
-      </el-form-item>
-
-      <el-form-item label="联系电话" prop="nsrsbh">
-        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
-      </el-form-item>
-
-      <el-form-item label="设为默认" prop="status">
-        <el-select v-model="form.status" placeholder>
-          <el-option :value="1" label="开启" />
-          <el-option :value="2" label="关闭" />
-        </el-select>
-      </el-form-item>
     </el-form>
+
+    <div class="m-btns">
+      <el-button @click="handleUpdate('', 'create')" type="primary">科目维护</el-button>
+    </div>
+
+    <el-table
+      stripe
+      borders
+      :data="list"
+      v-loading.body="listLoading"
+      highlight-current-row
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column align="center" type="selection" label="序号" width="60" />
+
+      <el-table-column align="center" label="摘要信息" prop="time" />
+
+      <el-table-column align="center" label="科目名称" prop="time" />
+
+      <el-table-column align="center" label="借/贷">
+        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
+      </el-table-column>
+
+      <el-table-column align="center" label="核算协助">
+        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
+      </el-table-column>
+
+
+      <el-table-column align="center" label="操作" width="300" fixed="right">
+        <template v-slot="scope">
+          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">编辑</el-button>
+          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
+
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      v-model:current-page="listQuery.pageIndex"
+      :page-sizes="[10, 20, 30, 50]"
+      :page-size="listQuery.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+    />
 
     <div class="m-footer">
       <el-button @click="cancel">取消</el-button>
@@ -104,9 +129,23 @@ export default {
       id: "",
       updateStatus: "",
       textMap: {
-        update: "编辑企业",
-        create: "新增企业",
-        detail: "企业详情"
+        update: "编辑凭证规则",
+        create: "新增凭证规则",
+        detail: "凭证规则详情"
+      },
+      list: [
+        { cateName: "北京模型有限公司", time: "2022-12" },
+        { cateName: "北京模型有限公司", time: "2022-12" },
+        { cateName: "北京模型有限公司", time: "2022-12" },
+        { cateName: "北京模型有限公司", time: "2022-12" },
+        { cateName: "北京模型有限公司", time: "2022-12" },
+        { cateName: "北京模型有限公司", time: "2022-12" }
+      ],
+      total: 0,
+      listLoading: false,
+      listQuery: {
+        pageIndex: 1,
+        pageSize: 10
       }
     };
   },
@@ -128,7 +167,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.replace({ path: "/businessManage/list" });
+      this.$router.replace({ path: "/basic/voucherRulesList" });
     },
     // 提交表单
     handleSubmit() {
@@ -177,8 +216,13 @@ export default {
     margin: 0 16px 24px;
   }
   .m-footer {
-
     margin: 32px 0 32px 33%;
+  }
+  .m-btns {
+    float: right;
+    .el-button {
+      margin: 0 0 16px 16px;
+    }
   }
 }
 </style>

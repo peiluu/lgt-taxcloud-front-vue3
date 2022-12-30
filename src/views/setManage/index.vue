@@ -2,7 +2,7 @@
   <div class="p-page">
     <el-form :model="listQuery" ref="form" :inline="true">
       <el-form-item label="账套名称" prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="账套名称" v-model="listQuery.name" />
+        <el-input @keyup.enter="getList" placeholder="账套名称" v-model="listQuery.name" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="listQuery.status">
@@ -12,7 +12,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" icon="search" @click="handleFilter">查询</el-button>
+        <el-button type="primary" icon="search" @click="getList">查询</el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -100,6 +101,14 @@ export default {
         this.listLoading = false;
       });
     },
+    // 重置表单
+    reset() {
+      this.listQuery = {
+        pageIndex: 1,
+        pageSize: 10
+      };
+      this.getList()
+    },
 
     handleAddChange(value) {
       this.form.subjectId =
@@ -107,9 +116,6 @@ export default {
       this.$refs.cascaderRef.dropDownVisible = false;
     },
 
-    handleFilter() {
-      this.getList();
-    },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
       this.getList();
