@@ -1,12 +1,16 @@
 <template>
   <div class="p-page">
     <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="企业名称" prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="企业名称" v-model="listQuery.name" />
+      <el-form-item label="用户名" prop="status">
+        <el-input @keyup.enter="handleFilter" placeholder="用户名" v-model="listQuery.name" />
       </el-form-item>
 
-      <el-form-item label="纳税人识别号码 " prop="status">
-        <el-input @keyup.enter="handleFilter" placeholder="纳税人识别号码" v-model="listQuery.qymc" />
+      <el-form-item label="操作类型" prop="status">
+        <el-input @keyup.enter="handleFilter" placeholder="操作类型" v-model="listQuery.qymc" />
+      </el-form-item>
+
+      <el-form-item label="日期" prop="status">
+        <el-date-picker v-model="listQuery.time" value-format="YYYY-MM-DD" placeholder="日期" />
       </el-form-item>
 
       <el-form-item>
@@ -14,34 +18,16 @@
       </el-form-item>
     </el-form>
 
-    <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button>
+    <!-- <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button> -->
     <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
       <el-table-column align="center" type="index" label="序号" width="60" />
 
-      <el-table-column align="center" label="企业名称">
-        <template v-slot="scope">
-          <el-button
-            link
-            type="primary"
-            @click="handleUpdate(scope.row.id, 'detail')"
-          >{{scope.row.cateName}}</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="纳税类型" prop="time" />
+      <el-table-column align="center" label="日期" prop="time" />
 
-      <el-table-column align="center" label="纳税人识别号码" prop="time" />
+      <el-table-column align="center" label="用户名" prop="cateName" />
 
-      <el-table-column align="center" label="标为默认企业">
-        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
-      </el-table-column>
-
-      <el-table-column align="center" label="操作" width="300" fixed="right">
-        <template v-slot="scope">
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
-          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="primary" link @click="handleEnter(scope.row)">切换为默认</el-button>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="操作类型" prop="cateName" />
+      <el-table-column align="center" label="操作日志内容" prop="cateName" />
     </el-table>
 
     <el-pagination
@@ -57,10 +43,10 @@
 </template>
 
 <script>
-import { page, delObj } from "./api/index.js";
+import { page, delObj } from "../../api/index.js";
 
 export default {
-  name: "setManageList",
+  name: "operationLog",
   data() {
     return {
       form: {},

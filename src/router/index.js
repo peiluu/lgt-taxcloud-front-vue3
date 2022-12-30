@@ -116,15 +116,15 @@ export const constantRouterMap = [
               import("@/views/settingManage/basic/subject/index"),
             meta: { title: "科目设置", icon: "dashboard" },
           },
-          {
-            path: "voucherRules",
-            name: " 凭证规则设定",
-            // 非菜单路由
-            isNotMenu: true,
-            component: () =>
-              import("@/views/settingManage/system/voucherRules/index"),
-            meta: { title: " 凭证规则设定", icon: "dashboard" },
-          },
+          // {
+          //   path: "voucherRules",
+          //   name: " 凭证规则设定",
+          //   // 非菜单路由
+          //   isNotMenu: true,
+          //   component: () =>
+          //     import("@/views/settingManage/system/voucherRules/index"),
+          //   meta: { title: " 凭证规则设定", icon: "dashboard" },
+          // },
         ],
       },
       {
@@ -132,7 +132,7 @@ export const constantRouterMap = [
         name: "规则设置",
         // 非菜单路由
         isNotMenu: true,
-        component: () => import("@/views/setManage/detail"),
+        component: () => import("@/views/settingManage/basic/subject/index"),
         meta: { title: "规则设置", icon: "dashboard" },
         children: [
           {
@@ -141,6 +141,24 @@ export const constantRouterMap = [
             component: () =>
               import("@/views/settingManage/basic/subject/index"),
             meta: { title: "辅助核算设定", icon: "dashboard" },
+          },
+        ],
+      },
+      {
+        path: "/system",
+        name: "系统设置",
+        // 非菜单路由
+        isNotMenu: true,
+        component: () =>
+          import("@/views/settingManage/system/operationLog/index"),
+        meta: { title: "系统设置", icon: "dashboard" },
+        children: [
+          {
+            name: "操作日志",
+            path: "operationLog",
+            component: () =>
+              import("@/views/settingManage/system/operationLog/index"),
+            meta: { title: "操作日志", icon: "dashboard" },
           },
         ],
       },

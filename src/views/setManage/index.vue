@@ -18,7 +18,7 @@
 
     <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button>
     <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
-      <el-table-column type="index" label="序号" width="65" />
+      <el-table-column align="center" type="index" label="序号" width="60" />
 
       <el-table-column align="center" label="账套名称">
         <template v-slot="scope">
@@ -45,9 +45,9 @@
 
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" @click="handleEnter(scope.row)">进入</el-button>
-          <el-button type="success" @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" link @click="handleEnter(scope.row)">进入</el-button>
+          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
+          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -17,7 +17,7 @@
 					<el-date-picker
 						v-model="dateValue"
 						type="month"
-						value-format="yyyy-MM"
+						value-format="YYYY-MM"
 						placeholder="选择日期"
 					></el-date-picker>
 				</div>
@@ -128,7 +128,7 @@ export default {
 		},
 	},
 	created() {
-		
+
 	},
 	watch: {
 		dateValue(val) {

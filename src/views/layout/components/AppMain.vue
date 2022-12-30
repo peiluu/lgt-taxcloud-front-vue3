@@ -34,7 +34,7 @@ export default {
 .app-main {
   width: 100%;
 	min-height: calc(100vh - 50px);
-	padding: 12px;
+	padding: 16px;
 	background: #f0f2f5;
 	.main-page {
 		background: #fff;

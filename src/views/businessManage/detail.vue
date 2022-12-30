@@ -41,7 +41,7 @@
       <el-form-item label="联系人" prop="nsrsbh">
         <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
       </el-form-item>
-      
+
       <el-form-item label="联系电话" prop="nsrsbh">
         <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
       </el-form-item>
@@ -177,7 +177,7 @@ export default {
     margin: 0 16px 24px;
   }
   .m-footer {
-    width: 100%;
+
     margin: 32px 0 32px 33%;
   }
 }

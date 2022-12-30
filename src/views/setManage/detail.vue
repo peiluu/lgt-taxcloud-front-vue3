@@ -168,7 +168,7 @@ export default {
     margin: 0 16px 24px;
   }
   .m-footer {
-    width: 100%;
+
     margin: 32px 0 32px 33%;
   }
 }

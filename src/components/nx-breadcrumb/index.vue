@@ -42,7 +42,7 @@ export default {
 .breadcrumb-container {
 	display: flex;
 	align-items: center;
-	padding: 8px 0 16px;
+	padding: 8px 0 24px;
 	font-size: 16px;
 //	color: #97a8be;
 	.el-breadcrumb {

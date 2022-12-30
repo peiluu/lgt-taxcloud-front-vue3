@@ -42,6 +42,11 @@
     }
   }
 }
+
+.el-dialog {
+  top: 20%;
+}
+
 .el-table {
   width: 100%;
   margin-top: 16px;
@@ -51,12 +56,12 @@
   display: flex;
   justify-content: flex-end;
 }
-// 详情表单
+// 详情页面表单
 .detail-form {
   .el-form-item {
     width: 40%;
     margin-right: 0;
-    margin-bottom: 24px
+    margin-bottom: 24px;
   }
   .el-input,
   .el-select {
@@ -69,3 +74,17 @@
     width: 73%;
   }
 }
+
+// 弹窗表单
+.dialogDetail-form {
+  width: 100%;
+  padding: 0 4%;
+  .el-form-item {
+    margin-bottom: 24px;
+  }
+  .el-input,
+  .el-select {
+    width: 100%;
+  }
+}
+
