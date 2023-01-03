@@ -26,6 +26,7 @@
 
       <el-form-item>
         <el-button type="primary" icon="search" @click="getList">查询</el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -79,14 +80,15 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     />
+
   </div>
 </template>
 
 <script>
 import { page, delObj } from "../../api/index.js";
-
 export default {
   name: "setManageList",
+
   data() {
     return {
       form: {},

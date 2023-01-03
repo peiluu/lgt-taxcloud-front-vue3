@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: 'nxHamburger',
+  name: 'LgtHamburger',
   props: {
     isActive: {
       type: Boolean,

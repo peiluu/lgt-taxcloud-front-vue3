@@ -15,7 +15,7 @@
 
 <script>
 export default {
-	name: 'nxBreadcrumb',
+	name: 'LgtBreadcrumb',
 	created() {
 		this.getBreadcrumb();
 	},

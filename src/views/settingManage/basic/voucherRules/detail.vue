@@ -37,34 +37,25 @@
       <el-button @click="handleUpdate('', 'create')" type="primary">科目维护</el-button>
     </div>
 
-    <el-table
-      stripe
-      borders
-      :data="list"
-      v-loading.body="listLoading"
-      highlight-current-row
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column align="center" type="selection" label="序号" width="60" />
+    <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
+      <el-table-column align="center" type="index" label="序号" width="60" />
 
-      <el-table-column align="center" label="摘要信息" prop="time" />
+      <el-table-column align="center" label="摘要信息" prop="abstract" />
 
-      <el-table-column align="center" label="科目名称" prop="time" />
+      <el-table-column align="center" label="科目名称" prop="subject" />
 
       <el-table-column align="center" label="借/贷">
-        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
+        <template v-slot="scope">{{scope.row.type === 1 ? "是" : '否'}}</template>
       </el-table-column>
 
       <el-table-column align="center" label="核算协助">
-        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
+        <template v-slot="scope">{{scope.row.type === 1 ? "是" : '否'}}</template>
       </el-table-column>
 
-
-      <el-table-column align="center" label="操作" width="300" fixed="right">
+      <el-table-column align="center" label="操作" width="120" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">编辑</el-button>
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
-
+          <el-button type="primary" link @click="handleUpdate(scope, 'update')">编辑</el-button>
+          <el-button type="primary" link @click="handleDelete(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -83,14 +74,24 @@
       <el-button @click="cancel">取消</el-button>
       <el-button v-if="updateStatus !== 'detail'" type="primary" @click="handleSubmit">提交</el-button>
     </div>
+
+    <DialogDetail
+      :dialogFormVisible="dialogFormVisible"
+      :dialogStatus="dialogStatus"
+      @closeDialog="handleCloseDialog"
+    />
   </div>
 </template>
 
 <script>
 import { addObj, editObj } from "../../api/index.js";
+import DialogDetail from "./dialogDetail.vue";
 
 export default {
   name: "setManageDetail",
+  components: {
+    DialogDetail
+  },
   data() {
     return {
       form: {
@@ -133,20 +134,15 @@ export default {
         create: "新增凭证规则",
         detail: "凭证规则详情"
       },
-      list: [
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" }
-      ],
+      list: [],
       total: 0,
       listLoading: false,
       listQuery: {
         pageIndex: 1,
         pageSize: 10
-      }
+      },
+      dialogFormVisible: false,
+      dialogStatus: ""
     };
   },
   created() {},
@@ -169,6 +165,19 @@ export default {
     cancel() {
       this.$router.replace({ path: "/basic/voucherRulesList" });
     },
+    handleUpdate(id = "", dialogStatus = "") {
+      this.dialogFormVisible = true;
+      this.dialogStatus = dialogStatus;
+    },
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val;
+      this.getList();
+    },
+    handleCurrentChange(val) {
+      this.listQuery.pageIndex = val;
+      this.getList();
+    },
+
     // 提交表单
     handleSubmit() {
       const set = this.$refs;
@@ -206,6 +215,19 @@ export default {
           duration: 2000
         });
       });
+    },
+    handleCloseDialog(updateFlag, data) {
+      console.log(1);
+      this.dialogFormVisible = false;
+      if (updateFlag) {
+        this.list = this.list.concat(data);
+
+        // this.getList();
+      }
+    },
+    handleDelete(rowIndex) {
+      console.log(rowIndex)
+      this.list = this.list.filter((item, index) => index !== rowIndex);
     }
   }
 };

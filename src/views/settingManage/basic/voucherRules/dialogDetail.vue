@@ -7,30 +7,40 @@
       ref="ruleForms"
       class="dialogDetail-form"
     >
-      <el-form-item label="科目编码" prop="subjectCode">
-        <el-input v-model="form.subjectCode" placeholder="请输入科目代码"></el-input>
+      <el-form-item label="摘要" prop="abstract">
+        <el-input v-model="form.abstract" placeholder="请输入摘要" />
       </el-form-item>
-      <el-form-item label="科目名称" prop="subjectName">
-        <el-input v-model="form.subjectName" placeholder="请输入科目名称"></el-input>
-      </el-form-item>
-      <el-form-item label="科目类别" prop="isSale">
-        <el-select v-model="form.costIncome" placeholder="请选择">
+
+      <el-form-item label="科目" prop="subject">
+        <el-select v-model="form.subject" placeholder="请选择">
           <el-option
             v-for="(item) in typeList"
-            :key="item.key"
-            :label="item.label"
-            :value="item.key"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="上级科目" prop="accoutingStandard">
-        <el-select v-model="form.accoutingStandard" placeholder="请选择会计准则">
-          <el-option v-for="(item) in  typeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+      <el-form-item label="借贷" prop="type">
+        <el-select v-model="form.type" placeholder="请选择">
+          <el-option
+            v-for="(item) in  typeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="辅助核算" prop="accoutingStandard">
-        <el-checkbox v-model="form.checked1" />
+      <el-form-item label="协助核算" prop="type">
+        <el-select v-model="form.type" placeholder="请选择">
+          <el-option
+            v-for="(item) in  typeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -58,9 +68,9 @@ const props = defineProps({
 });
 
 const textMap = reactive({
-  update: "编辑企业",
-  create: "新增企业",
-  detail: "企业详情"
+  update: "编辑凭证规则",
+  create: "新增凭证规则",
+  detail: "凭证规则详情"
 });
 const form = reactive({});
 const rules = reactive({
@@ -92,7 +102,10 @@ const rules = reactive({
     }
   ]
 });
-const typeList = reactive([]);
+const typeList = reactive([{
+  id: 1,
+  name: 1
+}]);
 
 const ruleForms = ref(null);
 
@@ -105,10 +118,11 @@ const handleSubmit = () => {
   ruleForms.value.validate(valid => {
     if (!valid) return false;
     // 调用接口
-    const api = props.dialogStatus === "create" ? addObj : editObj;
-    api(form).then(() => {
-      emit("closeDialog", true);
-    });
+    emit("closeDialog", true, form);
+    // const api = props.dialogStatus === "create" ? addObj : editObj;
+    // api(form).then(() => {
+    //   emit("closeDialog", true, form);
+    // });
   });
 };
 </script>

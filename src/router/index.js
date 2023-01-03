@@ -162,6 +162,41 @@ export const constantRouterMap = [
       },
     ],
   },
+
+  // 账簿管理
+  {
+    path: "/bookManage",
+    component: Layout,
+    meta: { title: "账簿管理", icon: "dashboard" },
+    children: [
+      {
+        path: "generalLedger",
+        name: "总账查询",
+        component: () => import("@/views/bookManage/generalLedger/index"),
+        meta: { title: "总账查询", icon: "dashboard" },
+      },
+    ],
+  },
+  // 结转结账
+  {
+    path: "/carryingForward",
+    component: Layout,
+    meta: { title: "结转结账", icon: "dashboard" },
+    children: [
+      {
+        path: "closing",
+        name: "期末结账",
+        component: () => import("@/views/carryingForward/closing/index"),
+        meta: { title: "期末结账", icon: "dashboard" },
+      },
+      {
+        path: "closin",
+        name: "期末结转",
+        component: () => import("@/views/carryingForward/carryForward/index"),
+        meta: { title: "期末结转", icon: "dashboard" },
+      },
+    ],
+  },
 ];
 
 export default createRouter({

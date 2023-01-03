@@ -1,7 +1,7 @@
 <template>
 	<section class="app-main">
 		<div class="main-page">
-			<nx-breadcrumb></nx-breadcrumb>
+			<lgt-breadcrumb />
 			<transition name="fade" mode="out-in">
 				<!-- <tags-view></tags-view> -->
 				<keep-alive :include="cachedViews">
@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import nxBreadcrumb from '@/components/nx-breadcrumb';
+import LgtBreadcrumb from '@/components/lgt-breadcrumb';
 
 export default {
 	name: 'AppMain',
 	components: {
-		nxBreadcrumb,
+		LgtBreadcrumb,
 	},
 	computed: {
 		cachedViews() {
