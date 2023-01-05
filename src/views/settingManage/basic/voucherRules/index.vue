@@ -37,7 +37,6 @@
 
     <el-table
       stripe
-      borders
       :data="list"
       v-loading.body="listLoading"
       highlight-current-row

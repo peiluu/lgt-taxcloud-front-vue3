@@ -19,7 +19,7 @@
     </el-form>
 
     <!-- <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button> -->
-    <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
+    <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row>
       <el-table-column align="center" type="index" label="序号" width="60" />
 
       <el-table-column align="center" label="日期" prop="time" />

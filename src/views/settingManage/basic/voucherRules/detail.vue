@@ -37,7 +37,7 @@
       <el-button @click="handleUpdate('', 'create')" type="primary">科目维护</el-button>
     </div>
 
-    <el-table stripe borders :data="list" v-loading.body="listLoading" highlight-current-row>
+    <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row>
       <el-table-column align="center" type="index" label="序号" width="60" />
 
       <el-table-column align="center" label="摘要信息" prop="abstract" />

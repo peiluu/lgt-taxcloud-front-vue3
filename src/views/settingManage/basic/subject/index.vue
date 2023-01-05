@@ -44,7 +44,6 @@
     <el-button @click="handleUpdate('', 'create')" style="float: right">导出</el-button>
     <el-table
       stripe
-      borders
       :data="list"
       v-loading.body="listLoading"
       highlight-current-row

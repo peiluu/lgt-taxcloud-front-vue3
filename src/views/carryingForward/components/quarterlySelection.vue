@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { getQuarterlyList } from "@/utils/util";
 export default {
   name: "quarterlySelection",
   data() {
@@ -32,7 +33,7 @@ export default {
   },
 
   mounted() {
-    this.getQuarterlyList();
+    this.getQuarterly();
   },
   watch: {
     currnentItem(val) {
@@ -51,41 +52,9 @@ export default {
       this.currentList = [...list.splice(this.originIndex + val, 4)];
       this.originIndex = this.originIndex + val;
     },
-
-    /**
-     * @description 获取季度列表
-     * @param number 倒推的年数，默认值为2
-     */
-    getQuarterlyList(number) {
-      const date = new Date();
-      var year = date.getFullYear();
-      const list = [];
-      // 倒推之后的第一年
-      const firstYear = year - (number || 2);
-      const push = (i, j) => {
-        list.push({
-          label: `${i}年第${j}季度`,
-          value: `${i}-${j}`
-        });
-      };
-      // 获取季度数
-      const quarter = Math.floor((date.getMonth() + 3) / 3);
-      for (let i = firstYear; i <= year; i++) {
-        for (let j = 1; j <= 4; j++) {
-          // 如果是起始年份，只有当前季度往后的季度
-          if (i === firstYear && j >= quarter) {
-            push(i, j);
-          }
-          // 如果是起始年份，只有当前季度往前的季度
-          else if (i === year && quarter >= j) {
-            push(i, j);
-          }
-          // 如果是中间的年份，有完整的季度
-          else if (i !== year && i !== firstYear) {
-            push(i, j);
-          }
-        }
-      }
+    // 获取初始化季度数据
+    getQuarterly() {
+      const list = getQuarterlyList(2);
       // 完整列表
       this.originList = [...list];
       this.originIndex = list.length - 4;

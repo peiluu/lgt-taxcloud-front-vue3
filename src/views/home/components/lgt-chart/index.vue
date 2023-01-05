@@ -14,7 +14,7 @@
 <script>
 /* eslint-disable */
 import * as echarts from "echarts";
-import { getArrayByKey, getMaxMinByKey } from "../../../../utils/util";
+import { getArrayByKey, getMaxMinByKey } from "@/utils/util";
 
 /**
  * @description - 折线柱状混合图组件

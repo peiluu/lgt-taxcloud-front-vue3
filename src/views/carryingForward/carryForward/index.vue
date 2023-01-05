@@ -14,7 +14,8 @@
 
         <div class="item">
           <div>金额：{{item.number}}</div>
-          <el-button @click="handleUpdate('', 'create')" type="primary">生成凭证</el-button>
+          <el-button v-if="item.status === 0" @click="carryForward" type="primary">结转</el-button>
+          <el-button v-else @click="generateVoucher" type="primary">生成凭证</el-button>
         </div>
       </el-card>
     </div>
@@ -22,6 +23,7 @@
 </template>
 
 <script>
+import { ElMessageBox, ElMessage } from "element-plus";
 import { page, delObj } from "../api/index.js";
 
 import quarterlySelection from "../components/quarterlySelection.vue";
@@ -32,18 +34,11 @@ export default {
   data() {
     return {
       form: {},
-      tabsList: [
-        { label: "资产类", id: 1 },
-        { label: "负债类", id: 2 },
-        { label: "权益类", id: 3 },
-        { label: "成本类", id: 4 },
-        { label: "损益类", id: 5 }
-      ],
       list: [
-        { name: "结转损益", number: 111 },
-        { name: "应交税费", number: 111 },
-        { name: "销售成本", number: 111 },
-        { name: "XXXX", number: 111 }
+        { name: "结转损益", number: 111, status: 0 },
+        { name: "应交税费", number: 111, status: 0 },
+        { name: "销售成本", number: 1414, status: 1 },
+        { name: "XXXX", number: 41414, status: 1 }
       ],
       total: 0,
       listLoading: false,
@@ -55,12 +50,7 @@ export default {
       dialogFormVisible: false,
       dialogStatus: "",
       deleteList: [],
-      itemList: [
-        { label: "期初余额", propsKey: "number" },
-        { label: "本期借方发生额", propsKey: "number" },
-        { label: "本期贷方发生额", propsKey: "number" },
-        { label: "期末余额", propsKey: "number" }
-      ]
+
     };
   },
 
@@ -78,9 +68,28 @@ export default {
         this.listLoading = false;
       });
     },
-
+    // 改变查询季度
     handleDateChange(val) {
-      console.log(val)
+      console.log(val);
+    },
+    // 结转
+    carryForward() {
+      ElMessageBox({
+        title: "已结转",
+        message: "本期结转发生额xxx",
+        showCancelButton: true,
+        cancelButtonText: "关闭",
+        confirmButtonText: "生成凭证"
+      })
+        .then(() => {
+          this.generateVoucher();
+        })
+        .catch(() => {});
+    },
+
+    // 生成凭证
+    generateVoucher() {
+      ElMessage("生成凭证");
     }
   }
 };
@@ -96,7 +105,6 @@ h3 {
   color: #ccc;
   padding-bottom: 8px;
 }
-
 
 .m-list {
   display: flex;

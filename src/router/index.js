@@ -175,6 +175,18 @@ export const constantRouterMap = [
         component: () => import("@/views/bookManage/generalLedger/index"),
         meta: { title: "总账查询", icon: "dashboard" },
       },
+      {
+        path: "subjectBalanceTable",
+        name: "科目余额表",
+        component: () => import("@/views/bookManage/subjectBalanceTable/index"),
+        meta: { title: "科目余额表", icon: "dashboard" },
+      },
+      {
+        path: "subLedgerQuery",
+        name: "明细账查询",
+        component: () => import("@/views/bookManage/subLedgerQuery/index"),
+        meta: { title: "明细账查询", icon: "dashboard" },
+      },
     ],
   },
   // 结转结账
