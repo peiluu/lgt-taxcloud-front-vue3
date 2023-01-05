@@ -190,7 +190,7 @@ export const constantRouterMap = [
         meta: { title: "期末结账", icon: "dashboard" },
       },
       {
-        path: "closin",
+        path: "carryForward",
         name: "期末结转",
         component: () => import("@/views/carryingForward/carryForward/index"),
         meta: { title: "期末结转", icon: "dashboard" },

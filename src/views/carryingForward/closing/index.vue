@@ -1,10 +1,11 @@
 <template>
   <div>
+    <quarterlySelection @dateChange="handleDateChange" />
+
     <div class="m-header">
       <h3>已到结账期，赶紧结账吧！</h3>
       <el-button @click="handleUpdate('', 'create')" type="primary">一键结账</el-button>
     </div>
-
 
     <el-tabs v-model="listQuery.type" type="card">
       <el-tab-pane
@@ -49,9 +50,12 @@
 
 <script>
 import { page, delObj } from "../api/index.js";
+import quarterlySelection from "../components/quarterlySelection.vue";
 
 export default {
   name: "closing",
+  components: { quarterlySelection },
+
   data() {
     return {
       form: {},
@@ -129,6 +133,9 @@ export default {
       if (updateFlag) {
         this.getList();
       }
+    },
+    handleDateChange(val) {
+      console.log(val);
     }
   }
 };
@@ -138,7 +145,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}F
+}
 h3 {
   color: #ccc;
   padding: 8px 0;

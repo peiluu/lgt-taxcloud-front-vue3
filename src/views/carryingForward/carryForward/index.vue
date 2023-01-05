@@ -1,5 +1,6 @@
 <template>
   <div>
+    <quarterlySelection @dateChange="handleDateChange" />
     <div class="m-header">
       <h3>已到结账期，赶紧结账吧！</h3>
       <el-button @click="handleUpdate('', 'create')" type="primary">一键结账</el-button>
@@ -23,8 +24,11 @@
 <script>
 import { page, delObj } from "../api/index.js";
 
+import quarterlySelection from "../components/quarterlySelection.vue";
+
 export default {
   name: "carryForward",
+  components: { quarterlySelection },
   data() {
     return {
       form: {},
@@ -63,6 +67,8 @@ export default {
   mounted() {
     // this.getList()
   },
+  computed() {},
+
   methods: {
     getList() {
       this.listLoading = true;
@@ -73,37 +79,8 @@ export default {
       });
     },
 
-    handleUpdate(id = "", dialogStatus = "") {
-      this.dialogFormVisible = true;
-      this.dialogStatus = dialogStatus;
-    },
-
-    handleSelectionChange(val) {
-      this.deleteList = val;
-    },
-    handleDelete(row) {
-      this.$confirm("你确定要删除这行内容吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        delObj({ id: row.id }).then(() => {
-          this.$notify({
-            title: "成功",
-            message: "删除成功",
-            type: "success",
-            duration: 2000
-          });
-          this.getList();
-        });
-      });
-    },
-    handleCloseDialog(updateFlag) {
-      console.log(1);
-      this.dialogFormVisible = false;
-      if (updateFlag) {
-        this.getList();
-      }
+    handleDateChange(val) {
+      console.log(val)
     }
   }
 };
@@ -117,8 +94,9 @@ export default {
 }
 h3 {
   color: #ccc;
-  padding: 8px 0;
+  padding-bottom: 8px;
 }
+
 
 .m-list {
   display: flex;
@@ -129,11 +107,11 @@ h3 {
       margin-right: 24px;
     }
   }
-  .item{
+  .item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    .el-button{
+    .el-button {
       margin-top: 12px;
       width: 30%;
     }
