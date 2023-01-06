@@ -209,6 +209,33 @@ export const constantRouterMap = [
       },
     ],
   },
+  // 报表查询
+  {
+    path: "/reportQuery",
+    component: Layout,
+    meta: { title: "报表查询", icon: "dashboard" },
+    children: [
+      {
+        path: "profitTable",
+        name: "利润表",
+        component: () => import("@/views/reportQuery/profitTable/index"),
+        meta: { title: "利润表", icon: "dashboard" },
+      },
+      // {
+      //   path: "assetsLiabilities",
+      //   name: "资产负债表",
+      //   component: () =>
+      //     import("@/views/reportQuery/assetsLiabilities/index"),
+      //   meta: { title: "资产负债表", icon: "dashboard" },
+      // },
+      // {
+      //   path: "cashFlowTable",
+      //   name: "现金流量表",
+      //   component: () => import("@/views/reportQuery/subLedgerQuery/index"),
+      //   meta: { title: "现金流量表", icon: "dashboard" },
+      // },
+    ],
+  },
 ];
 
 export default createRouter({

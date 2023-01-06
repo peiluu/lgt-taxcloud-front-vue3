@@ -4,8 +4,16 @@
       @export="handleExport"
       @print="handlePrint"
       @query="handleQuery"
-      formLabel="总账账期"
-    />
+      formLabel="利润表周期"
+    >
+      <el-form-item prop="periods">
+        <el-select v-model="form.periods">
+          <el-option key="1" value="1" label="月报" />
+          <el-option key="2" value="2" label="季报" />
+          <el-option key="3" value="3" label="半年报" />
+        </el-select>
+      </el-form-item>
+    </lgtQuarterlySelect>
 
     <el-scrollbar height="600px">
       <el-table
@@ -43,7 +51,7 @@ import lgtQuarterlySelect from "@/components/lgt-quarter-select/index.vue";
 import { page } from "../api/index.js";
 
 export default {
-  name: "subjectBalanceTable",
+  name: "profitTable",
   components: { lgtQuarterlySelect },
   data() {
     return {

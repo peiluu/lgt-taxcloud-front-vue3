@@ -1,11 +1,6 @@
 <template>
   <div>
-    <lgtQuarterlySelect
-      @export="handleExport"
-      @print="handlePrint"
-      @query="handleQuery"
-      formLabel="科目余额账期"
-    />
+    <lgtQuarterlySelect @export="handleExport" @print="handlePrint" @query="handleQuery" />
 
     <el-scrollbar height="600px">
       <el-table border :data="list" v-loading.body="listLoading" highlight-current-row show-summary>

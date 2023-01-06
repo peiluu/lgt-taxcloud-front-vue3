@@ -20,9 +20,12 @@
 </template>
 
 <script>
+/**
+ * @desption 季度tab选择器
+ * */
 import { getQuarterlyList } from "@/utils/util";
 export default {
-  name: "quarterlySelection",
+  name: "lgtQuarterlyTab",
   data() {
     return {
       originList: [], // 完整列表

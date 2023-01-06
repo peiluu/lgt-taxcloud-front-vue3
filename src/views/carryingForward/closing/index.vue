@@ -1,6 +1,6 @@
 <template>
   <div>
-    <quarterlySelection @dateChange="handleDateChange" />
+    <LgtQuarterlyTab @dateChange="handleDateChange" />
 
     <div class="m-header">
       <h3>已到结账期，赶紧结账吧！</h3>
@@ -50,11 +50,11 @@
 
 <script>
 import { page, delObj } from "../api/index.js";
-import quarterlySelection from "../components/quarterlySelection.vue";
+import LgtQuarterlyTab from "@/components/lgt-quarter-tab/index.vue";
 
 export default {
   name: "closing",
-  components: { quarterlySelection },
+  components: { LgtQuarterlyTab },
 
   data() {
     return {

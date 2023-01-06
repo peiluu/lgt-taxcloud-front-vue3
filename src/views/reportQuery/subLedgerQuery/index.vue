@@ -1,11 +1,6 @@
 <template>
   <div>
-    <lgtQuarterlySelect
-      @export="handleExport"
-      @print="handlePrint"
-      @query="handleQuery"
-      formLabel="明细账期"
-    />
+    <lgtQuarterlySelect @export="handleExport" @print="handlePrint" @query="handleQuery" />
 
     <div class="m-section">
       <el-card>
@@ -165,7 +160,8 @@ export default {
     },
     handleQuery(data) {
       console.log("查询", data);
-    }
+    },
+
   }
 };
 </script>

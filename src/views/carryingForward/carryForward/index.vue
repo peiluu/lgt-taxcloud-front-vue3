@@ -1,6 +1,6 @@
 <template>
   <div>
-    <quarterlySelection @dateChange="handleDateChange" />
+    <LgtQuarterlyTab @dateChange="handleDateChange" />
     <div class="m-header">
       <h3>已到结账期，赶紧结账吧！</h3>
       <el-button @click="handleUpdate('', 'create')" type="primary">一键结账</el-button>
@@ -26,11 +26,11 @@
 import { ElMessageBox, ElMessage } from "element-plus";
 import { page, delObj } from "../api/index.js";
 
-import quarterlySelection from "../components/quarterlySelection.vue";
+import LgtQuarterlyTab from "@/components/lgt-quarter-tab/index.vue";
 
 export default {
   name: "carryForward",
-  components: { quarterlySelection },
+  components: { LgtQuarterlyTab },
   data() {
     return {
       form: {},
@@ -49,8 +49,7 @@ export default {
       },
       dialogFormVisible: false,
       dialogStatus: "",
-      deleteList: [],
-
+      deleteList: []
     };
   },
 

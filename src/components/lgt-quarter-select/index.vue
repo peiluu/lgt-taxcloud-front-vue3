@@ -1,51 +1,57 @@
 <template>
-  <div class="breadcrumb-container">
-    <span>当前位置：</span>
-    <el-breadcrumb separator=">">
-      <transition-group name="breadcrumb">
-        <template v-for="item in levelList">
-          <el-breadcrumb-item :key="item.path" v-if="item.meta.title">{{ item.meta.title }}</el-breadcrumb-item>
-        </template>
-      </transition-group>
-    </el-breadcrumb>
-  </div>
+  <el-form :model="form" ref="form" :inline="true">
+    <el-form-item :label="formLabel" prop="status">
+      <slot />
+      <el-select v-model="form.date">
+        <el-option
+          v-for="item in quarterlyList"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+        />
+      </el-select>
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" icon="search" @click="$emit('query',form)">查询</el-button>
+    </el-form-item>
+
+    <el-form-item style="float: right">
+      <el-button @click="$emit('export')">导出</el-button>
+    </el-form-item>
+    <el-form-item style="float: right">
+      <el-button @click="$emit('print')">打印</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
 /**
- * @description 季度时间选择
- */
+ * @desption 季度下拉选择器
+ * */
+import { getQuarterlyList } from "@/utils/util";
 export default {
-  name: "LgtQuarterSelect",
-  created() {},
+  name: "lgtQuarterlySelect",
+  props: {
+    formLabel: {
+      type: String
+    }
+  },
   data() {
     return {
-      levelList: null
+      form: {},
+      quarterlyList: []
     };
   },
-  watch: {
-    $route() {
-      this.getBreadcrumb();
-    }
+
+  mounted() {
+    this.quarterlyList = getQuarterlyList(2);
   },
-  methods: {
-    getBreadcrumb() {
-      const matched = this.$route.matched.filter(item => item.name);
-      this.levelList = matched;
-    }
-  }
+  methods: {}
 };
 </script>
-
 <style lang="scss" scoped>
-.breadcrumb-container {
-  display: flex;
-  align-items: center;
-  padding: 8px 0 24px;
-  font-size: 16px;
-  //	color: #97a8be;
-  .el-breadcrumb {
-    font-size: 16px;
-  }
+.el-form-item {
+  margin-right: 16px;
 }
 </style>
