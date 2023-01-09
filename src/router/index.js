@@ -236,6 +236,42 @@ export const constantRouterMap = [
       },
     ],
   },
+  // 原始凭证管理
+  {
+    path: "/originalVoucherManage",
+    component: Layout,
+    meta: { title: "原始凭证管理", icon: "dashboard" },
+    children: [
+      {
+        path: "invoiceList",
+        name: "发票管理",
+        component: () => import("@/views/originalVoucherManage/invoice/index"),
+        meta: { title: "发票管理", icon: "dashboard" },
+      },
+      {
+        path: "invoiceDetail",
+        name: "发票详情",
+        hidden: true,
+        component: () => import("@/views/originalVoucherManage/invoice/detail"),
+        meta: { title: "发票详情", icon: "dashboard" },
+      },
+      {
+        path: "originalVoucherList",
+        name: "原始凭证管理",
+        component: () =>
+          import("@/views/originalVoucherManage/originalVoucher/index"),
+        meta: { title: "原始凭证管理", icon: "dashboard" },
+      },
+      {
+        path: "originalVouchereDetail",
+        name: "原始凭证详情",
+        hidden: true,
+        component: () =>
+          import("@/views/originalVoucherManage/originalVoucher/detail"),
+        meta: { title: "原始凭证详情", icon: "dashboard" },
+      },
+    ],
+  },
 ];
 
 export default createRouter({
