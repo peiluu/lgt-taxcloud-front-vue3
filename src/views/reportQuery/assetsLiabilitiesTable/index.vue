@@ -4,8 +4,7 @@
       @export="handleExport"
       @print="handlePrint"
       @query="handleQuery"
-      formLabel="利润表周期"
-      :showPeriodsSelect="true"
+      formLabel="资产负债表账期"
     />
 
     <el-scrollbar height="600px">
@@ -26,7 +25,7 @@ import lgtQuarterlySelect from "@/components/lgt-quarter-select/index.vue";
 import { page } from "../api/index.js";
 
 export default {
-  name: "profitTable",
+  name: "assetsLiabilitiesTable",
   components: { lgtQuarterlySelect },
   data() {
     return {
@@ -51,11 +50,7 @@ export default {
       quarterlyList: []
     };
   },
-  watch: {
-    "listQuery.type"() {
-      this.getList();
-    }
-  },
+
   mounted() {
     this.quarterlyList = getQuarterlyList(2);
   },

@@ -221,19 +221,19 @@ export const constantRouterMap = [
         component: () => import("@/views/reportQuery/profitTable/index"),
         meta: { title: "利润表", icon: "dashboard" },
       },
-      // {
-      //   path: "assetsLiabilities",
-      //   name: "资产负债表",
-      //   component: () =>
-      //     import("@/views/reportQuery/assetsLiabilities/index"),
-      //   meta: { title: "资产负债表", icon: "dashboard" },
-      // },
-      // {
-      //   path: "cashFlowTable",
-      //   name: "现金流量表",
-      //   component: () => import("@/views/reportQuery/subLedgerQuery/index"),
-      //   meta: { title: "现金流量表", icon: "dashboard" },
-      // },
+      {
+        path: "assetsLiabilitiesTable",
+        name: "资产负债表",
+        component: () =>
+          import("@/views/reportQuery/assetsLiabilitiesTable/index"),
+        meta: { title: "资产负债表", icon: "dashboard" },
+      },
+      {
+        path: "cashFlowTable",
+        name: "现金流量表",
+        component: () => import("@/views/reportQuery/cashFlowTable/index"),
+        meta: { title: "现金流量表", icon: "dashboard" },
+      },
     ],
   },
 ];

@@ -221,5 +221,8 @@ export default {
   .m-charts {
     display: flex;
   }
+  /deep/ .el-icon {
+    cursor: pointer;
+  }
 }
 </style>

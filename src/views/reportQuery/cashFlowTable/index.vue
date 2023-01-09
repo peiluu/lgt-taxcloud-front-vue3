@@ -4,16 +4,19 @@
       @export="handleExport"
       @print="handlePrint"
       @query="handleQuery"
-      formLabel="利润表周期"
-      :showPeriodsSelect="true"
+      formLabel="现金流量表账期"
     />
 
     <el-scrollbar height="600px">
-      <el-table border stripe :data="list" v-loading.body="listLoading" highlight-current-row>
-        <el-table-column align="center" label="项目" prop="cateName" />
+      <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row>
+        <el-table-column align="center" label="资产" prop="cateName" />
         <el-table-column align="center" label="行次" prop="time" />
-        <el-table-column align="center" label="本年累计金额" prop="time" />
-        <el-table-column align="center" label="本期金额" prop="time" />
+        <el-table-column align="center" label="期末余额" prop="time" />
+        <el-table-column align="center" label="年初余额" prop="time" />
+        <el-table-column align="center" label="负债和所有者权益" prop="time" />
+        <el-table-column align="center" label="行次" prop="time" />
+        <el-table-column align="center" label="期末余额" prop="time" />
+        <el-table-column align="center" label="年初余额" prop="time" />
       </el-table>
       <div class="table-footer">共{{list.length}}条数据</div>
     </el-scrollbar>
@@ -26,7 +29,7 @@ import lgtQuarterlySelect from "@/components/lgt-quarter-select/index.vue";
 import { page } from "../api/index.js";
 
 export default {
-  name: "profitTable",
+  name: "cashFlowTable",
   components: { lgtQuarterlySelect },
   data() {
     return {

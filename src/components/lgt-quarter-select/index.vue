@@ -1,7 +1,13 @@
 <template>
   <el-form :model="form" ref="form" :inline="true">
     <el-form-item :label="formLabel" prop="status">
-      <slot />
+      <el-form-item prop="periods" v-if="showPeriodsSelect">
+        <el-select v-model="form.periods">
+          <el-option key="1" value="1" label="月报" />
+          <el-option key="2" value="2" label="季报" />
+          <el-option key="3" value="3" label="半年报" />
+        </el-select>
+      </el-form-item>
       <el-select v-model="form.date">
         <el-option
           v-for="item in quarterlyList"
@@ -28,13 +34,19 @@
 <script>
 /**
  * @desption 季度下拉选择器
- * */
+ * @param formLabel 表单lable
+ * @param showPeriodsSelect 是否显示周期选择器
+ */
+
 import { getQuarterlyList } from "@/utils/util";
 export default {
   name: "lgtQuarterlySelect",
   props: {
     formLabel: {
       type: String
+    },
+    showPeriodsSelect: {
+      type: Boolean
     }
   },
   data() {
