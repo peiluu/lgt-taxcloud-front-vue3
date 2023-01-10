@@ -74,7 +74,6 @@ export default {
 .com-quarterly-selection {
   display: flex;
   align-items: center;
-  padding-bottom: 16px;
 }
 .el-icon {
   cursor: pointer;

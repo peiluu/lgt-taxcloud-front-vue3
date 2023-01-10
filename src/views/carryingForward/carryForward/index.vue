@@ -24,7 +24,7 @@
 
 <script>
 import { ElMessageBox, ElMessage } from "element-plus";
-import { page, delObj } from "../api/index.js";
+import { page } from "../api/index.js";
 
 import LgtQuarterlyTab from "@/components/lgt-quarter-tab/index.vue";
 
@@ -102,7 +102,7 @@ export default {
 }
 h3 {
   color: #ccc;
-  padding-bottom: 8px;
+  padding: 16px 0 8px;
 }
 
 .m-list {

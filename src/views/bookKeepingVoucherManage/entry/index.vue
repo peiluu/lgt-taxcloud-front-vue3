@@ -41,14 +41,7 @@
       </div>
     </el-form>
 
-    <el-table
-      stripe
-      :data="list"
-      v-loading.body="listLoading"
-      highlight-current-row
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column align="center" type="selection" label="选择" />
+    <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row>
       <el-table-column align="center" type="index" label="序号" width="60" />
 
       <el-table-column align="center" label="凭证编码">
@@ -60,31 +53,17 @@
           >{{scope.row.cateName}}</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="发票日期" prop="time" />
+      <el-table-column align="center" label="原始凭证场景" prop="time" />
 
-      <el-table-column align="center" label="发票类型">
+      <el-table-column align="center" label="原始凭证金额" prop="time" />
+
+      <el-table-column align="center" label="业务类型">
         <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
       </el-table-column>
 
-      <el-table-column align="center" label="发票代码" prop="time" />
+      <el-table-column align="center" label="所关联记账凭证" prop="time" />
 
-      <el-table-column align="center" label="供应商名称" prop="time" />
-      <el-table-column align="center" label="不含税金额" prop="time" />
-      <el-table-column align="center" label="税额" prop="time" />
-      <el-table-column align="center" label="价税合计" prop="time" />
-
-      <el-table-column align="center" label="发票状态">
-        <template v-slot="scope">{{scope.row.status === 1 ? "正常" : '异常'}}</template>
-      </el-table-column>
-      <el-table-column align="center" label="凭证字号" prop="time" />
-
-      <el-table-column align="center" label="记账周期" prop="time" />
-
-      <el-table-column align="center" label="附件">
-        <template v-slot="scope">查询</template>
-      </el-table-column>
-
-      <el-table-column align="center" label="操作" width="200" fixed="right">
+      <el-table-column align="center" label="操作" width="300" fixed="right">
         <template v-slot="scope">
           <el-button type="primary" link @click="handleEnter(scope.row)">生成凭证</el-button>
           <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
@@ -156,9 +135,6 @@ export default {
       this.getList();
     },
 
-    handleSelectionChange(val) {
-      this.deleteList = val;
-    },
     handleUpdate(id = "", updateStatus = "") {
       this.$router.push({
         path: "/originalVoucherManage/invoiceDetail",

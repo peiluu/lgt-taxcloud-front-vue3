@@ -272,6 +272,33 @@ export const constantRouterMap = [
       },
     ],
   },
+  // 记账凭证管理
+  {
+    path: "/bookKeepingVoucherManage",
+    component: Layout,
+    meta: { title: "记账凭证管理", icon: "dashboard" },
+    children: [
+      {
+        path: "entry",
+        name: "录入记账凭证",
+        component: () => import("@/views/bookKeepingVoucherManage/entry/index"),
+        meta: { title: "录入记账凭证", icon: "dashboard" },
+      },
+      {
+        path: "query",
+        name: "查询记账凭证",
+        component: () => import("@/views/bookKeepingVoucherManage/query/index"),
+        meta: { title: "查询记账凭证", icon: "dashboard" },
+      },
+      {
+        path: "summary",
+        name: "记账凭证汇总",
+        component: () =>
+          import("@/views/bookKeepingVoucherManage/summary/index"),
+        meta: { title: "记账凭证汇总", icon: "dashboard" },
+      },
+    ],
+  },
 ];
 
 export default createRouter({
