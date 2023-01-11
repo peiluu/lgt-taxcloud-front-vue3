@@ -69,6 +69,7 @@ import LgtQuarterlyTab from "@/components/lgt-quarter-tab/index.vue";
 
 import { page, delObj } from "../api/index.js";
 
+
 export default {
   name: "invoiceList",
   components: { LgtQuarterlyTab },
@@ -135,9 +136,10 @@ export default {
     },
     goToDetail(code) {
       this.$router.push({
-        path: "/bookManage/subLedgerQuery",
+        path: "/bookKeepingVoucherManage/entry",
         query: {
-          code
+          code,
+          isDetail: true
         }
       });
     },

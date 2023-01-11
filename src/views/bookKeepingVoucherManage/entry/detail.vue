@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" :rules="rules" ref="form" label-width="100px" inline disabled>
+  <el-form :model="form" :rules="rules" ref="form" label-width="100px" inline :disabled="isDetail">
     <h2>记账凭证</h2>
     <el-form-item label="凭证记" prop="code">
       <el-select v-model="form.status">
@@ -24,8 +24,8 @@
     <table>
       <thead>
         <tr>
-          <th rowspan="2" width="100">摘要</th>
-          <th rowspan="2">会计科目</th>
+          <th rowspan="2" width="300">摘要</th>
+          <th rowspan="2" width="300">会计科目</th>
           <th colspan="11">借方金额</th>
           <th colspan="11">贷方金额</th>
         </tr>
@@ -63,7 +63,7 @@
 
         <!-- 合计行 -->
         <tr>
-          <td colspan="2" width="100">合计：</td>
+          <td colspan="2">合计：</td>
           <td
             v-for="(debitItem,subIndex) in debitUnitMap"
             :key="subIndex"
@@ -80,6 +80,7 @@
       <div>创建人：admin</div>
       <div>
         <el-button link type="primary" size="large">原始单据</el-button>
+        <el-button link type="primary" size="large">添加原始单据</el-button>
         <span>已添加 2 张</span>
       </div>
     </div>
@@ -93,7 +94,6 @@
 
 <script>
 import { getQuarterlyList } from "@/utils/util";
-
 import { addObj, editObj } from "../api/index.js";
 
 export default {
@@ -104,7 +104,8 @@ export default {
         dcdirection: 1,
         status: 1
       },
-      updateStatus: "",
+      // 是否是查看详情
+      isDetail: false,
 
       rules: {},
       // 借方金额列表
@@ -253,9 +254,9 @@ export default {
 
   mounted() {
     // 查询详情
-    const { id = "", updateStatus = "" } = this.$route.query;
+    const { id = "", isDetail = "" } = this.$route.query;
     this.id = id;
-    this.updateStatus = updateStatus;
+    this.isDetail = isDetail;
     // this.$set(this.form, "date", this.dateValue);
   },
   computed: {
@@ -396,7 +397,10 @@ td {
   border: 1px solid #e6e6e6;
   padding: 8px 16px;
   text-align: center;
-//  background: #f5f7fa;
+  //  background: #f5f7fa;
+}
+td {
+  // padding: 0;
 }
 
 th {

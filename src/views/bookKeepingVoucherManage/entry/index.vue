@@ -1,506 +1,484 @@
 <template>
-  <div>
-    <el-form :model="form" :rules="rules" ref="form" label-width="100px">
-      <el-table
-        :data="tableData"
-        style="width: 100%"
-        :header-cell-style="handerMethod"
-        :cell-style="{ 'text-align': 'center' }"
-        @cell-click="cellClick"
-        :span-method="objectSpanMethod"
-      >
-        <el-table-column label="摘要" width="150">
-          <template #default="scope">
-            <el-input v-model="tableData[scope.$index].name" />
-          </template>
-        </el-table-column>
+  <el-form :model="form" :rules="rules" ref="form" label-width="100px" inline>
+    <h2>记账凭证</h2>
+    <el-form-item label="凭证记" prop="code">
+      <el-select v-model="form.status">
+        <el-option :value="1" />
+      </el-select>
+      <el-input-number v-model="form.code" style="margin: 0 8px" :min="1" />号
+    </el-form-item>
 
-        <el-table-column label="科目" width="150">
-          <template #default="scope">
-            <el-select v-model="tableData[scope.$index].province">
-              <el-option
-                v-for="(item) in subjectCateList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>
+    <el-form-item prop="quarter">
+      <el-select v-model="form.quarter">
+        <el-option v-for="item in quarterlyList" :key="item.value" :value="item.value" :label="item.label" />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="日期" prop="date">
+      <el-date-picker v-model="dateValue" value-format="YYYY-MM-DD" placeholder="选择日期" />
+    </el-form-item>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2" width="300">摘要</th>
+          <th rowspan="2" width="300">会计科目</th>
+          <th colspan="11">借方金额</th>
+          <th colspan="11">贷方金额</th>
+        </tr>
+        <tr>
+          <th v-for="item in debitUnitMap" :key="item.label">
+            {{ item.label }}
+          </th>
+          <th v-for="item in creditUnitMap" :key="item.label">
+            {{ item.label }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in tableList" :key="index">
+          <td>
+            <template v-if="isDetail">{{ item.abstract }}</template>
+            <el-input v-else v-model="item.abstract" />
+          </td>
+          <td>
+            <template v-if="isDetail">{{ item.subject }}</template>
+            <el-select v-else v-model="item.subject" style="margin: 0 8px">
+              <el-option v-for="(subItem, subIndex) in subjectList" :key="subIndex" :value="subItem.value" :label="subItem.name" />
             </el-select>
+          </td>
+          <!-- 借方金额 -->
+          <template v-if="item.isDebitEdit">
+            <td colspan="11">
+              <el-input v-model="item.debitAmount" @blur="onInputBlur" autofocus :key="index" />
+            </td>
           </template>
-        </el-table-column>
-
-        <el-table-column v-for="(item) in listMap" :key="item.label">{{ item }}</el-table-column>
-        <el-table-column label="借方金额">
-          <!-- <template  slot-scope="scope"  v-if="tableData[scope.$index] && tableData[scope.$index].idEditDebit === true">
-            <th prop="name2" :label="item.label" width="40" v-for="(item) in listMap" :key="item.index">
-              {{item.label}}
-            </th>
-          </template>-->
-
-          <!-- <template v-slot="scope"> -->
-
-          <!-- </template> -->
-          <!-- <el-table-column prop="name2" label="千" width="40">
-          </el-table-column>-->
-          <!-- <el-table-column label="亿" width="40">
-
-            </el-table-column>
-            <el-table-column prop="name2" label="千" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="百" width="40">
-            </el-table-column>
-            <el-table-column  label="十" width="40">
-            </el-table-column>
-            <el-table-column label="万" width="40">
-            </el-table-column>
-            <el-table-column label="千" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="百" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="十" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="元" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="角" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="分" width="40">
-          </el-table-column>-->
-
-          <!-- </template> -->
-          <!--
-          <template v-else>
-            <el-table-column prop="name1" label="亿" width="40">
-            </el-table-column>
-            <el-table-column prop="name2" label="千" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="百" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="十" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="万" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="千" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="百" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="十" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="元" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="角" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="分" width="40">
-            </el-table-column>
-          </template>-->
-        </el-table-column>
-
-        <!-- <el-table-column label="贷方金额">
-          <template slot-scope="scope">
-            <template v-if="tableData[scope.$index].idEditDebit">
-              <el-input v-model="form.sceneName" />
-            </template>
+          <td v-else v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex" @click="handleClick('isDebitEdit', index)">
+            {{ getValue(item.debitAmount, subIndex) }}
+          </td>
+          <!-- 贷方金额 -->
+          <template v-if="item.isCreditEdit">
+            <td colspan="11">
+              <el-input v-model="item.creditAmount" @blur="onInputBlur" autofocus :key="index" />
+            </td>
           </template>
+          <td v-else v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex" @click="handleClick('isCreditEdit', index)">
+            {{ getValue(item.creditAmount, subIndex) }}
+          </td>
+        </tr>
 
-          <div class="row" @click="columnClick">
-            <el-table-column prop="name1" label="亿" width="40">
-            </el-table-column>
-            <el-table-column prop="name2" label="千" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="百" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="十" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="万" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="千" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="百" width="40">
-            </el-table-column>
-            <el-table-column prop="num" label="十" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="元" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="角" width="40">
-            </el-table-column>
-            <el-table-column prop="name3" label="分" width="40">
-            </el-table-column>
-          </div>
+        <!-- 合计行 -->
+        <tr>
+          <td colspan="2">合计：</td>
+          <td v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex">
+            {{ getTotalValue("debitAmount", subIndex) }}
+          </td>
 
-        </el-table-column>-->
-      </el-table>
-    </el-form>
+          <td v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex">
+            {{ getTotalValue("creditAmount", subIndex) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-    <div class="dialog-footer">
-      <el-button @click="cancel('form')">取 消</el-button>
-      <!-- <el-button v-if="dialogStatus =='create'" type="primary" @click="create('form')">确 定</el-button> -->
-      <el-button type="primary" @click="update('form')">确 定</el-button>
+    <div :class="{ 'table-footer': true, disabled: isDetail }">
+      <div v-if="!isDetail">创建人：admin</div>
+      <div>
+        <el-button v-if="isDetail" link type="primary" size="large">原始单据</el-button>
+        <el-button v-else link type="primary" size="large" @click="showDialog(true)">添加原始单据</el-button>
+        <span>已添加 2 张</span>
+      </div>
     </div>
-  </div>
+    <el-dialog center title="选择添加的原始单据类型" v-model="dialogTableVisible" width="20%">
+      <!-- :disabled="isDetail" -->
+      <el-button type="primary" @click="addOriginalVoucher('invoice')">发票</el-button>
+      <el-button type="primary" @click="addOriginalVoucher('other')">其他</el-button>
+      <el-button @click="showDialog(false)">取消</el-button>
+    </el-dialog>
+
+    <div class="m-footer">
+      <el-button @click="back">返回</el-button>
+      <!-- :disabled="isDetail" -->
+      <el-button v-if="!isDetail" type="primary" @click="handleSubmit">提交</el-button>
+    </div>
+  </el-form>
 </template>
 
 <script>
-import { page, addObj, delObj, editObj } from "../api/index";
+import { getQuarterlyList } from "@/utils/util";
+import { addObj, editObj } from "../api/index.js";
 
 export default {
-  name: "accountRecord",
+  name: "oinvoiceDetail",
   data() {
     return {
-      idEditDebit: false, // 编辑借方金额
-      isEditCreditor: false, // 编辑贷方金额
-      form: {},
+      form: {
+        dcdirection: 1,
+        status: 1,
+      },
+      // 是否是查看详情
+      isDetail: false,
+      dialogTableVisible: false,
+
       rules: {},
-      currentIndex: "",
-      dataList: [],
-      listMap: [
+      // 借方金额列表
+      debitUnitMap: [
         {
           label: "亿",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "千",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "百",
           prop: "name2",
-          value: 1
+          value: 1,
         },
         {
           label: "十",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "万",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "千",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "百",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "十",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "元",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "角",
-          prop: "name2"
+          prop: "name2",
         },
         {
           label: "分",
-          prop: "name2"
-        }
+          prop: "name2",
+        },
       ],
-      tableData: [
+      // 贷方金额列表
+      creditUnitMap: [
+        {
+          label: "亿",
+          prop: "name2",
+        },
+        {
+          label: "千",
+          prop: "name2",
+        },
+        {
+          label: "百",
+          prop: "name2",
+          value: 1,
+        },
+        {
+          label: "十",
+          prop: "name2",
+        },
+        {
+          label: "万",
+          prop: "name2",
+        },
+        {
+          label: "千",
+          prop: "name2",
+        },
+        {
+          label: "百",
+          prop: "name2",
+        },
+        {
+          label: "十",
+          prop: "name2",
+        },
+        {
+          label: "元",
+          prop: "name2",
+        },
+        {
+          label: "角",
+          prop: "name2",
+        },
+        {
+          label: "分",
+          prop: "name2",
+        },
+      ],
+      // 表格数据
+      tableList: [
         {
           index: 0,
           id: 1,
-          date: "2016-05-03",
-          name: "王小虎1",
-          province: "上海",
-          city: "普陀区",
-          num: 1,
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333
+          subject: 11111,
+          abstract: "摘要",
+          debitAmount: 56789.11,
+          creditAmount: 124155.1111,
         },
         {
           index: 1,
           id: 2,
-          date: "2016-05-02",
-          name: "王小虎2",
-          province: "上海",
-          num: 1,
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333
+          subject: "普陀区",
+          abstract: "摘要",
+          debitAmount: 56789.11,
+          creditAmount: 181515.41,
         },
         {
           date: "2016-05-04",
-          name: "王小虎",
-          money: 11,
-          num: 1,
-          index: 2,
           id: 3,
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333
+          subject: 11111,
+          abstract: "摘要",
+          debitAmount: 56789.11,
+          creditAmount: 11111.1111,
         },
         {
-          index: 3,
-          id: 4,
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333
-        }
+          id: 3,
+          subject: 11111,
+          abstract: "摘要",
+          debitAmount: 56789.11,
+          creditAmount: 11111.1111,
+        },
       ],
-      subjectCateList: [
+      subjectList: [
         {
           name: "库存现金",
-          value: 111
+          value: 111,
         },
         {
           name: "其他项目",
-          value: 222
-        }
-      ]
+          value: 222,
+        },
+      ],
     };
   },
-  created() {
-    // this.getList()
-  },
+  created() { },
 
   mounted() {
-    // this.$nextTick(function () {
-    //   this.setColSpan()
-    // })
+    // 查询详情
+    const { id = "", isDetail = false } = this.$route.query;
+    this.id = id;
+    this.isDetail = isDetail;
+    // this.$set(this.form, "date", this.dateValue);
   },
-
+  computed: {
+    quarterlyList() {
+      return getQuarterlyList(2);
+    },
+    dateValue() {
+      const date = new Date();
+      var year = date.getFullYear();
+      var mon = date.getMonth() + 1;
+      var day = date.getDate();
+      return (
+        year +
+        "-" +
+        (mon > 9 ? mon : "0" + mon) +
+        "-" +
+        (day > 9 ? day : "0" + day)
+      );
+    },
+  },
+  watch: {
+    // 如果id 存在就去查询详情
+    id(newV) {
+      if (newV) {
+        // this.findTaxSubjectCascade(newV)
+      }
+    },
+  },
   methods: {
-    handerMethod({ row, column, rowIndex, columnIndex }) {
-      if (row[0].level === 1) {
-        // 这里有个非常坑的bug 必须是row[0]=0 row[1]=2才会生效
-        // row[0].colSpan = 2
-        // console.log(row[0])
-        // if (columnIndex === 1) {
-        //   return { display: 'none' }
-        // }
-        // if (columnIndex === 2) {
-        //   return { display: 'none' }
-        // }
-      }
-    },
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      // if ()
-      // 合并单元格
-      if (columnIndex > 1) {
-        return [1, 11];
-      }
-    },
-    cellClick(row, column, cell) {
-      console.log(cell);
-      this.currentIndex = this.tableData.findIndex(item => item.id === row.id);
-      this.tableData = this.tableData.map(item => {
+    // 单元格点击事件
+    handleClick(key, index) {
+      this.tableList = this.tableList.map((subItem, subIndex) => {
         return {
-          ...item,
-          idEditDebit: row.id === item.id
-        };
-      });
-      console.log(this.tableData);
-      console.log(this.currentIndex);
+          ...subItem,
+          [key]: index === subIndex,
+        }
+      })
     },
-    setColSpan: function() {
-      // 获取表头的所有单元格 将第二列表头单元格的colSpan设为4
-      document
-        .getElementById("inspector-ouzhiunit")
-        .getElementsByClassName(
-          "el-table__header"
-        )[0].rows[2].cells[0].colSpan = 4;
-
-      // 获取表头的所有单元格
-      // let x = document.getElementsByClassName("el-table__header")[0].rows[0].cells
-      // 将第二列表头单元格的colSpan设为2
-      // x[1].colSpan = 2
-    },
-    clickRow(row) {
-      console.log(row);
-    },
-    columnClick(e) {
-      console.log(e);
-    },
-    headerStyle({ row, column, rowIndex, columnIndex }) {
-      // 让第一行的第二个元素占2行
-      // if (rowIndex == 0) {
-      //   row[1].rowSpan = 2
-      // }
-      // // 让第二行
-      // if (rowIndex == 1) {
-      //   row[0].colSpan = 0
-      //   row[1].colSpan = 0
-      //   if (columnIndex == 0 || columnIndex == 1) {
-      //     return {
-      //       display: 'none'
-      //     }
-      //   }
-      // }
-      // return {
-      //   backgroundColor: "green",
-      // };
-    },
-    cellMerge({ row, column, rowIndex, columnIndex }) {
-      console.log(row, column, rowIndex, columnIndex);
-      if (columnIndex === 0) {
-        const _row = this.spanArr[rowIndex];
-        const _col = _row > 0 ? 1 : 0;
+    // 金额输入框失去焦点
+    onInputBlur() {
+      this.tableList = this.tableList.map((subItem) => {
         return {
-          rowspan: _row,
-          colspan: _col
-        };
+          ...subItem,
+          isDebitEdit: false,
+          isCreditEdit: false,
+        }
+      })
+    },
+    getValue(amount, index) {
+      const arr = (amount + "").split(".");
+      // 小数点前，将字符串翻转
+      const reverseArr = arr[0].split("").reverse();
+      // 几位数
+      if (9 - reverseArr.length <= index && index < 9) {
+        return reverseArr[9 - index];
+      } else if (arr[1] && arr[1].length) {
+        // 小数点后
+        return arr[1][index - 9];
       }
     },
-    handleChange(value) {
-      this.form.pid = value && value.length ? value[value.length - 1] : "";
-      this.$refs.cascaderRef.dropDownVisible = false;
+    // 计算合计
+    getTotalValue(key, index) {
+      const total = this.tableList.reduce((sum, item) => {
+        return sum + parseFloat(item[key])
+      }, 0);
+      return this.getValue(total, index);
     },
-
-    getList() {
-      this.listLoading = true;
-      page(this.listQuery).then(response => {
-        this.list = response.rows;
-        this.total = response.total;
-        this.listLoading = false;
+    // 返回凭证列表
+    back() {
+      this.$router.replace({
+        path: "/bookKeepingVoucherManage/query",
       });
     },
-
-    handleFilter() {
-      this.getList();
+    // 添加原始单据
+    addOriginalVoucher(type) {
+      const path = type === 'invoice' ? '/originalVoucherManage/invoiceDetail' : '/originalVoucherManage/originalVouchereDetail';
+      this.$router.push({
+        path
+      });
     },
-    handleSizeChange(val) {
-      this.listQuery.pageSize = val;
-      this.getList();
-    },
-    handleCurrentChange(val) {
-      this.listQuery.pageIndex = val;
-      this.getList();
-    },
-    handleCreate() {
-      this.cascadeList = [...this.allCascadeList];
-      this.resetTemp();
-      this.dialogStatus = "create";
-      this.dialogFormVisible = true;
-    },
-    handleUpdate(row) {
-      this.form = row;
-      this.editId = row.id;
-      this.dialogFormVisible = true;
-      this.dialogStatus = "update";
+    showDialog(flag) {
+      this.dialogTableVisible = flag
     },
 
-    setDisabled(list, id) {
-      list.map(item => {
-        item.disabled = item.id === id;
-        if (item.children && item.children > 0) {
-          this.setDisabled(item.children, id);
+    // 提交表单
+    handleSubmit() {
+      // debugger
+      const set = this.$refs;
+      set["form"].validate((valid) => {
+        if (!valid) return false;
+        if (this.updateStatus === "create") {
+          this.create();
+        } else {
+          this.update();
         }
       });
-      console.log(list);
-      return list;
     },
-    handleDelete(row) {
-      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        delObj({ id: row.id }).then(() => {
-          this.$notify({
-            title: "成功",
-            message: "删除成功",
-            type: "success",
-            duration: 2000
-          });
-          this.getList();
+    // 创建账套
+    create() {
+      addObj(this.form).then(() => {
+        this.dialogFormVisible = false;
+        this.getList();
+        this.$notify({
+          title: "成功",
+          message: "新建成功",
+          type: "success",
+          duration: 2000,
         });
       });
     },
-    create(formName) {
-      const set = this.$refs;
-      set[formName].validate(valid => {
-        if (valid) {
-          console.log(this.form);
-          addObj({
-            ...this.form,
-
-            pid: this.form.pid || ""
-          }).then(() => {
-            this.dialogFormVisible = false;
-            this.getList();
-            this.$notify({
-              title: "成功",
-              message: "创建成功",
-              type: "success",
-              duration: 2000
-            });
-          });
-        } else {
-          return false;
-        }
+    // 编辑账套
+    update() {
+      editObj(this.form).then(() => {
+        this.dialogFormVisible = false;
+        this.getList();
+        this.$notify({
+          title: "成功",
+          message: "更新成功",
+          type: "success",
+          duration: 2000,
+        });
       });
     },
-    cancel(formName) {
-      this.dialogFormVisible = false;
-      this.$refs[formName].resetFields();
-      this.getList();
-    },
-    update(formName) {
-      const set = this.$refs;
-
-      set[formName].validate(valid => {
-        if (valid) {
-          const param = {
-            ...this.form,
-            tableData: this.tableData
-          };
-          console.log(param);
-          return;
-          this.dialogFormVisible = false;
-          this.form.password = undefined;
-          editObj(this.form).then(() => {
-            this.dialogFormVisible = false;
-            this.getList();
-            this.$notify({
-              title: "成功",
-              message: "更新成功",
-              type: "success",
-              duration: 2000
-            });
-          });
-        } else {
-          return false;
-        }
-      });
-    },
-    resetTemp() {
-      this.form = {};
-    }
-  }
+  },
 };
 </script>
-<style lang="scss">
-.row {
-  border: 1px solid red;
+<style lang="scss" scoped>
+.m-title {
+  margin: 0 16px 24px;
 }
 
-.el-select,
-.el-cascader {
+h2 {
+  padding-bottom: 24px;
+  text-align: center;
+}
+
+s .m-footer {
+  margin: 48px 0 32px 33%;
+}
+
+.el-card {
+  margin-bottom: 16px;
+
+  &:first-child {
+    /deep/ .el-card__body {
+      display: flex;
+      align-items: flex-end;
+
+      span {
+        padding-left: 8px;
+      }
+    }
+  }
+}
+
+table {
+  border: 1px solid #e6e6e6;
+  border-collapse: collapse;
+  border-spacing: 1px;
   width: 100%;
 }
 
-.cascaderClass {
-  .el-radio__inner {
-    top: -18px;
-    left: -19px;
-    border-radius: 0;
-    border: 0;
-    width: 170px;
-    height: 34px;
-    background-color: transparent;
-    cursor: pointer;
-    box-sizing: border-box;
-    position: absolute;
+th,
+td {
+  border: 1px solid #e6e6e6;
+  padding: 8px 16px;
+  text-align: center;
+  //  background: #f5f7fa;
+}
+
+td {
+  // padding: 0;
+}
+
+th {
+  background-color: #eff3f5;
+}
+
+table tr td {
+  word-break: break-all;
+}
+
+tr:nth-child(odd) {
+  //  background-color: #f5f6f7;
+}
+
+
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+
+  &.disabled {
+    justify-content: flex-end;
   }
 
-  .el-radio__input.is-checked .el-radio__inner {
-    background: transparent;
+  span {
+    margin-left: 4px;
   }
+}
+
+/deep/ .el-dialog__body {
+  display: flex;
+  justify-content: center;
+}
+
+.m-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
 }
 </style>
