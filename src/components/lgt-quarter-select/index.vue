@@ -51,14 +51,15 @@ export default {
   },
   data() {
     return {
-      form: {},
-      quarterlyList: []
+      form: {}
     };
   },
-
-  mounted() {
-    this.quarterlyList = getQuarterlyList(2);
+  computed: {
+    quarterlyList() {
+      return getQuarterlyList(2);
+    }
   },
+  mounted() {},
   methods: {}
 };
 </script>

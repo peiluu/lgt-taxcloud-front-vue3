@@ -1,117 +1,357 @@
 <template>
-  <div class="p-page">
-    <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="发票号码" prop="status">
-        <el-input @keyup.enter="getList" placeholder="发票号码" v-model="listQuery.name" />
-      </el-form-item>
+  <div>
+    <el-form :model="form" :rules="rules" ref="form" label-width="100px">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        :header-cell-style="handerMethod"
+        :cell-style="{ 'text-align': 'center' }"
+        @cell-click="cellClick"
+        :span-method="objectSpanMethod"
+      >
+        <el-table-column label="摘要" width="150">
+          <template #default="scope">
+            <el-input v-model="tableData[scope.$index].name" />
+          </template>
+        </el-table-column>
 
-      <el-form-item label="发票类型" prop="status">
-        <el-select v-model="listQuery.status">
-          <el-option :value="1" label="开启"></el-option>
-          <el-option :value="2" label="关闭"></el-option>
-        </el-select>
-      </el-form-item>
+        <el-table-column label="科目" width="150">
+          <template #default="scope">
+            <el-select v-model="tableData[scope.$index].province">
+              <el-option
+                v-for="(item) in subjectCateList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
 
-      <el-form-item label="发票日期" prop="status">
-        <el-date-picker v-model="form.time" value-format="YYYY-MM-DD" placeholder="发票日期" />
-      </el-form-item>
+        <el-table-column v-for="(item) in listMap" :key="item.label">{{ item }}</el-table-column>
+        <el-table-column label="借方金额">
+          <!-- <template  slot-scope="scope"  v-if="tableData[scope.$index] && tableData[scope.$index].idEditDebit === true">
+            <th prop="name2" :label="item.label" width="40" v-for="(item) in listMap" :key="item.index">
+              {{item.label}}
+            </th>
+          </template>-->
 
-      <el-form-item label="发票状态" prop="status">
-        <el-select v-model="listQuery.status">
-          <el-option :value="1" label="开启"></el-option>
-          <el-option :value="2" label="关闭"></el-option>
-        </el-select>
-      </el-form-item>
+          <!-- <template v-slot="scope"> -->
 
-      <el-form-item>
-        <el-button type="primary" icon="search" @click="getList">查询</el-button>
-      </el-form-item>
+          <!-- </template> -->
+          <!-- <el-table-column prop="name2" label="千" width="40">
+          </el-table-column>-->
+          <!-- <el-table-column label="亿" width="40">
 
-      <div>
-        <el-form-item>
-          <el-button type="primary" @click="handleUpdate('', 'create')">新增</el-button>
-        </el-form-item>
+            </el-table-column>
+            <el-table-column prop="name2" label="千" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="百" width="40">
+            </el-table-column>
+            <el-table-column  label="十" width="40">
+            </el-table-column>
+            <el-table-column label="万" width="40">
+            </el-table-column>
+            <el-table-column label="千" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="百" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="十" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="元" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="角" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="分" width="40">
+          </el-table-column>-->
 
-        <el-form-item style="float: right">
-          <el-button @click="$emit('export')">导出</el-button>
-        </el-form-item>
-        <el-form-item style="float: right">
-          <el-button @click="$emit('print')">打印</el-button>
-        </el-form-item>
-      </div>
+          <!-- </template> -->
+          <!--
+          <template v-else>
+            <el-table-column prop="name1" label="亿" width="40">
+            </el-table-column>
+            <el-table-column prop="name2" label="千" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="百" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="十" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="万" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="千" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="百" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="十" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="元" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="角" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="分" width="40">
+            </el-table-column>
+          </template>-->
+        </el-table-column>
+
+        <!-- <el-table-column label="贷方金额">
+          <template slot-scope="scope">
+            <template v-if="tableData[scope.$index].idEditDebit">
+              <el-input v-model="form.sceneName" />
+            </template>
+          </template>
+
+          <div class="row" @click="columnClick">
+            <el-table-column prop="name1" label="亿" width="40">
+            </el-table-column>
+            <el-table-column prop="name2" label="千" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="百" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="十" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="万" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="千" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="百" width="40">
+            </el-table-column>
+            <el-table-column prop="num" label="十" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="元" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="角" width="40">
+            </el-table-column>
+            <el-table-column prop="name3" label="分" width="40">
+            </el-table-column>
+          </div>
+
+        </el-table-column>-->
+      </el-table>
     </el-form>
 
-    <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row>
-      <el-table-column align="center" type="index" label="序号" width="60" />
-
-      <el-table-column align="center" label="凭证编码">
-        <template v-slot="scope">
-          <el-button
-            link
-            type="primary"
-            @click="handleUpdate(scope.row.id, 'detail')"
-          >{{scope.row.cateName}}</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="原始凭证场景" prop="time" />
-
-      <el-table-column align="center" label="原始凭证金额" prop="time" />
-
-      <el-table-column align="center" label="业务类型">
-        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
-      </el-table-column>
-
-      <el-table-column align="center" label="所关联记账凭证" prop="time" />
-
-      <el-table-column align="center" label="操作" width="300" fixed="right">
-        <template v-slot="scope">
-          <el-button type="primary" link @click="handleEnter(scope.row)">生成凭证</el-button>
-          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      v-model:current-page="listQuery.pageIndex"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="listQuery.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-    />
+    <div class="dialog-footer">
+      <el-button @click="cancel('form')">取 消</el-button>
+      <!-- <el-button v-if="dialogStatus =='create'" type="primary" @click="create('form')">确 定</el-button> -->
+      <el-button type="primary" @click="update('form')">确 定</el-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { page, delObj } from "../api/index.js";
+import { page, addObj, delObj, editObj } from "../api/index";
 
 export default {
-  name: "invoiceList",
+  name: "accountRecord",
   data() {
     return {
+      idEditDebit: false, // 编辑借方金额
+      isEditCreditor: false, // 编辑贷方金额
       form: {},
-      list: [
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" }
+      rules: {},
+      currentIndex: "",
+      dataList: [],
+      listMap: [
+        {
+          label: "亿",
+          prop: "name2"
+        },
+        {
+          label: "千",
+          prop: "name2"
+        },
+        {
+          label: "百",
+          prop: "name2",
+          value: 1
+        },
+        {
+          label: "十",
+          prop: "name2"
+        },
+        {
+          label: "万",
+          prop: "name2"
+        },
+        {
+          label: "千",
+          prop: "name2"
+        },
+        {
+          label: "百",
+          prop: "name2"
+        },
+        {
+          label: "十",
+          prop: "name2"
+        },
+        {
+          label: "元",
+          prop: "name2"
+        },
+        {
+          label: "角",
+          prop: "name2"
+        },
+        {
+          label: "分",
+          prop: "name2"
+        }
       ],
-      total: 0,
-      listLoading: false,
-      listQuery: {
-        pageIndex: 1,
-        pageSize: 10
-      }
+      tableData: [
+        {
+          index: 0,
+          id: 1,
+          date: "2016-05-03",
+          name: "王小虎1",
+          province: "上海",
+          city: "普陀区",
+          num: 1,
+          address: "上海市普陀区金沙江路 1518 弄",
+          zip: 200333
+        },
+        {
+          index: 1,
+          id: 2,
+          date: "2016-05-02",
+          name: "王小虎2",
+          province: "上海",
+          num: 1,
+          city: "普陀区",
+          address: "上海市普陀区金沙江路 1518 弄",
+          zip: 200333
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎",
+          money: 11,
+          num: 1,
+          index: 2,
+          id: 3,
+          province: "上海",
+          city: "普陀区",
+          address: "上海市普陀区金沙江路 1518 弄",
+          zip: 200333
+        },
+        {
+          index: 3,
+          id: 4,
+          date: "2016-05-01",
+          name: "王小虎",
+          province: "上海",
+          city: "普陀区",
+          address: "上海市普陀区金沙江路 1518 弄",
+          zip: 200333
+        }
+      ],
+      subjectCateList: [
+        {
+          name: "库存现金",
+          value: 111
+        },
+        {
+          name: "其他项目",
+          value: 222
+        }
+      ]
     };
   },
-  mounted() {
+  created() {
     // this.getList()
   },
+
+  mounted() {
+    // this.$nextTick(function () {
+    //   this.setColSpan()
+    // })
+  },
+
   methods: {
+    handerMethod({ row, column, rowIndex, columnIndex }) {
+      if (row[0].level === 1) {
+        // 这里有个非常坑的bug 必须是row[0]=0 row[1]=2才会生效
+        // row[0].colSpan = 2
+        // console.log(row[0])
+        // if (columnIndex === 1) {
+        //   return { display: 'none' }
+        // }
+        // if (columnIndex === 2) {
+        //   return { display: 'none' }
+        // }
+      }
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      // if ()
+      // 合并单元格
+      if (columnIndex > 1) {
+        return [1, 11];
+      }
+    },
+    cellClick(row, column, cell) {
+      console.log(cell);
+      this.currentIndex = this.tableData.findIndex(item => item.id === row.id);
+      this.tableData = this.tableData.map(item => {
+        return {
+          ...item,
+          idEditDebit: row.id === item.id
+        };
+      });
+      console.log(this.tableData);
+      console.log(this.currentIndex);
+    },
+    setColSpan: function() {
+      // 获取表头的所有单元格 将第二列表头单元格的colSpan设为4
+      document
+        .getElementById("inspector-ouzhiunit")
+        .getElementsByClassName(
+          "el-table__header"
+        )[0].rows[2].cells[0].colSpan = 4;
+
+      // 获取表头的所有单元格
+      // let x = document.getElementsByClassName("el-table__header")[0].rows[0].cells
+      // 将第二列表头单元格的colSpan设为2
+      // x[1].colSpan = 2
+    },
+    clickRow(row) {
+      console.log(row);
+    },
+    columnClick(e) {
+      console.log(e);
+    },
+    headerStyle({ row, column, rowIndex, columnIndex }) {
+      // 让第一行的第二个元素占2行
+      // if (rowIndex == 0) {
+      //   row[1].rowSpan = 2
+      // }
+      // // 让第二行
+      // if (rowIndex == 1) {
+      //   row[0].colSpan = 0
+      //   row[1].colSpan = 0
+      //   if (columnIndex == 0 || columnIndex == 1) {
+      //     return {
+      //       display: 'none'
+      //     }
+      //   }
+      // }
+      // return {
+      //   backgroundColor: "green",
+      // };
+    },
+    cellMerge({ row, column, rowIndex, columnIndex }) {
+      console.log(row, column, rowIndex, columnIndex);
+      if (columnIndex === 0) {
+        const _row = this.spanArr[rowIndex];
+        const _col = _row > 0 ? 1 : 0;
+        return {
+          rowspan: _row,
+          colspan: _col
+        };
+      }
+    },
+    handleChange(value) {
+      this.form.pid = value && value.length ? value[value.length - 1] : "";
+      this.$refs.cascaderRef.dropDownVisible = false;
+    },
+
     getList() {
       this.listLoading = true;
       page(this.listQuery).then(response => {
@@ -121,10 +361,8 @@ export default {
       });
     },
 
-    handleAddChange(value) {
-      this.form.subjectId =
-        value && value.length ? value[value.length - 1] : "";
-      this.$refs.cascaderRef.dropDownVisible = false;
+    handleFilter() {
+      this.getList();
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
@@ -134,20 +372,31 @@ export default {
       this.listQuery.pageIndex = val;
       this.getList();
     },
-
-    handleUpdate(id = "", updateStatus = "") {
-      this.$router.push({
-        path: "/originalVoucherManage/invoiceDetail",
-        query: {
-          id,
-          updateStatus
-        }
-      });
+    handleCreate() {
+      this.cascadeList = [...this.allCascadeList];
+      this.resetTemp();
+      this.dialogStatus = "create";
+      this.dialogFormVisible = true;
+    },
+    handleUpdate(row) {
+      this.form = row;
+      this.editId = row.id;
+      this.dialogFormVisible = true;
+      this.dialogStatus = "update";
     },
 
-    handleEnter() {},
+    setDisabled(list, id) {
+      list.map(item => {
+        item.disabled = item.id === id;
+        if (item.children && item.children > 0) {
+          this.setDisabled(item.children, id);
+        }
+      });
+      console.log(list);
+      return list;
+    },
     handleDelete(row) {
-      this.$confirm("你确定要删除这行内容吗?", "提示", {
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -162,7 +411,96 @@ export default {
           this.getList();
         });
       });
+    },
+    create(formName) {
+      const set = this.$refs;
+      set[formName].validate(valid => {
+        if (valid) {
+          console.log(this.form);
+          addObj({
+            ...this.form,
+
+            pid: this.form.pid || ""
+          }).then(() => {
+            this.dialogFormVisible = false;
+            this.getList();
+            this.$notify({
+              title: "成功",
+              message: "创建成功",
+              type: "success",
+              duration: 2000
+            });
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    cancel(formName) {
+      this.dialogFormVisible = false;
+      this.$refs[formName].resetFields();
+      this.getList();
+    },
+    update(formName) {
+      const set = this.$refs;
+
+      set[formName].validate(valid => {
+        if (valid) {
+          const param = {
+            ...this.form,
+            tableData: this.tableData
+          };
+          console.log(param);
+          return;
+          this.dialogFormVisible = false;
+          this.form.password = undefined;
+          editObj(this.form).then(() => {
+            this.dialogFormVisible = false;
+            this.getList();
+            this.$notify({
+              title: "成功",
+              message: "更新成功",
+              type: "success",
+              duration: 2000
+            });
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    resetTemp() {
+      this.form = {};
     }
   }
 };
 </script>
+<style lang="scss">
+.row {
+  border: 1px solid red;
+}
+
+.el-select,
+.el-cascader {
+  width: 100%;
+}
+
+.cascaderClass {
+  .el-radio__inner {
+    top: -18px;
+    left: -19px;
+    border-radius: 0;
+    border: 0;
+    width: 170px;
+    height: 34px;
+    background-color: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: absolute;
+  }
+
+  .el-radio__input.is-checked .el-radio__inner {
+    background: transparent;
+  }
+}
+</style>

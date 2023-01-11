@@ -21,7 +21,7 @@
               type="month"
               value-format="YYYY-MM"
               placeholder="选择日期"
-            ></el-date-picker>
+            />
           </div>
           <span style="float: right; padding: 3px 0">单位（万元）</span>
         </div>

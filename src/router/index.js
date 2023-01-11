@@ -281,7 +281,7 @@ export const constantRouterMap = [
       {
         path: "entry",
         name: "录入记账凭证",
-        component: () => import("@/views/bookKeepingVoucherManage/entry/index"),
+        component: () => import("@/views/bookKeepingVoucherManage/entry/detail"),
         meta: { title: "录入记账凭证", icon: "dashboard" },
       },
       {
