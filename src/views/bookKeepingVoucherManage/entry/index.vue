@@ -16,68 +16,80 @@
     <el-form-item label="日期" prop="date">
       <el-date-picker v-model="dateValue" value-format="YYYY-MM-DD" placeholder="选择日期" />
     </el-form-item>
-    <table>
-      <thead>
-        <tr>
-          <th rowspan="2" width="300">摘要</th>
-          <th rowspan="2" width="300">会计科目</th>
-          <th colspan="11">借方金额</th>
-          <th colspan="11">贷方金额</th>
-        </tr>
-        <tr>
-          <th v-for="item in debitUnitMap" :key="item.label">
-            {{ item.label }}
-          </th>
-          <th v-for="item in creditUnitMap" :key="item.label">
-            {{ item.label }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in tableList" :key="index">
-          <td>
-            <template v-if="isDetail">{{ item.abstract }}</template>
-            <el-input v-else v-model="item.abstract" />
-          </td>
-          <td>
-            <template v-if="isDetail">{{ item.subject }}</template>
-            <el-select v-else v-model="item.subject" style="margin: 0 8px">
-              <el-option v-for="(subItem, subIndex) in subjectList" :key="subIndex" :value="subItem.value" :label="subItem.name" />
-            </el-select>
-          </td>
-          <!-- 借方金额 -->
-          <template v-if="item.isDebitEdit">
-            <td colspan="11">
-              <el-input v-model="item.debitAmount" @blur="onInputBlur" autofocus :key="index" />
+    <div class="m-table">
+      <div v-if="!isDetail">
+        <el-icon @click="addLine" color="red">
+          <Plus />
+        </el-icon>
+        <el-icon>
+          <Delete @click="deleteLine" color="red" />
+        </el-icon>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2" width="300">摘要</th>
+            <th rowspan="2" width="300">会计科目</th>
+            <th colspan="11">借方金额</th>
+            <th colspan="11">贷方金额</th>
+          </tr>
+          <tr>
+            <th v-for="item in debitUnitMap" :key="item.label">
+              {{ item.label }}
+            </th>
+            <th v-for="item in creditUnitMap" :key="item.label">
+              {{ item.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in tableList" :key="index">
+            <td>
+              <template v-if="isDetail">{{ item.abstract }}</template>
+              <el-input v-else v-model="item.abstract" />
             </td>
-          </template>
-          <td v-else v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex" @click="handleClick('isDebitEdit', index)">
-            {{ getValue(item.debitAmount, subIndex) }}
-          </td>
-          <!-- 贷方金额 -->
-          <template v-if="item.isCreditEdit">
-            <td colspan="11">
-              <el-input v-model="item.creditAmount" @blur="onInputBlur" autofocus :key="index" />
+            <td>
+              <template v-if="isDetail">{{ item.subject }}</template>
+              <el-select v-else v-model="item.subject" style="margin: 0 8px">
+                <el-option v-for="(subItem, subIndex) in subjectList" :key="subIndex" :value="subItem.value" :label="subItem.name" />
+              </el-select>
             </td>
-          </template>
-          <td v-else v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex" @click="handleClick('isCreditEdit', index)">
-            {{ getValue(item.creditAmount, subIndex) }}
-          </td>
-        </tr>
+            <!-- 借方金额 -->
+            <template v-if="item.isDebitEdit">
+              <td colspan="11">
+                <el-input v-model="item.debitAmount" @blur="onInputBlur" v-focuss :key="index" />
+              </td>
+            </template>
+            <td v-else v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex" @click="handleClick('isDebitEdit', index)">
+              {{ getValue(item.debitAmount, subIndex) }}
+            </td>
+            <!-- 贷方金额 -->
+            <template v-if="item.isCreditEdit">
+              <td colspan="11">
+                <el-input v-model="item.creditAmount" @blur="onInputBlur" v-focus :key="index" />
+              </td>
+            </template>
+            <td v-else v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex" @click="handleClick('isCreditEdit', index)">
+              {{ getValue(item.creditAmount, subIndex) }}
+            </td>
+          </tr>
 
-        <!-- 合计行 -->
-        <tr>
-          <td colspan="2">合计：</td>
-          <td v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex">
-            {{ getTotalValue("debitAmount", subIndex) }}
-          </td>
+          <!-- 合计行 -->
+          <tr>
+            <td colspan="2">合计：</td>
+            <td v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex">
+              {{ getTotalValue("debitAmount", subIndex) }}
+            </td>
 
-          <td v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex">
-            {{ getTotalValue("creditAmount", subIndex) }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex">
+              {{ getTotalValue("creditAmount", subIndex) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
 
     <div :class="{ 'table-footer': true, disabled: isDetail }">
       <div v-if="!isDetail">创建人：admin</div>
@@ -108,6 +120,14 @@ import { addObj, editObj } from "../api/index.js";
 
 export default {
   name: "oinvoiceDetail",
+  directives: {
+    focuss: {
+      inserted(el) {
+        console.log(el)
+        el.focus()
+      }
+    }
+  },
   data() {
     return {
       form: {
@@ -297,12 +317,25 @@ export default {
     },
   },
   methods: {
-    // 单元格点击事件
+    // 增加一行
+    addLine() {
+      this.tableList.push({})
+    },
+    deleteLine() {
+      this.tableList.splice(this.tableList.length - 1, 1)
+    },
+
+
+
+    // 单元格点击事件，点击的当前行的借方或贷方的编辑属性设置成true，其余的重置为false
     handleClick(key, index) {
+      // 取借方或贷方的另一个
+      const otherKey = key === 'isDebitEdit' ? 'isCreditEdit' : 'isDebitEdit'
       this.tableList = this.tableList.map((subItem, subIndex) => {
         return {
           ...subItem,
           [key]: index === subIndex,
+          [otherKey]: false
         }
       })
     },
@@ -455,6 +488,22 @@ tr:nth-child(odd) {
 }
 
 
+.m-table {
+  display: flex;
+
+  >div:first-of-type {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4px 3% 0;
+
+    .el-icon {
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+  }
+}
 
 .table-footer {
   display: flex;

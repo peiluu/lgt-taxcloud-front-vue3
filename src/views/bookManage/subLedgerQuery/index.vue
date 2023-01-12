@@ -185,6 +185,7 @@ export default {
       align-items: center;
       margin-top: 8px;
       padding: 4px;
+      cursor: pointer;
       &.active {
         background: #ffebc0;
       }

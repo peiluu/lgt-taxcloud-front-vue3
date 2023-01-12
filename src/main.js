@@ -1,6 +1,8 @@
 import { createApp } from 'vue';
 import router from './router';
 import store from './store';
+import directive from './directive'
+console.log(directive)
 import App from './App.vue';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -14,4 +16,4 @@ const app = createApp(App);
 for (const iconName in ElIcons) {
 	app.component(iconName, ElIcons[iconName]);
 }
-app.use(router).use(store).use(ElementPlus).mount('#app');
+app.use(router).use(store).use(directive).use(ElementPlus).mount('#app');
