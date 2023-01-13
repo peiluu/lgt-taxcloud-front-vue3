@@ -16,6 +16,7 @@
     <el-form-item label="日期" prop="date">
       <el-date-picker v-model="dateValue" value-format="YYYY-MM-DD" placeholder="选择日期" />
     </el-form-item>
+
     <div class="m-table">
       <div v-if="!isDetail">
         <el-icon @click="addLine" color="red">
@@ -89,7 +90,6 @@
       </table>
 
     </div>
-
 
     <div :class="{ 'table-footer': true, disabled: isDetail }">
       <div v-if="!isDetail">创建人：admin</div>
@@ -321,18 +321,22 @@ export default {
     addLine() {
       this.tableList.push({})
     },
+    // 删除一行
     deleteLine() {
+      // 至少保留一行
+      if (this.tableList.length <= 1) return
       this.tableList.splice(this.tableList.length - 1, 1)
     },
 
-
-
-    // 单元格点击事件，点击的当前行的借方或贷方的编辑属性设置成true，其余的重置为false
+    // 单元格点击事件，
     handleClick(key, index) {
+      // 查看详情时单元格点击无效
+      if (this.isDetail) return;
       // 取借方或贷方的另一个
       const otherKey = key === 'isDebitEdit' ? 'isCreditEdit' : 'isDebitEdit'
       this.tableList = this.tableList.map((subItem, subIndex) => {
         return {
+          // 点击的当前行的借方或贷方的编辑属性设置成true，其余的重置为false
           ...subItem,
           [key]: index === subIndex,
           [otherKey]: false
@@ -349,6 +353,8 @@ export default {
         }
       })
     },
+
+    // 获取单元格的值，按金额单位划分
     getValue(amount, index) {
       const arr = (amount + "").split(".");
       // 小数点前，将字符串翻转
@@ -357,7 +363,7 @@ export default {
       if (9 - reverseArr.length <= index && index < 9) {
         return reverseArr[9 - index];
       } else if (arr[1] && arr[1].length) {
-        // 小数点后
+        // 小数点后，正向连续取值
         return arr[1][index - 9];
       }
     },
@@ -398,7 +404,7 @@ export default {
         }
       });
     },
-    // 创建账套
+    // 创建
     create() {
       addObj(this.form).then(() => {
         this.dialogFormVisible = false;
@@ -411,7 +417,7 @@ export default {
         });
       });
     },
-    // 编辑账套
+    // 编辑
     update() {
       editObj(this.form).then(() => {
         this.dialogFormVisible = false;
