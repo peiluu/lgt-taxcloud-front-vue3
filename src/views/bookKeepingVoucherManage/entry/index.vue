@@ -474,11 +474,6 @@ td {
   border: 1px solid #e6e6e6;
   padding: 8px 16px;
   text-align: center;
-  //  background: #f5f7fa;
-}
-
-td {
-  // padding: 0;
 }
 
 th {
@@ -487,10 +482,6 @@ th {
 
 table tr td {
   word-break: break-all;
-}
-
-tr:nth-child(odd) {
-  //  background-color: #f5f6f7;
 }
 
 
