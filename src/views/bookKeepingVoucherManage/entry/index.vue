@@ -359,19 +359,23 @@ export default {
       const arr = (amount + "").split(".");
       // 小数点前，将字符串翻转
       const reverseArr = arr[0].split("").reverse();
+      let result = '';
       // 几位数
       if (9 - reverseArr.length <= index && index < 9) {
-        return reverseArr[9 - index];
+        result = reverseArr[9 - index]
+
       } else if (arr[1] && arr[1].length) {
         // 小数点后，正向连续取值
-        return arr[1][index - 9];
+        result = arr[1][index - 9];
       }
+      return isNaN(result) ? '' : result
     },
     // 计算合计
     getTotalValue(key, index) {
       const total = this.tableList.reduce((sum, item) => {
-        return sum + parseFloat(item[key])
+        return sum + parseFloat(item[key] || 0)
       }, 0);
+      console.log(total)
       return this.getValue(total, index);
     },
     // 返回凭证列表
