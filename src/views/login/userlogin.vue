@@ -1,15 +1,32 @@
 <template>
   <el-form class="login-form" status-icon :rules="loginRules" ref="loginForm" :model="loginForm" label-width="0">
-    <el-form-item prop="loginName">
-      <el-input @keyup.enter="handleLogin" v-model="loginForm.loginName" auto-complete="off" placeholder="请输入手机号/纳税人识别号码">
-        <i slot="prefix" class="icon-yonghu"></i>
+    <el-form-item prop="username">
+      <el-input v-model="loginForm.username" auto-complete="off" placeholder="请输入手机号/纳税人识别号码">
+        <!-- <i slot="prefix" class="icon-yonghu"></i> -->
       </el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input @keyup.enter.native="handleLogin" :type="passwordType" v-model="loginForm.password" auto-complete="off" placeholder="请输入密码">
-        <i class="el-icon-view el-input__icon" slot="suffix" @click="showPassword"></i>
-        <i slot="prefix" class="icon-mima"></i>
+      <el-input :type="passwordType" v-model="loginForm.password" auto-complete="off" placeholder="请输入密码">
+        <!-- <i class="el-icon-view el-input__icon" slot="suffix" @click="showPassword"></i> -->
+        <!-- <i slot="prefix" class="icon-mima"></i> -->
       </el-input>
+    </el-form-item>
+
+    <el-form-item prop="verCode">
+      <el-row :gutter="20">
+        <el-col :span="14">
+          <el-input v-model="loginForm.verCode" placeholder="验证码">
+            <span slot="prefix" class="el-input__icon">
+              <svg class="icon-svg" aria-hidden="true">
+                <use xlink:href="#icon-safetycertificate"></use>
+              </svg>
+            </span>
+          </el-input>
+        </el-col>
+        <el-col :span="10" class="login-captcha">
+          <img class="login-code" :src="captchaPath" @click="getCaptcha()">
+        </el-col>
+      </el-row>
     </el-form-item>
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
@@ -21,6 +38,14 @@
 
 <script>
 import { isvalidUsername } from '@/utils/validate'
+import { baseURL } from '@/config';
+import cookies from "@/utils/cookies";
+
+
+import { getUUID } from '@/utils'
+import { getCaptcha, login } from './api/login'
+
+
 export default {
   name: 'userLogin',
   data() {
@@ -42,10 +67,11 @@ export default {
     }
     return {
       loginForm: {
-        loginName: 'admin',
-        password: '123456'
+        username: 'rootroot',
+        password: '123456',
       },
       checked: false,
+      captchaPath: '',
       code: {
         src: '',
         value: '',
@@ -53,7 +79,7 @@ export default {
         type: 'text'
       },
       loginRules: {
-        loginName: [
+        username: [
           { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [
@@ -70,26 +96,43 @@ export default {
     }
   },
   created() {
+    this.getCaptcha()
+
   },
   mounted() { },
   computed: {
   },
   props: [],
   methods: {
+    // 获取验证码
+    async getCaptcha() {
+      const data = await getCaptcha()
+      this.captchaPath = "data:image/gif;base64," + data.captcha;
+      this.loginForm.uuid = data.uuid;
+
+    },
+
     showPassword() {
       this.passwordType === ''
         ? (this.passwordType = 'password')
         : (this.passwordType = '')
     },
+    // 登录
     handleLogin() {
-      this.$router.push({ path: '/home/home' })
-      // this.$refs.loginForm.validate(valid => {
-      //   if (valid) {
-      //     this.$store.dispatch('Login', this.loginForm).then(res => {
-      //       this.$router.push({ path: '/dashboard/dashboard' })
-      //     })
-      //   }
-      // })
+
+      // this.$router.push({ path: '/home/home' })
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          login(this.loginForm).then((res) => {
+            console.log(res)
+            cookies.set('uuid', res.id)
+            cookies.set('token', res.accessToken)
+          })
+          // this.$store.dispatch('Login', this.loginForm).then(res => {
+          //   this.$router.push({ path: '/dashboard/dashboard' })
+          // })
+        }
+      })
     },
     register() {
       this.$router.push({
@@ -100,11 +143,18 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.login-form{
-  .register-text{
+.login-form {
+  .register-text {
     text-align: center;
     cursor: pointer;
   }
-}
 
+  .login-code {
+    height: 40px - 2px;
+    display: block;
+    margin: 0px -20px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+}
 </style>

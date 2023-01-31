@@ -1,17 +1,33 @@
 <template>
   <el-form class="p-register-form" status-icon :rules="loginRules" ref="form" :model="form" label-width="0">
-    <el-form-item prop="loginName">
-      <el-input style="width: 270px" @keyup.enter.native="handleLogin" v-model="form.loginName" auto-complete="off" placeholder="请输入用户名">
-        <i slot="prefix" class="icon-yonghu"></i>
+    <el-form-item prop="username">
+      <el-input style="width: 270px" @keyup.enter.native="handleLogin" v-model="form.username" auto-complete="off" placeholder="请输入用户名">
+
       </el-input>
     </el-form-item>
     <el-form-item prop="password">
-      <el-input  @keyup.enter.native="handleLogin" :type="passwordType" v-model="form.password" auto-complete="off" placeholder="请输入密码">
+      <el-input @keyup.enter.native="handleLogin" :type="passwordType" v-model="form.password" auto-complete="off" placeholder="请输入密码">
         <i class="el-icon-view el-input__icon" slot="suffix" @click="showPassword"></i>
         <i slot="prefix" class="icon-mima"></i>
       </el-input>
     </el-form-item>
-    <el-form-item prop="phone">
+
+    <el-form-item prop="name">
+      <el-input style="width: 270px" @keyup.enter.native="handleLogin" v-model="form.name" auto-complete="off" placeholder="请输入姓名">
+        <i slot="prefix" class="icon-yonghu"></i>
+      </el-input>
+    </el-form-item>
+
+    <el-form-item prop="sex">
+      <el-select v-model="form.sex" placeholder="性别" clearable>
+        <el-option label="男" value="男"></el-option>
+        <el-option label="女" value="女"></el-option>
+      </el-select>
+      <!-- <el-input style="width: 270px" @keyup.enter.native="handleLogin" v-model="form.loginName" auto-complete="off" placeholder="请输入用户名">
+        <i slot="prefix" class="icon-yonghu"></i>
+      </el-input> -->
+    </el-form-item>
+    <!-- <el-form-item prop="phone">
       <el-input  @keyup.enter.native="handleLogin" v-model="form.phone" auto-complete="off" placeholder="请输入手机号码">
         <i slot="prefix" class="icon-shouji"></i>
       </el-input>
@@ -23,18 +39,22 @@
           <span @click="handleSend" class="msg-text" :class="[{ display: msgKey }]">{{ msgText }}</span>
         </template>
       </el-input>
-    </el-form-item>
+    </el-form-item> -->
 
     <!--<el-checkbox v-model="checked">记住账号</el-checkbox>-->
     <el-form-item>
       <div class="login-text" @click="backLogin">已有账号？立即登录</div>
-      <el-button type="primary" @click.native.prevent="handleLogin" class="login-submit">注册</el-button>
+      <el-button type="primary" @click.native.prevent="handleRegister" class="login-submit">注册</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
 import { isvalidUsername, isvalidatemobile } from '@/utils/validate'
+import { throwStatement } from '@babel/types'
+import { register } from '../api/login'
+
+
 const MSGINIT = '发送验证码'
 // const MSGERROR = '验证码发送失败'
 const MSGSCUCCESS = '${time}秒后重发'
@@ -77,12 +97,7 @@ export default {
       msgText: MSGINIT,
       msgTime: MSGTIME,
       msgKey: false,
-      form: {
-        loginName: '',
-        password: '',
-        phone: '',
-        code: ''
-      },
+      form: {},
       checked: false,
       code: {
         src: '',
@@ -126,12 +141,15 @@ export default {
         ? (this.passwordType = 'password')
         : (this.passwordType = '')
     },
-    handleLogin() {
+    handleRegister() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.$store.dispatch('Login', this.form).then(res => {
-            this.$router.push({ path: '/dashboard/dashboard' })
+          register(this.form).then((res) => {
+
           })
+          // this.$store.dispatch('Login', this.form).then(res => {
+          //   this.$router.push({ path: '/dashboard/dashboard' })
+          // })
         }
       })
     },
@@ -159,7 +177,8 @@ export default {
   .el-form-item {
     // margin-bottom: 24px;
   }
-  .login-text{
+
+  .login-text {
     cursor: pointer;
   }
 }

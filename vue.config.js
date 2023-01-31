@@ -24,4 +24,10 @@ module.exports = defineConfig({
   //     addStyleResource(config.module.rule("scss").oneOf(type))
   //   );
   // },
+  devServer: {
+    host: "0.0.0.0",
+    port: 9530,
+    open: true, //vue项目启动时自动打开浏览器
+
+  },
 });

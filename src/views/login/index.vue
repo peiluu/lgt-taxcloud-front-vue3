@@ -18,7 +18,7 @@
         </h4>
         <el-tabs>
           <!-- <el-tab-pane label="用户密码" name="user"> -->
-            <userLogin></userLogin>
+            <userLogin />
           <!-- </el-tab-pane> -->
           <!--<el-tab-pane label="短信验证码" name="code">
             <codeLogin></codeLogin>

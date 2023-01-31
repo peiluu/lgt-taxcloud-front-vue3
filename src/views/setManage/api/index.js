@@ -8,9 +8,10 @@ export function page(data) {
   })
 }
 
+// 新增账套
 export function addObj(data) {
   return request({
-    url: '/api/tax/meSubject/addTaxAccountingRule',
+    url: '/api/tax/taxcloud/initAccountSet',
     method: 'post',
     data
   })
