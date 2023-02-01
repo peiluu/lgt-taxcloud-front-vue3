@@ -39,11 +39,11 @@
 <script>
 import { isvalidUsername } from '@/utils/validate'
 import { baseURL } from '@/config';
+
 import cookies from "@/utils/cookies";
-
-
+import { ElMessage } from 'element-plus'
 import { getUUID } from '@/utils'
-import { getCaptcha, login } from './api/login'
+import { getCaptcha, login } from './api'
 
 
 export default {
@@ -56,15 +56,7 @@ export default {
         callback()
       }
     }
-    const validateCode = (rule, value, callback) => {
-      if (this.code.value !== value) {
-        this.loginForm.code = ''
-        this.refreshCode()
-        callback(new Error('请输入正确的验证码'))
-      } else {
-        callback()
-      }
-    }
+
     return {
       loginForm: {
         username: 'rootroot',
@@ -86,10 +78,10 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, message: '密码长度最少为6位', trigger: 'blur' }
         ],
-        code: [
+        verCode: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
           { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' },
-          { required: true, trigger: 'blur', validator: validateCode }
+
         ]
       },
       passwordType: 'password'
@@ -97,10 +89,6 @@ export default {
   },
   created() {
     this.getCaptcha()
-
-  },
-  mounted() { },
-  computed: {
   },
   props: [],
   methods: {
@@ -109,7 +97,6 @@ export default {
       const data = await getCaptcha()
       this.captchaPath = "data:image/gif;base64," + data.captcha;
       this.loginForm.uuid = data.uuid;
-
     },
 
     showPassword() {
@@ -120,14 +107,22 @@ export default {
     // 登录
     handleLogin() {
 
-      // this.$router.push({ path: '/home/home' })
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          this.getCaptcha()
           login(this.loginForm).then((res) => {
-            console.log(res)
+            // console.log(res)
+            // ElMessage({
+            //   message: '登录成功',
+            //   type: 'success',
+            // })
+            setTimeout(() => {
+              this.$router.push({ path: '/taxclude/home' })
+            }, 500)
             cookies.set('uuid', res.id)
             cookies.set('token', res.accessToken)
           })
+
           // this.$store.dispatch('Login', this.loginForm).then(res => {
           //   this.$router.push({ path: '/dashboard/dashboard' })
           // })
@@ -152,7 +147,7 @@ export default {
   .login-code {
     height: 40px - 2px;
     display: block;
-    margin: 0px -20px;
+    margin: 0px -10px;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
   }

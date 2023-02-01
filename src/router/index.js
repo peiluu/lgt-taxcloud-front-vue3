@@ -38,7 +38,7 @@ export const constantRouterMap = [
   // },
   // 首页
   {
-    path: "/home",
+    path: "/taxclude",
     component: Layout,
     // component: () => import('@/views/home/index'),
     meta: { title: "首页", icon: "home" },

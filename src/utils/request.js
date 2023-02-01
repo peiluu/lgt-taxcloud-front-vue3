@@ -1,9 +1,9 @@
 import axios from "axios";
-import qs from "qs";
+// import qs from "qs";
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 
 import store from "../store";
-import { getToken } from "@/utils/auth";
+// import { getToken } from "@/utils/auth";
 import cookies from "@/utils/cookies";
 import { baseURL } from "@/config";
 
@@ -25,16 +25,18 @@ service.interceptors.request.use(
     // 		...config.data,
     // 	});
     // }
-    loading = ElLoading.service({
-      lock: true,
-      text: "Loading",
-      // background: "rgba(0, 0, 0, 0.7)",
-    });
+    // 加载接口时显示loading
+    if (!config.hideLoading) {
+      loading = ElLoading.service({
+        lock: true,
+        // text: "Loading",
+        // background: "#FFF",
+      });
+    }
 
     // 在请求发送之前做一些处理
     if (!/^https:\/\/|http:\/\//.test(config.url)) {
       const token = cookies.get("token");
-
       if (token && token !== "undefined") {
         // 让每个请求携带token-- ['Authorization']为自定义key 请根据实际情况自行修改
         config.headers["Authorization"] = "Bearer " + token;
@@ -55,7 +57,12 @@ service.interceptors.request.use(
 // respone拦截器
 service.interceptors.response.use(
   (response) => {
-    loading.close();
+    if (loading) {
+      setTimeout(() => {
+        loading.close();
+      }, 1000);
+    }
+
     /**
      * statusCode为非200是抛错 可结合自己业务进行修改
      */

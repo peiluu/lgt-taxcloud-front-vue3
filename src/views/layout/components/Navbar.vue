@@ -2,11 +2,7 @@
 <template>
   <el-menu class="c-navbar" mode="horizontal">
     <div class="m-left">
-      <Lgt-hamburger
-        class="hamburger-container"
-        :toggleClick="toggleSideBar"
-        :isActive="sidebar.opened"
-      />
+      <Lgt-hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened" />
       <div class="m-list">
         <div>
           当前主体
@@ -29,6 +25,8 @@
 <script>
 import { mapGetters } from "vuex";
 import LgtHamburger from "@/components/lgt-hamburger";
+import cookies from "@/utils/cookies";
+// import request from "@/utils/request";
 
 export default {
   name: "navBar",
@@ -60,10 +58,15 @@ export default {
       this.$store.dispatch("ToggleSideBar");
     },
     logout() {
-      this.$router.push({
-        path: "/login"
+      const token = cookies.get("token");
+      request({
+        url: "/api/auth/jwt/logout?token=" + token,
+        method: "delete",
       });
-      location.reload();
+      // this.$router.push({
+      //   path: "/login"
+      // });
+      // location.reload();
       // this.$store.dispatch('LogOut').then(() => {
       // 	location.reload(); // In order to re-instantiate the vue-router object to avoid bugs
       // });
@@ -89,6 +92,7 @@ export default {
     float: left;
     padding-right: 16px;
   }
+
   .m-left {
     display: flex;
   }
@@ -103,16 +107,15 @@ export default {
     .name {
       color: #6981ff;
     }
-
     .btn {
       margin-left: 8px;
       cursor: pointer;
       color: #e96979;
     }
   }
-
   .m-right {
     height: 100%;
+
     span {
       padding-right: 8px;
     }

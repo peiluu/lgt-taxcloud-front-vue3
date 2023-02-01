@@ -15,7 +15,7 @@
       </el-form-item>
 
       <el-form-item label="纳税类型" prop="dcdirection">
-        <el-select v-model="form.dcdsirection" disabled>
+        <el-select v-model="form.dcdirection" disabled>
           <el-option :value="1" label="小规模纳税人" />
         </el-select>
       </el-form-item>
@@ -24,8 +24,8 @@
         <el-input v-model="form.nsrsbh" placeholder="请输入纳税人识别号" />
       </el-form-item>
 
-      <el-form-item label="所属行业" prop="nsrsbh">
-        <el-input v-model="form.nsrsbh" placeholder="请输入所属行业" />
+      <el-form-item label="所属行业" prop="metierName">
+        <el-input v-model="form.metierName" placeholder="请输入所属行业" />
       </el-form-item>
 
       <el-form-item label="经营地址" prop="dcdirection">
@@ -110,7 +110,9 @@ export default {
       }
     };
   },
-  created() {},
+  created() {
+    this.create()
+  },
 
   mounted() {
     // 查询详情

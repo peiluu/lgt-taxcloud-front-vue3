@@ -5,6 +5,7 @@ export async function getCaptcha() {
   return await request({
     url: "/api/auth/captcha",
     method: "get",
+    hideLoading: true,
   });
 }
 
@@ -26,19 +27,28 @@ export function login(data) {
   });
 }
 
-export function getInfo(token) {
-  return request({
-    url: "/user/info",
-    method: "get",
-    params: { token },
-  });
-}
+// export function getInfo(token) {
+//   return request({
+//     url: "/user/info",
+//     method: "get",
+//     params: { token },
+//   });
+// }
 
 // 登出
 export function logout(token) {
   return request({
-    url: "/user/logout",
-    method: "post",
-    params: { token },
+    url: "/api/auth/jwt/logout?token=" + token,
+    method: "delete",
+    // loading: {
+    //   type: "loading",
+    //   options: {
+    //     fullscreen: true,
+    //     lock: true,
+    //     text: "正在退出...",
+    //     spinner: "el-icon-loading",
+    //     background: "rgba(0, 0, 0, 0.8)",
+    //   },
+    // },
   });
 }

@@ -20,18 +20,18 @@
 		<div class="login-border animated fadeInRight">
 			<div class="login-main">
 				<h4 class="login-title">注册</h4>
-				<el-tabs> <userInfo></userInfo></el-tabs>
+				<el-tabs> <userRegister /></el-tabs>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
-import userInfo from './userInfo';
+import userRegister from './userRegister';
 import { mapGetters } from 'vuex';
 export default {
 	name: 'register',
 	components: {
-		userInfo,
+		userRegister,
 	},
 	data() {
 		return {};

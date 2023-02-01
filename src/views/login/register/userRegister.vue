@@ -51,8 +51,9 @@
 
 <script>
 import { isvalidUsername, isvalidatemobile } from '@/utils/validate'
-import { throwStatement } from '@babel/types'
-import { register } from '../api/login'
+import { ElMessage } from 'element-plus'
+
+import { register } from '../api'
 
 
 const MSGINIT = '发送验证码'
@@ -60,7 +61,7 @@ const MSGINIT = '发送验证码'
 const MSGSCUCCESS = '${time}秒后重发'
 const MSGTIME = 60
 export default {
-  name: 'userlogin',
+  name: 'userRegister',
   data() {
     const validatePhone = (rule, value, callback) => {
       if (isvalidatemobile(value)[0]) {
@@ -144,8 +145,14 @@ export default {
     handleRegister() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          register(this.form).then((res) => {
-
+          register(this.form).then(() => {
+            ElMessage({
+              message: '注册成功',
+              type: 'success',
+            })
+            setTimeout(() => {
+              this.$router.push({ path: '/login' })
+            }, 500)
           })
           // this.$store.dispatch('Login', this.form).then(res => {
           //   this.$router.push({ path: '/dashboard/dashboard' })
