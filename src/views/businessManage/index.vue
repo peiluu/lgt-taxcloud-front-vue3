@@ -24,22 +24,20 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="纳税类型">
-        <template v-slot="scope">
-        {{ scope.row.nslx === 0 ? '小规模纳税人' : '其他' }}
-        </template>
+        <template v-slot="scope">{{ scope.row.nslx == 0 ? '小规模纳税人' : '其他' }}</template>
       </el-table-column>
 
       <el-table-column align="center" label="纳税人识别号码" prop="nsrsbh" />
 
       <el-table-column align="center" label="标为默认企业">
-        <template v-slot="scope">{{ scope.row.sfmr === '1' ? "是" : '否' }}</template>
+        <template v-slot="scope">{{ scope.row.sfmr == '1' ? "是" : '否' }}</template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template v-slot="scope">
           <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
           <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="primary" link @click="handleEnter(scope.row)">切换为默认</el-button>
+          <el-button v-if="scope.row.sfmr != '1'" type="primary" link @click="handleSetDefault(scope.row.id)">切换为默认</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,7 +48,8 @@
 </template>
 
 <script>
-import { page, delObj } from "./api/index.js";
+import cookies from "@/utils/cookies";
+import { page, delObj, updateEnterpriseStatus } from "./api/index.js";
 
 export default {
   name: "setManageList",
@@ -67,7 +66,7 @@ export default {
     };
   },
   mounted() {
-    this.getList()
+    this.getList();
   },
   methods: {
     getList() {
@@ -76,6 +75,9 @@ export default {
         this.list = response.rows;
         this.total = response.total;
         this.listLoading = false;
+        const { qymc = ' ', id = '' } = response.rows.find((item => item.sfmr == 1))
+        // 存储主体企业信息
+        cookies.set('qyInfo', { name: qymc, id })
       });
     },
 
@@ -94,7 +96,7 @@ export default {
     },
 
     handleUpdate(id = "", updateStatus = "") {
-      console.log(id)
+      console.log(id);
       this.$router.push({
         path: "/businessManage/detail",
         query: {
@@ -103,8 +105,20 @@ export default {
         }
       });
     },
-
-    handleEnter() { },
+    // 设置为默认
+    handleSetDefault(id) {
+      updateEnterpriseStatus({
+        id
+      }).then(() => {
+        this.$notify({
+          title: "成功",
+          message: "设置成功",
+          type: "success",
+          duration: 2000
+        });
+        this.getList();
+      });
+    },
     handleDelete(row) {
       this.$confirm("你确定要删除这行内容吗?", "提示", {
         confirmButtonText: "确定",

@@ -120,10 +120,10 @@ export default {
             cookies.set('uuid', res.id)
             cookies.set('token', res.accessToken)
             cookies.set('username', this.loginForm.username)
-            setTimeout(() => {
-              this.$router.push({ path: '/taxclude/home' })
-
-            }, 1000)
+            // setTimeout(() => {
+            this.$router.push({ path: '/chooseAccountSet' })
+            // this.$router.push({ path: '/taxclude/home' })
+            // }, 500)
           })
 
         }

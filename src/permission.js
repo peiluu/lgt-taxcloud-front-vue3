@@ -9,7 +9,6 @@ import cookies from "@/utils/cookies";
 
 import { setTitle } from "@/utils/util"; // 设置浏览器头部标题
 
-
 // permission judge function
 function hasPermission(roles, permissionRoles) {
   if (roles.indexOf("admin") >= 0) return true; // admin permission passed directly

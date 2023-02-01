@@ -6,12 +6,10 @@
       <div class="m-list">
         <div>
           当前主体
-          <span class="name">{{ comName }}</span>
-          <span class="btn">切换</span>
+          <span class="qymc">{{ qymc }}</span>
+          <span class="accountSetName">{{ accountSetName }}</span>
+          <span class="btn" @click="goGochooseAccountSet">切换</span>
         </div>
-        <template v-for="item in list" v-if="showChange" :key="item.name">
-          <div>{{ item.name }}</div>
-        </template>
       </div>
     </div>
 
@@ -38,24 +36,29 @@ export default {
   data() {
     return {
       showChange: false,
-      comName: "北京罗格科技有限公司",
-      list: [
-        {
-          name: "北京罗格科技有限公司2"
-        },
-        {
-          name: "北京罗格科技有限公司3"
-        }
-      ],
     };
+  },
+  mounted(){
+    console.log(cookies.getAll())
   },
   computed: {
     ...mapGetters(["sidebar", "name", "avatar"]),
     username() {
       return cookies.get('username')
-    }
+    },
+    // 主体企业名称
+    qymc() {
+      return cookies.get('qymc')
+    },
+    // 账套名称
+    accountSetName() {
+      return cookies.get('accountSetName')
+    },
   },
   methods: {
+    goGochooseAccountSet() {
+      this.$router.push({ path: '/chooseAccountSet' })
+    },
     toggleSideBar() {
       this.$store.dispatch("ToggleSideBar");
     },

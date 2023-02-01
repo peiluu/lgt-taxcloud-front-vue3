@@ -27,6 +27,7 @@ export const constantRouterMap = [
     name: "注册",
     hidden: true,
   },
+
   // { path: '/404', component: () => import('@/views/errorPage/404'), hidden: true },
   // { path: '/401', component: () => import('@/views/errorPage/401'), hidden: true },
   // 锁屏
@@ -48,6 +49,12 @@ export const constantRouterMap = [
         name: "首页",
         component: () => import("@/views/home/index"),
         meta: { title: "首页", icon: "home" },
+      },
+      {
+        path: "/chooseAccountSet",
+        component: () => import("@/views/home/chooseAccountSet"),
+        name: "账套选择",
+        hidden: true,
       },
     ],
   },

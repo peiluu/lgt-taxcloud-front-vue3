@@ -58,7 +58,7 @@
 
       <el-table-column align="center" label="状态">
         <template v-slot="scope">
-          <el-switch v-model="scope.row.dcdirection" active-value="100" inactive-value="0"></el-switch>
+          <el-switch v-model="scope.row.dcdirection" active-value="100" inactive-value="0" ></el-switch>
         </template>
       </el-table-column>
 

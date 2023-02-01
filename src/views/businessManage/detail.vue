@@ -76,7 +76,9 @@ export default {
             min: 1,
             max: 20,
             message: "长度在 1 到 20 个字符",
-            trigger: "blur"
+            trigger: "blur",
+            // re
+
           }
         ],
         nsrsbh: [
@@ -88,7 +90,7 @@ export default {
           {
             min: 1,
             max: 20,
-            message: "长度为位数字",
+            message: "长度为18位数字",
             trigger: "blur"
           }
         ],
@@ -109,6 +111,8 @@ export default {
       },
       id: "",
       updateStatus: "",
+      // 返回选择企业和账套页面
+      backToChoose: false,
       // 行业
       cascadeList: [],
       textMap: {
@@ -129,8 +133,9 @@ export default {
 
   mounted() {
     // 查询详情
-    const { id = "", updateStatus = "" } = this.$route.query;
+    const { id = "", updateStatus = "", backToChoose = false } = this.$route.query;
     this.id = id;
+    this.backToChoose = backToChoose;
     this.updateStatus = updateStatus;
     this.findTaxMetierCascade()
 
@@ -154,7 +159,8 @@ export default {
       });
     },
     toBack() {
-      this.$router.replace({ path: "/businessManage/list" });
+      const path = this.backToChoose ? '/chooseAccountSet' : "/businessManage/list"
+      this.$router.replace({ path });
     },
     // 提交表单
     handleSubmit() {
