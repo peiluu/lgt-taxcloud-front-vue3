@@ -1,5 +1,5 @@
 /* eslint-disable */
-// import router from '../../const/website';
+// import router from '../../constant/website';
 // import router from '@/router/index';
 // import { constantRouterMap } from '@/const/router';
 import { constantRouterMap } from '@/router/index.js';

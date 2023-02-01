@@ -18,7 +18,7 @@ export const constantRouterMap = [
   {
     path: "/login",
     component: () => import("@/views/login/index"),
-    name: "登录NxAdmin",
+    name: "登录",
     hidden: true,
   },
   {

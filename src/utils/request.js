@@ -100,6 +100,8 @@ service.interceptors.response.use(
     }
   },
   (error) => {
+    loading.close();
+
     console.log("err" + error); // for debug
     ElMessage({
       message: error.message,

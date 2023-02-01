@@ -16,7 +16,7 @@
     </div>
 
     <div class="m-right">
-      <span>{{ user.name }}</span>
+      <span>{{ username }}</span>
       <el-button link type="primary" @click="logout">注销</el-button>
     </div>
   </el-menu>
@@ -26,6 +26,8 @@
 import { mapGetters } from "vuex";
 import LgtHamburger from "@/components/lgt-hamburger";
 import cookies from "@/utils/cookies";
+import { ElMessage, ElMessageBox } from 'element-plus'
+
 // import request from "@/utils/request";
 
 export default {
@@ -45,31 +47,40 @@ export default {
           name: "北京罗格科技有限公司3"
         }
       ],
-      user: {
-        name: "admin"
-      }
     };
   },
   computed: {
-    ...mapGetters(["sidebar", "name", "avatar"])
+    ...mapGetters(["sidebar", "name", "avatar"]),
+    username() {
+      return cookies.get('username')
+    }
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch("ToggleSideBar");
     },
+
     logout() {
-      const token = cookies.get("token");
-      request({
-        url: "/api/auth/jwt/logout?token=" + token,
-        method: "delete",
-      });
-      // this.$router.push({
-      //   path: "/login"
-      // });
-      // location.reload();
-      // this.$store.dispatch('LogOut').then(() => {
-      // 	location.reload(); // In order to re-instantiate the vue-router object to avoid bugs
-      // });
+      ElMessageBox.confirm(
+        '确定要注销吗?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        this.$store.dispatch('LogOut').then(() => {
+          cookies.remove("token");
+          cookies.remove("uuid");
+          setTimeout(() => {
+            console.log(22222222, cookies.getAll())
+            this.$router.push({
+              path: "/login",
+            });
+          }, 1000);
+        });
+      }).catch(() => { })
     }
   }
 };
@@ -107,12 +118,14 @@ export default {
     .name {
       color: #6981ff;
     }
+
     .btn {
       margin-left: 8px;
       cursor: pointer;
       color: #e96979;
     }
   }
+
   .m-right {
     height: 100%;
 

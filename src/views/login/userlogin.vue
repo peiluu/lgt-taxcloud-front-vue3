@@ -89,6 +89,7 @@ export default {
   },
   created() {
     this.getCaptcha()
+
   },
   props: [],
   methods: {
@@ -116,16 +117,15 @@ export default {
             //   message: '登录成功',
             //   type: 'success',
             // })
-            setTimeout(() => {
-              this.$router.push({ path: '/taxclude/home' })
-            }, 500)
             cookies.set('uuid', res.id)
             cookies.set('token', res.accessToken)
+            cookies.set('username', this.loginForm.username)
+            setTimeout(() => {
+              this.$router.push({ path: '/taxclude/home' })
+
+            }, 1000)
           })
 
-          // this.$store.dispatch('Login', this.loginForm).then(res => {
-          //   this.$router.push({ path: '/dashboard/dashboard' })
-          // })
         }
       })
     },
