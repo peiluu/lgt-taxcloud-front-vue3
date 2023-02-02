@@ -8,7 +8,7 @@
     <el-form-item prop="code">
       <el-input size="small" @keyup.enter.native="handleLogin" v-model="loginForm.code" auto-complete="off" placeholder="请输入验证码">
         <i slot="prefix" class="icon-yanzhengma yanzhengma" style=""></i>
-        <template slot="append">
+        <template v-slot:append>
           <span @click="handleSend" class="msg-text" :class="[{display:msgKey}]">{{msgText}}</span>
         </template>
       </el-input>

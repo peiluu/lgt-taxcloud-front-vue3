@@ -3,7 +3,6 @@ import { getToken, setToken, removeToken } from "@/utils/auth";
 import cookies from "@/utils/cookies";
 
 import { setStore, getStore, removeStore } from "@/utils/store";
-import { set } from "nprogress";
 const user = {
   state: {
     token: getToken(),
@@ -22,6 +21,7 @@ const user = {
       getStore({
         name: "browserHeaderTitle",
       }) || "NxAdmin",
+    userInfo: {},
   },
 
   mutations: {
@@ -72,49 +72,53 @@ const user = {
     SET_BROWSERHEADERTITLE: (state, action) => {
       state.browserHeaderTitle = action.browserHeaderTitle;
     },
+    // 存储用户信息
+    SET_USERINFO: (state, userInfo) => {
+      state.userInfo = userInfo
+    },
   },
 
   actions: {
-    // 登录
-    Login({ commit }, userInfo) {
-      const loginName = userInfo.loginName.trim();
-      return new Promise((resolve, reject) => {
-        login(loginName, userInfo.password)
-          .then((response) => {
-            const data = response;
-            setToken(data.token);
-            commit("SET_TOKEN", data.token);
-            resolve();
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    },
+    // // 登录
+    // Login({ commit }, userInfo) {
+    //   const loginName = userInfo.loginName.trim();
+    //   return new Promise((resolve, reject) => {
+    //     login(loginName, userInfo.password)
+    //       .then((response) => {
+    //         const data = response;
+    //         setToken(data.token);
+    //         commit("SET_TOKEN", data.token);
+    //         resolve();
+    //       })
+    //       .catch((error) => {
+    //         reject(error);
+    //       });
+    //   });
+    // },
 
-    // 获取用户信息
-    GetInfo({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        getInfo(state.token)
-          .then((response) => {
-            const data = response;
-            if (data.roles && data.roles.length > 0) {
-              // 验证返回的roles是否是一个非空数组
-              commit("SET_ROLES", data.roles);
-            } else {
-              reject("getInfo: roles must be a non-null array !");
-            }
-            commit("SET_NAME", data.name);
-            commit("SET_LOGIN_NAME", data.loginName);
-            commit("SET_ROLE_NAME", data.roleName);
-            commit("SET_AVATAR", data.avatar);
-            resolve(response);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    },
+    // // 获取用户信息
+    // GetInfo({ commit, state }) {
+    //   return new Promise((resolve, reject) => {
+    //     getInfo(state.token)
+    //       .then((response) => {
+    //         const data = response;
+    //         if (data.roles && data.roles.length > 0) {
+    //           // 验证返回的roles是否是一个非空数组
+    //           commit("SET_ROLES", data.roles);
+    //         } else {
+    //           reject("getInfo: roles must be a non-null array !");
+    //         }
+    //         commit("SET_NAME", data.name);
+    //         commit("SET_LOGIN_NAME", data.loginName);
+    //         commit("SET_ROLE_NAME", data.roleName);
+    //         commit("SET_AVATAR", data.avatar);
+    //         resolve(response);
+    //       })
+    //       .catch((error) => {
+    //         reject(error);
+    //       });
+    //   });
+    // },
 
     // 登出
     LogOut() {
@@ -122,7 +126,6 @@ const user = {
         const token = cookies.get("token");
         logout(token)
           .then(() => {
-
             resolve();
           })
           .catch((error) => {
@@ -140,19 +143,19 @@ const user = {
     //   });
     // },
     // 动态修改权限
-    ChangeRoles({ commit }, role) {
-      return new Promise((resolve) => {
-        commit("SET_TOKEN", role);
-        setToken(role);
-        getInfo(role).then((response) => {
-          const data = response;
-          commit("SET_ROLES", data.roles);
-          commit("SET_NAME", data.name);
-          commit("SET_AVATAR", data.avatar);
-          resolve();
-        });
-      });
-    },
+    // ChangeRoles({ commit }, role) {
+    //   return new Promise((resolve) => {
+    //     commit("SET_TOKEN", role);
+    //     setToken(role);
+    //     getInfo(role).then((response) => {
+    //       const data = response;
+    //       commit("SET_ROLES", data.roles);
+    //       commit("SET_NAME", data.name);
+    //       commit("SET_AVATAR", data.avatar);
+    //       resolve();
+    //     });
+    //   });
+    // },
   },
 };
 

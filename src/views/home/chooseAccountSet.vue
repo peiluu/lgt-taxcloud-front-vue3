@@ -32,7 +32,7 @@
           <template #header>{{ item.accountSetName }}</template>
           <div class="item-name">会计准则：{{ item.kjzd }} </div>
           <div>账套启用时间：{{ item.qysj }}</div>
-          <div class="item-btn"><span>进入账套</span><span @click="handleDelete(item)">删除账套</span></div>
+          <div class="item-btn"><span @click="handleEnter(item.id)">进入账套</span><span @click="handleDelete(item)">删除账套</span></div>
         </el-card>
         <el-card class="item" @click="addObj('/setManage/detail')">
           <div class="item-add">
@@ -66,7 +66,6 @@ export default {
     }
   },
   created() {
-
   },
   watch: {
     activeQyId(val) {
@@ -115,6 +114,17 @@ export default {
         }
       });
     },
+    // 进入账套
+    handleEnter(id) {
+
+      this.$router.push({
+        path: "/taxclude/home",
+        query: {
+          id
+        }
+      });
+    },
+
     // 删除账套
     handleDelete(row) {
       this.$confirm('你确定要删除这行内容吗?', '提示', {

@@ -19,7 +19,7 @@
 
     <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button>
 
-    <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row>
+    <el-table stripe :data="list" highlight-current-row>
       <el-table-column align="center" type="index" label="序号" width="60" />
       <el-table-column align="center" label="账套名称">
         <template v-slot="scope">
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import cookies from "@/utils/cookies";
+
 import { findAccountSet, delObj, updateAccountSetStatus } from "./api/index.js";
 export default {
   name: "setManageList",
@@ -112,6 +114,17 @@ export default {
         }
       });
     },
+    // 进入账套
+    handleEnter({ id = '', accountSetName = '', }) {
+      cookies.set('accountSetId', id)
+      cookies.set('accountSetName', accountSetName)
+      this.$router.push({
+        path: "/taxclude/home",
+        query: {
+          id
+        }
+      });
+    },
 
     updateAccountSetStatus(row) {
       updateAccountSetStatus({ id: row.id }).then(() => {
@@ -140,7 +153,7 @@ export default {
           });
           this.getList();
         });
-      });
+      }).catch(() => { })
     }
   }
 };

@@ -1,9 +1,7 @@
 import axios from "axios";
 // import qs from "qs";
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
-
 import store from "../store";
-// import { getToken } from "@/utils/auth";
 import cookies from "@/utils/cookies";
 import { baseURL } from "@/config";
 
@@ -12,7 +10,6 @@ import { baseURL } from "@/config";
 let loading = null;
 const service = axios.create({
   baseURL, // api的base_url
-  // baseURL: process.env.BASE_API, // api的base_url
   timeout: 60000, // 请求超时时间
 });
 
@@ -30,7 +27,7 @@ service.interceptors.request.use(
       loading = ElLoading.service({
         lock: true,
         // text: "Loading",
-        // background: "#FFF",
+        background: "rgba(0, 0, 0, 0.7)",
       });
     }
 
@@ -42,9 +39,6 @@ service.interceptors.request.use(
         config.headers["Authorization"] = "Bearer " + token;
       }
     }
-    // if (store.getters.token) {
-    //   config.headers["X-Token"] = getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
-    // }
     return config;
   },
   (error) => {
@@ -101,13 +95,17 @@ service.interceptors.response.use(
   },
   (error) => {
     loading.close();
-
     console.log("err" + error); // for debug
     ElMessage({
       message: error.message,
       type: "error",
       duration: 5 * 1000,
     });
+    // token错误或者token过期，退出返回首页，清除token信息
+    if (error.response.status === 401) {
+      window.location.replace('#/login')
+      cookies.remove("token");
+    }
     return Promise.reject(error);
   }
 );

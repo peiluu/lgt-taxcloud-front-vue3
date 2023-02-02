@@ -89,7 +89,7 @@ export default {
   },
   created() {
     this.getCaptcha()
-
+    // window.location.replace('#/register')
   },
   props: [],
   methods: {

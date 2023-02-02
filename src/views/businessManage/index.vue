@@ -67,6 +67,7 @@ export default {
   },
   mounted() {
     this.getList();
+    cookies.removeAll()
   },
   methods: {
     getList() {
@@ -77,7 +78,8 @@ export default {
         this.listLoading = false;
         const { qymc = ' ', id = '' } = response.rows.find((item => item.sfmr == 1))
         // 存储主体企业信息
-        cookies.set('qyInfo', { name: qymc, id })
+        cookies.set('qyId', id)
+        cookies.set('qymc', qymc)
       });
     },
 

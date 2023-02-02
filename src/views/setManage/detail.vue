@@ -6,7 +6,7 @@
         <el-input v-model="form.accountSetName" placeholder="请输入账套名称" />
       </el-form-item>
       <el-form-item label="所属企业" prop="qyId">
-        <el-input v-model="qyInfo.name" disabled />
+        <!-- <el-input v-model="qyInfo.name" disabled /> -->
       </el-form-item>
 
       <el-form-item label="启用期间" prop="qysj">
@@ -47,7 +47,7 @@
 
 <script>
 import { addObj, editObj, findAccountSet } from "./api/index.js";
-import cookies from "@/utils/cookies";
+// import cookies from "@/utils/cookies";
 export default {
   name: "setManageDetail",
   data() {
@@ -89,6 +89,8 @@ export default {
       },
       id: "",
       updateStatus: "",
+      // 返回选择企业和账套页面
+      backToChoose: false,
       textMap: {
         update: "编辑账套",
         create: "新增账套",
@@ -96,12 +98,16 @@ export default {
       }
     };
   },
-  created() { },
+  created() {
+    // console.log(this.$cookies)
+    // this.cookies.removeAll();
+  },
 
   mounted() {
     // 查询详情
-    const { id = "", updateStatus = "" } = this.$route.query;
+    const { id = "", updateStatus = "", backToChoose = false } = this.$route.query;
     this.id = id;
+    this.backToChoose = backToChoose;
     this.updateStatus = updateStatus;
   },
   watch: {
@@ -119,7 +125,7 @@ export default {
   computed: {
     // 主体企业信息
     qyInfo() {
-      return cookies.get('qyInfo') || {}
+      // return cookies.get('qyInfo') || {}
     },
   },
   methods: {
@@ -170,7 +176,8 @@ export default {
       });
     },
     toBack() {
-      this.$router.replace({ path: "/setManage/list" });
+      const path = this.backToChoose ? '/chooseAccountSet' : "/setManage/list"
+      this.$router.replace({ path });
     },
   }
 };

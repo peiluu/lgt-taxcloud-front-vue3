@@ -2,20 +2,16 @@ import router from "./router";
 import store from "./store";
 import NProgress from "nprogress"; // Progress 进度条
 import "nprogress/nprogress.css"; // Progress 进度条样式
-import { ElMessage } from "element-plus";
 import cookies from "@/utils/cookies";
-
-// import { getToken } from "@/utils/auth"; // 验权
-
-import { setTitle } from "@/utils/util"; // 设置浏览器头部标题
-
+import {  setTitle } from "@/utils/util";
+0
 // permission judge function
-function hasPermission(roles, permissionRoles) {
-  if (roles.indexOf("admin") >= 0) return true; // admin permission passed directly
-  if (!permissionRoles) return true;
-  return roles.some((role) => permissionRoles.indexOf(role) >= 0);
-}
-const whiteList = ["/login"]; // 不重定向白名单
+// function hasPermission(roles, permissionRoles) {
+//   if (roles.indexOf("admin") >= 0) return true; // admin permission passed directly
+//   if (!permissionRoles) return true;
+//   return roles.some((role) => permissionRoles.indexOf(role) >= 0);
+// }
+const whiteList = ["/login", "/register"]; // 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start();

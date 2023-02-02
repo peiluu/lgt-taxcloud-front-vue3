@@ -1,43 +1,62 @@
-import Cookies from 'js-cookie'
-// import setting from '@/setting.js'
+import Cookies from "js-cookie";
+import store from "./store";
 
-const cookies = {}
-
+const cookies = {};
 /**
  * @description 存储 cookie 值
  * @param {String} name cookie name
  * @param {String} value cookie value
  * @param {Object} setting cookie setting
  */
-cookies.set = function (name = 'default', value = '', cookieSetting = {}) {
+cookies.set = function (name = "default", value = "", cookieSetting = {}) {
+  // cookie有效时间为1天
   let currentCookieSetting = {
-    expires: 1
-  }
-  Object.assign(currentCookieSetting, cookieSetting)
-  Cookies.set(`taxcloud-${name}`, value, currentCookieSetting)
-}
+    expires: 1,
+  };
+
+  Object.assign(currentCookieSetting, cookieSetting);
+  Cookies.set(`taxcloud-${name}`, value, currentCookieSetting);
+
+  // const userInfo = {
+  //   ...store.getters.userInfo,
+  //   [name]: value
+  // }
+
+  // store.commit("SET_USERINFO", userInfo);
+};
 
 /**
  * @description 拿到 cookie 值
  * @param {String} name cookie name
  */
-cookies.get = function (name = 'default') {
-  return Cookies.get(`taxcloud-${name}`)
-}
+cookies.get = function (name = "default") {
+  return Cookies.get(`taxcloud-${name}`);
+};
 
 /**
  * @description 拿到 cookie 全部的值
  */
 cookies.getAll = function () {
-  return Cookies.get()
-}
+  return Cookies.get();
+};
 
 /**
  * @description 删除 cookie
  * @param {String} name cookie name
  */
-cookies.remove = function (name = 'default') {
-  return Cookies.remove(`taxcloud-${name}`)
-}
+cookies.remove = function (name = "default") {
+  return Cookies.remove(`taxcloud-${name}`);
+};
 
-export default cookies
+/**
+ * @description 删除 所有cookie
+ */
+cookies.removeAll = function () {
+  const allCookies = Cookies.get();
+  for (let key in allCookies) {
+    console.log(key);
+    return Cookies.remove(key);
+  }
+};
+
+export default cookies;
