@@ -117,6 +117,8 @@ export default {
           type: "success",
           duration: 2000
         });
+        //  cookies.set('qyId', qyId)
+        // cookies.set('qymc', qymc)
         this.getList();
       });
     },

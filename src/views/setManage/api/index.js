@@ -34,7 +34,7 @@ export function editObj(obj) {
 // 修改账套状态
 export function updateAccountSetStatus(obj) {
   return request({
-    url: "/api/tax/taxsby/updateAccountSetStatus" + obj.id,
+    url: "/api/tax/taxsby/updateAccountSetStatus/" + obj.id,
     method: "post",
   });
 }

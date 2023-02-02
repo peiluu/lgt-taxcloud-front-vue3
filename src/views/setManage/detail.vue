@@ -6,7 +6,7 @@
         <el-input v-model="form.accountSetName" placeholder="请输入账套名称" />
       </el-form-item>
       <el-form-item label="所属企业" prop="qyId">
-        <!-- <el-input v-model="qyInfo.name" disabled /> -->
+        <el-input v-model="qyInfo.qymc" disabled />
       </el-form-item>
 
       <el-form-item label="启用期间" prop="qysj">
@@ -47,7 +47,7 @@
 
 <script>
 import { addObj, editObj, findAccountSet } from "./api/index.js";
-// import cookies from "@/utils/cookies";
+import cookies from "@/utils/cookies";
 export default {
   name: "setManageDetail",
   data() {
@@ -125,7 +125,10 @@ export default {
   computed: {
     // 主体企业信息
     qyInfo() {
-      // return cookies.get('qyInfo') || {}
+      return {
+        qyId: cookies.get('qyId'),
+        qymc: cookies.get('qymc'),
+      }
     },
   },
   methods: {
@@ -150,8 +153,7 @@ export default {
     // 创建账套
     create() {
       addObj({
-        ...this.form, qyId: 3,
-
+        ...this.form, qyId: this.qyInfo.qyId,
       }).then(() => {
         this.$notify({
           title: "成功",

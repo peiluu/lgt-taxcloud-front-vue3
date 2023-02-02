@@ -24,19 +24,13 @@ router.beforeEach((to, from, next) => {
     });
     // 将企业和账套信息保存在响应式vuex数据中
     store.commit("SET_USERINFO", {
-      ...store.getters.userInfo,
       qymc: cookies.get("qymc"),
+      qyId: cookies.get("qyId"),
+      accountSetId: cookies.get("accountSetId"),
       accountSetName: cookies.get("accountSetName"),
     });
-    console.log(store);
     /* has token*/
 
-    // if (store.getters.isLock && to.path !== "/lock") {
-    //   next({
-    //     path: "/lock",
-    //   });
-    //   NProgress.done();
-    // } else
     // 未退出登录直接进入登录页面，强制回退首页
     if (to.path === "/login") {
       next({ path: "/taxclude/home" });

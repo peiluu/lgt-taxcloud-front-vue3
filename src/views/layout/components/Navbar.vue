@@ -39,7 +39,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.userInfo)
   },
   computed: {
     ...mapGetters(["sidebar", "name", "avatar", 'userInfo']),

@@ -3,7 +3,7 @@
     <div class="m-section">
       <h3>选择企业</h3>
       <div class="list">
-        <el-card class="item item-qy" v-for="(item) in enterpriseList" :key="item.id" @click="activeQyId = item.id">
+        <el-card class="item item-qy" v-for="(item) in enterpriseList" :key="item.id" @click="updateEnterpriseStatus(item)">
           <template #header>{{ item.qymc }}</template>
           <div class="item-name">联系人：{{ item.lxr || '暂无数据' }} </div>
           <div>联系电话：{{ item.lxdh || '暂无数据' }}</div>
@@ -11,7 +11,6 @@
             <el-icon :size="40">
               <Check />
             </el-icon>
-
           </div>
         </el-card>
         <el-card class="item" @click="addObj('/businessManage/detail')">
@@ -50,7 +49,7 @@
 
 <script>
 import cookies from "@/utils/cookies";
-import { page } from "@/views/businessManage/api/index.js";
+import { page, updateEnterpriseStatus } from "@/views/businessManage/api/index.js";
 import { delObj, findAccountSet } from "@/views/setManage/api/index.js";
 
 export default {
@@ -67,9 +66,18 @@ export default {
   created() {
   },
   watch: {
-    activeQyId(val) {
-      if (val) {
+    // 监听默认企业的变化
+    activeQyId(qyId) {
+      if (qyId) {
         this.findAccountSet()
+        const { qymc = '' } = this.enterpriseList.find((item => item.id == qyId))
+        cookies.set('qyId', qyId)
+        cookies.set('qymc', qymc)
+        this.$store.commit("SET_USERINFO", {
+          qyId,
+          qymc
+        });
+
       }
     }
   },
@@ -83,11 +91,27 @@ export default {
         pageIndex: 1,
         pageSize: 0
       }).then(response => {
-        const { qymc = ' ', id = '' } = response.rows.find((item => item.sfmr == 1))
+        this.enterpriseList = response.rows;
+        // 查询默认主体企业
+        const { id = '' } = response.rows.find((item => item.sfmr == 1))
         // 存储主体企业信息
         this.activeQyId = id
-        cookies.set('qyInfo', { name: qymc, id })
-        this.enterpriseList = response.rows;
+      });
+    },
+
+    // 切换为默认企业
+    updateEnterpriseStatus({ id = '' }) {
+      updateEnterpriseStatus({
+        id
+      }).then(() => {
+        this.activeQyId = id
+        this.$notify({
+          title: "成功",
+          message: "设置成功",
+          type: "success",
+          duration: 2000
+        });
+        this.getList();
       });
     },
 
@@ -122,8 +146,6 @@ export default {
       });
       cookies.set('accountSetId', id);
       cookies.set('accountSetName', accountSetName);
-      console.log(this.$store)
-
       this.$router.push({
         path: "/taxclude/home",
         query: {

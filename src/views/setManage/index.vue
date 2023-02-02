@@ -30,10 +30,9 @@
 
       <el-table-column align="center" label="会计制度" prop="kjzd" />
 
-
       <el-table-column align="center" label="状态">
         <template v-slot="scope">
-          <!-- <el-switch v-model="scope.row.status" active-value="100" inactive-value="0" @change="updateAccountSetStatus(scope.row)" /> -->
+          <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @click="updateAccountSetStatus(scope.row)" />
         </template>
       </el-table-column>
 
@@ -62,23 +61,29 @@ export default {
       form: {},
       list: [],
       total: 0,
-      listLoading: false,
       listQuery: {
         pageIndex: 1,
         pageSize: 10
-      }
+      },
+      status: 1
     };
   },
   mounted() {
     this.getList();
   },
+  computed: {
+    stat() {
+      return this.$store.getters.errorLogs
+    }
+  },
   methods: {
     getList() {
-      this.listLoading = true;
-      findAccountSet(this.listQuery).then(response => {
-        this.list = response.rows;
+      findAccountSet({
+        ...this.listQuery,
+        qyId: cookies.get('qyId')
+      }).then(response => {
+        this.list = response.rows
         this.total = response.total;
-        this.listLoading = false;
       });
     },
     // 重置表单
@@ -130,7 +135,7 @@ export default {
       updateAccountSetStatus({ id: row.id }).then(() => {
         this.$notify({
           title: "成功",
-          message: "删除成功",
+          message: "操作成功",
           type: "success",
           duration: 2000
         });
