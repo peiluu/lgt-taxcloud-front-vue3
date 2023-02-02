@@ -1,7 +1,7 @@
 /**
  * Created by jiachenpan on 16/11/18.
  */
-
+/* 合法用户名 */
 export function isvalidUsername(str) {
   const re = /^[a-z][a-z_0-9]{4,19}$/i
   return re.test(str)

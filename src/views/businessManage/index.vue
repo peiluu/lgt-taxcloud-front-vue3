@@ -67,7 +67,6 @@ export default {
   },
   mounted() {
     this.getList();
-    cookies.removeAll()
   },
   methods: {
     getList() {

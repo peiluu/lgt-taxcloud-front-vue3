@@ -32,7 +32,7 @@
           <template #header>{{ item.accountSetName }}</template>
           <div class="item-name">会计准则：{{ item.kjzd }} </div>
           <div>账套启用时间：{{ item.qysj }}</div>
-          <div class="item-btn"><span @click="handleEnter(item.id)">进入账套</span><span @click="handleDelete(item)">删除账套</span></div>
+          <div class="item-btn"><span @click="handleEnter(item)">进入账套</span><span @click="handleDelete(item)">删除账套</span></div>
         </el-card>
         <el-card class="item" @click="addObj('/setManage/detail')">
           <div class="item-add">
@@ -50,7 +50,6 @@
 
 <script>
 import cookies from "@/utils/cookies";
-
 import { page } from "@/views/businessManage/api/index.js";
 import { delObj, findAccountSet } from "@/views/setManage/api/index.js";
 
@@ -114,8 +113,16 @@ export default {
         }
       });
     },
+
     // 进入账套
-    handleEnter(id) {
+    handleEnter({ id, accountSetName }) {
+      this.$store.commit("SET_USERINFO", {
+        accountSetId: id,
+        accountSetName
+      });
+      cookies.set('accountSetId', id);
+      cookies.set('accountSetName', accountSetName);
+      console.log(this.$store)
 
       this.$router.push({
         path: "/taxclude/home",
@@ -140,8 +147,8 @@ export default {
             duration: 2000
           })
           this.findAccountSet()
-        }).catch(() => { })
-      })
+        })
+      }).catch(() => { })
     }
   }
 }

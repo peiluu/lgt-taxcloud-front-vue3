@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
-import store from "./store";
+
+
 
 const cookies = {};
 /**
@@ -16,7 +17,7 @@ cookies.set = function (name = "default", value = "", cookieSetting = {}) {
 
   Object.assign(currentCookieSetting, cookieSetting);
   Cookies.set(`taxcloud-${name}`, value, currentCookieSetting);
-
+  // console.log(store)
   // const userInfo = {
   //   ...store.getters.userInfo,
   //   [name]: value

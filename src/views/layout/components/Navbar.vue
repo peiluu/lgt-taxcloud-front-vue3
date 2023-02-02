@@ -6,8 +6,8 @@
       <div class="m-list">
         <div>
           当前主体
-          <span class="txt">{{ qymc }}</span>
-          <span class="txt">{{ accountSetName }}</span>
+          <span class="txt">{{ userInfo?.qymc }}</span>
+          <span class="txt">{{ userInfo?.accountSetName }}</span>
           <span class="btn" @click="goGochooseAccountSet">切换</span>
         </div>
       </div>
@@ -39,9 +39,10 @@ export default {
     };
   },
   mounted() {
+    console.log(this.userInfo)
   },
   computed: {
-    ...mapGetters(["sidebar", "name", "avatar"]),
+    ...mapGetters(["sidebar", "name", "avatar", 'userInfo']),
     username() {
       return cookies.get('username')
     },
@@ -73,11 +74,9 @@ export default {
         }
       ).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          cookies.removeAll();
-          // cookies.remove("token");
-          // cookies.remove("uuid");
+          cookies.remove("token");
+          cookies.remove("uuid");
           setTimeout(() => {
-            console.log(22222222, cookies.getAll())
             this.$router.push({
               path: "/login",
             });

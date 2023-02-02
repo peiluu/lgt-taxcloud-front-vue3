@@ -1,7 +1,5 @@
 /* eslint-disable */
 import { constantRouterMap } from '@/router/index.js';
-
-// console.log(222, constantRouterMap);
 import Layout from '@/views/layout/Layout';
 
 /**

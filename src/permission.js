@@ -3,8 +3,8 @@ import store from "./store";
 import NProgress from "nprogress"; // Progress 进度条
 import "nprogress/nprogress.css"; // Progress 进度条样式
 import cookies from "@/utils/cookies";
-import {  setTitle } from "@/utils/util";
-0
+import { setTitle } from "@/utils/util";
+0;
 // permission judge function
 // function hasPermission(roles, permissionRoles) {
 //   if (roles.indexOf("admin") >= 0) return true; // admin permission passed directly
@@ -22,6 +22,13 @@ router.beforeEach((to, from, next) => {
     store.commit("SET_BROWSERHEADERTITLE", {
       browserHeaderTitle: browserHeaderTitle,
     });
+    // 将企业和账套信息保存在响应式vuex数据中
+    store.commit("SET_USERINFO", {
+      ...store.getters.userInfo,
+      qymc: cookies.get("qymc"),
+      accountSetName: cookies.get("accountSetName"),
+    });
+    console.log(store);
     /* has token*/
 
     // if (store.getters.isLock && to.path !== "/lock") {

@@ -1,11 +1,11 @@
 <template>
   <div class="p-page">
     <div class="m-header">
-      <el-card class="left">
+      <el-card class="left" @click="$router.push({ path: '/bookKeepingVoucherManage/entry' })">
         <el-icon :size="40" color="#02a7f0">
           <CirclePlus />
         </el-icon>
-        <h3>新建凭证</h3>
+        <h3 >新建凭证</h3>
       </el-card>
       <!-- 我的关注 -->
       <LgtMyFocus />
@@ -16,12 +16,7 @@
         <div class="clearfix center-header">
           <span>{{ dateValuesText }}财务指标</span>
           <div class="datapick">
-            <el-date-picker
-              v-model="dateValue"
-              type="month"
-              value-format="YYYY-MM"
-              placeholder="选择日期"
-            />
+            <el-date-picker v-model="dateValue" type="month" value-format="YYYY-MM" placeholder="选择日期" />
           </div>
           <span style="float: right; padding: 3px 0">单位（万元）</span>
         </div>
@@ -38,15 +33,11 @@
     </el-card>
     <div class="m-charts">
       <div v-for="item in chartList" :key="item.chartId" class="chart-item">
-        <LgtChart
-          :chartId="item.chartId"
-          :chartData="item.chartData"
-          :chartConfig="{
-						width: chartWidth + 'px',
-						height: '400px',
-						title: item.title,
-					}"
-        />
+        <LgtChart :chartId="item.chartId" :chartData="item.chartData" :chartConfig="{
+          width: chartWidth + 'px',
+          height: '400px',
+          title: item.title,
+        }" />
       </div>
     </div>
   </div>
@@ -126,7 +117,7 @@ export default {
       return (window.innerWidth - 300) / 2;
     }
   },
-  created() {},
+  created() { },
   watch: {
     dateValue(val) {
       this.getData(val);
@@ -138,7 +129,7 @@ export default {
   },
 
   methods: {
-    getData(date) {},
+    getData(date) { },
 
     getDateValue(now) {
       const date = new Date(now || new Date());
@@ -175,6 +166,7 @@ export default {
         align-items: center;
       }
     }
+
     h3 {
       margin-top: 12px;
     }
@@ -221,6 +213,7 @@ export default {
   .m-charts {
     display: flex;
   }
+
   /deep/ .el-icon {
     cursor: pointer;
   }
