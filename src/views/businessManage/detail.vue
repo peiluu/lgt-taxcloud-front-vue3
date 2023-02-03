@@ -17,7 +17,7 @@
       </el-form-item>
 
       <el-form-item label="所属行业" prop="sshy">
-        <el-cascader v-model="form.sshy" :options="cascadeList" clearable ref="cascaderRef" @change="handleChange" :props="props" popper-class='cascaderClass'></el-cascader>
+        <el-cascader v-model="form.sshy" :options="cascadeList" clearable ref="cascaderRef" @change="handleChange" :props="props" popper-class="cascaderClass"></el-cascader>
         <!-- <el-input v-model="form.sshy" placeholder="请输入所属行业" /> -->
       </el-form-item>
 
@@ -41,8 +41,8 @@
 
       <el-form-item label="设为默认" prop="sfmr">
         <el-select v-model="form.sfmr" placeholder>
-          <el-option value="1" label="开启" />
-          <el-option value="0" label="关闭" />
+          <el-option :value="1" label="开启" />
+          <el-option :value="0" label="关闭" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { isvalidUsername } from "@/utils/validate";
+
 import { page, addObj, editObj, findTaxMetierCascade } from "./api/index.js";
 
 export default {
@@ -63,51 +65,49 @@ export default {
     return {
       form: {
         nslx: 0,
-        sfmr: 1
+        sfmr: 1,
       },
       rules: {
         qymc: [
           {
             required: true,
             message: "请输入企业名称",
-            trigger: "blur"
+            trigger: "blur",
           },
           {
-            min: 1,
             max: 20,
-            message: "长度在 1 到 20 个字符",
+            message: "最多输入20个汉字",
             trigger: "blur",
-            // re
-
-          }
+          },
         ],
         nsrsbh: [
           {
             required: true,
             message: "请输入纳税人识别号",
-            trigger: "blur"
+            trigger: "blur",
           },
           {
-            min: 1,
-            max: 20,
+            min: 18,
+            max: 18,
             message: "长度为18位数字",
-            trigger: "blur"
-          }
+            trigger: "blur",
+            pattern: /^[0-9]{18}$/,
+          },
         ],
-        time: [
+        lxdh: [
+          {
+            min: 18,
+            max: 18,
+            message: "请输入手机号码格式",
+            trigger: "blur",
+            pattern: /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/,
+          },
+        ],
+        sfmr: [
           {
             required: true,
-            message: "请选择启用期间",
-            trigger: "blur"
-          }
+          },
         ],
-        accoutingStandard: [
-          {
-            required: true,
-            message: "请选择会计准则",
-            trigger: "blur"
-          }
-        ]
       },
       id: "",
       updateStatus: "",
@@ -118,12 +118,12 @@ export default {
       textMap: {
         update: "编辑企业",
         create: "新增企业",
-        detail: "企业详情"
+        detail: "企业详情",
       },
       props: {
-        label: 'metierName',
-        value: 'id',
-        checkStrictly: true
+        label: "metierName",
+        value: "id",
+        checkStrictly: true,
       },
     };
   },
@@ -133,12 +133,15 @@ export default {
 
   mounted() {
     // 查询详情
-    const { id = "", updateStatus = "", backToChoose = false } = this.$route.query;
+    const {
+      id = "",
+      updateStatus = "",
+      backToChoose = false,
+    } = this.$route.query;
     this.id = id;
     this.backToChoose = backToChoose;
     this.updateStatus = updateStatus;
-    this.findTaxMetierCascade()
-
+    this.findTaxMetierCascade();
   },
   watch: {
     // 如果id 存在就去查询详情
@@ -147,25 +150,27 @@ export default {
         this.getDetail({
           pageIndex: 1,
           pageSize: 10,
-          id: newV
-        })
+          id: newV,
+        });
       }
-    }
+    },
   },
   methods: {
     getDetail(params) {
-      page(params).then(response => {
-        this.form = response.rows[0] || {}
+      page(params).then((response) => {
+        this.form = response.rows[0] || {};
       });
     },
     toBack() {
-      const path = this.backToChoose ? '/chooseAccountSet' : "/businessManage/list"
+      const path = this.backToChoose
+        ? "/chooseAccountSet"
+        : "/businessManage/list";
       this.$router.replace({ path });
     },
     // 提交表单
     handleSubmit() {
       const set = this.$refs;
-      set["form"].validate(valid => {
+      set["form"].validate((valid) => {
         if (!valid) return false;
         if (this.updateStatus === "create") {
           this.create();
@@ -182,9 +187,9 @@ export default {
           title: "成功",
           message: "新建成功",
           type: "success",
-          duration: 2000
+          duration: 2000,
         });
-        this.toBack()
+        this.toBack();
       });
     },
     // 编辑企业
@@ -195,22 +200,22 @@ export default {
           title: "成功",
           message: "更新成功",
           type: "success",
-          duration: 2000
+          duration: 2000,
         });
-        this.toBack()
+        this.toBack();
       });
     },
     // 查询行业级联列表
     findTaxMetierCascade() {
-      findTaxMetierCascade().then(response => {
-        this.cascadeList = response
-      })
+      findTaxMetierCascade().then((response) => {
+        this.cascadeList = response;
+      });
     },
     handleChange(value) {
-      this.form.sshy = value && value.length ? value[value.length - 1] : ''
-      this.$refs.cascaderRef.dropDownVisible = false
+      this.form.sshy = value && value.length ? value[value.length - 1] : "";
+      this.$refs.cascaderRef.dropDownVisible = false;
     },
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -219,7 +224,6 @@ export default {
 }
 
 .m-footer {
-
   margin: 32px 0 32px 33%;
 }
 
@@ -240,6 +244,5 @@ export default {
   .el-radio__input.is-checked .el-radio__inner {
     background: transparent;
   }
-
 }
 </style>

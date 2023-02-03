@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import router from "./router";
 import store from "./store";
 import directive from "./directive";
-import cookies from "@/utils/cookies";
+// import cookies from "@/utils/cookies";
 import "@/permission"; // 权限控制
 import "@/utils/cookies";
 
