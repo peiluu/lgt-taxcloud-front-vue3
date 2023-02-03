@@ -2,23 +2,18 @@
   <div>
     <div class="m-header">
       <span>类别</span>
-      <el-tabs v-model="listQuery.type" type="card">
-        <el-tab-pane
-          v-for="item in tabsList"
-          :label="item.label"
-          :name="item.id"
-          :key="item.id"
-        >{{item.label}}</el-tab-pane>
+      <el-tabs v-model="listQuery.subjectCate" type="card">
+        <el-tab-pane v-for="item in subjectCateList" :label="item.name" :name="item.value" :key="item.value">{{ item.name }}</el-tab-pane>
       </el-tabs>
     </div>
 
     <el-form :model="listQuery" ref="form" :inline="true">
       <el-form-item label="编码" prop="status">
-        <el-input @keyup.enter="getList" placeholder="编码" v-model="listQuery.name" />
+        <el-input @keyup.enter="getList" placeholder="编码" v-model="listQuery.code" />
       </el-form-item>
 
       <el-form-item label="名称" prop="status">
-        <el-input @keyup.enter="getList" placeholder="名称" v-model="listQuery.qymc" />
+        <el-input @keyup.enter="getList" placeholder="名称" v-model="listQuery.name" />
       </el-form-item>
 
       <el-form-item label="状态" prop="status">
@@ -42,23 +37,17 @@
 
     <el-button @click="handleUpdate('', 'create')" type="primary">新增</el-button>
     <el-button @click="handleUpdate('', 'create')" style="float: right">导出</el-button>
-    <el-table
-      stripe
-      :data="list"
-      v-loading.body="listLoading"
-      highlight-current-row
-      @selection-change="handleSelectionChange"
-    >
+    <el-table stripe :data="list" v-loading.body="listLoading" highlight-current-row @selection-change="handleSelectionChange">
       <el-table-column align="center" type="selection" width="60" label="选择" />
 
-      <el-table-column align="center" label="编码" prop="cateName"></el-table-column>
-      <el-table-column align="center" label="名称" prop="time" />
+      <el-table-column align="center" label="编码" prop="subjectCode" />
+      <el-table-column align="center" label="名称" prop="subjectName" />
 
       <el-table-column align="center" label="辅助核算" prop="time" />
 
       <el-table-column align="center" label="状态">
         <template v-slot="scope">
-          <el-switch v-model="scope.row.dcdirection" active-value="1" inactive-value="0" ></el-switch>
+          <el-switch v-model="scope.row.dcdirection" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
 
@@ -71,25 +60,14 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      v-model:current-page="listQuery.pageIndex"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="listQuery.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-    />
-    <dialogDetail
-      :dialogFormVisible="dialogFormVisible"
-      :dialogStatus="dialogStatus"
-      @closeDialog="handleCloseDialog"
-    />
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" v-model:current-page="listQuery.pageIndex" :page-sizes="[10, 20, 30, 50]" :page-size="listQuery.pageSize"
+      layout="total, sizes, prev, pager, next, jumper" :total="total" />
+    <dialogDetail :dialogFormVisible="dialogFormVisible" :dialogStatus="dialogStatus" @closeDialog="handleCloseDialog" />
   </div>
 </template>
 
 <script>
-import { page, delObj } from "../../api/index.js";
+import { page, delObj, findParentTaxSubject } from "../../api/subject.js";
 import dialogDetail from "./dialogDetail.vue";
 
 export default {
@@ -98,42 +76,13 @@ export default {
   data() {
     return {
       form: {},
-      tabsList: [
-        {
-          label: "资产类",
-          id: 1
-        },
-        {
-          label: "负债类",
-          id: 2
-        },
-        {
-          label: "权益类",
-          id: 3
-        },
-        {
-          label: "成本类",
-          id: 4
-        },
-        {
-          label: "损益类",
-          id: 5
-        }
-      ],
-      list: [
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" }
-      ],
+      subjectCateList: [],
+      list: [],
       total: 0,
       listLoading: false,
       listQuery: {
         pageIndex: 1,
         pageSize: 10,
-        type: 1
       },
       dialogFormVisible: false,
       dialogStatus: "",
@@ -141,14 +90,23 @@ export default {
     };
   },
   watch: {
-    "listQuery.type"() {
+    "listQuery.subjectCate"() {
       this.getList();
     }
+
   },
   mounted() {
-    // this.getList()
+    this.findParentTaxSubject()
   },
   methods: {
+    // 查询科目类别
+    findParentTaxSubject() {
+      findParentTaxSubject().then(response => {
+        this.subjectCateList = response
+        this.listQuery.subjectCate = response[0]?.value
+      })
+    },
+
     getList() {
       this.listLoading = true;
       page(this.listQuery).then(response => {
@@ -157,6 +115,7 @@ export default {
         this.listLoading = false;
       });
     },
+
 
     handleAddChange(value) {
       this.form.subjectId =
@@ -212,6 +171,7 @@ export default {
   display: flex;
   align-items: center;
   padding-bottom: 24px;
+
   span {
     padding-right: 8px;
   }
@@ -219,6 +179,7 @@ export default {
   /deep/ .el-tabs__header {
     margin: 0;
   }
+
   .el-tab-pane {
     display: none;
   }

@@ -1,24 +1,4 @@
-# lgt-taxcloud-front-vue3
+# 基于Vue3技术实现的
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Vue3对比Vue2的优势
+1. Set

@@ -1,4 +1,4 @@
-const path = require("path");
+// const path = require("path");
 const { defineConfig } = require("@vue/cli-service");
 
 /**
@@ -28,6 +28,5 @@ module.exports = defineConfig({
     host: "0.0.0.0",
     port: 9530,
     open: true, //vue项目启动时自动打开浏览器
-
   },
 });

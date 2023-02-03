@@ -1,6 +1,4 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-// import { constantRouterMap } from './router.js';
-
 import Layout from "../views/layout/Layout";
 
 export const constantRouterMap = [
@@ -10,11 +8,6 @@ export const constantRouterMap = [
     redirect: "/login",
     hidden: true,
   },
-  // {
-  //   path: '',
-  //   component: Layout,
-  //   redirect: '/dashboard/dashboard'
-  // },
   {
     path: "/login",
     component: () => import("@/views/login/index"),
@@ -41,7 +34,6 @@ export const constantRouterMap = [
   {
     path: "/taxclude",
     component: Layout,
-    // component: () => import('@/views/home/index'),
     meta: { title: "首页", icon: "home" },
     children: [
       {

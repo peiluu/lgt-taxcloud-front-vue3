@@ -106,6 +106,7 @@ service.interceptors.response.use(
       window.location.replace('#/login')
       cookies.remove("token");
     }
+    
     return Promise.reject(error);
   }
 );

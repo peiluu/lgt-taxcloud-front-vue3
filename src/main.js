@@ -2,7 +2,8 @@ import { createApp } from "vue";
 import router from "./router";
 import store from "./store";
 import directive from "./directive";
-// console.log(directive)
+import cookies from "@/utils/cookies";
+
 import "@/utils/cookies";
 
 import App from "./App.vue";
@@ -11,6 +12,7 @@ import "element-plus/dist/index.css";
 import "@/styles/index.scss"; // global css
 
 import * as ElIcons from "@element-plus/icons-vue";
+// console.log(Vue)
 // Vue.prototype.$cookies = cookies;
 const app = createApp(App);
 import "@/permission"; // 权限控制

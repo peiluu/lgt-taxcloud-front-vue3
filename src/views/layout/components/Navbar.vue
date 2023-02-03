@@ -14,6 +14,9 @@
     </div>
 
     <div class="m-right">
+      <el-icon :size="20">
+        <User />
+      </el-icon>
       <span>{{ username }}</span>
       <el-button link type="primary" @click="logout">注销</el-button>
     </div>
@@ -129,10 +132,11 @@ export default {
   }
 
   .m-right {
+    display: flex;
+    align-items: center;
     height: 100%;
-
     span {
-      padding-right: 8px;
+      padding:0 4px;
     }
   }
 }

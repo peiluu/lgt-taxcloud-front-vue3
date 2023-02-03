@@ -101,16 +101,14 @@ export default {
 
     // 切换为默认企业
     updateEnterpriseStatus({ id = '' }) {
+      // 不能重复点击，调用接口
+      if (id == this.activeQyId) {
+        return
+      }
       updateEnterpriseStatus({
         id
       }).then(() => {
         this.activeQyId = id
-        this.$notify({
-          title: "成功",
-          message: "设置成功",
-          type: "success",
-          duration: 2000
-        });
         this.getList();
       });
     },
