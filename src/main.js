@@ -3,7 +3,7 @@ import router from "./router";
 import store from "./store";
 import directive from "./directive";
 import cookies from "@/utils/cookies";
-
+import "@/permission"; // 权限控制
 import "@/utils/cookies";
 
 import App from "./App.vue";
@@ -15,7 +15,7 @@ import * as ElIcons from "@element-plus/icons-vue";
 // console.log(Vue)
 // Vue.prototype.$cookies = cookies;
 const app = createApp(App);
-import "@/permission"; // 权限控制
+
 
 for (const iconName in ElIcons) {
   app.component(iconName, ElIcons[iconName]);

@@ -43,6 +43,7 @@
             </th>
           </tr>
         </thead>
+        
         <tbody>
           <tr v-for="(item, index) in tableList" :key="index">
             <td>
@@ -58,7 +59,7 @@
             <!-- 借方金额 -->
             <template v-if="item.isDebitEdit">
               <td colspan="11">
-                <el-input v-model="item.debitAmount" @blur="onInputBlur" v-focuss :key="index" />
+                <el-input v-model="item.debitAmount" @blur="onInputBlur" v-focus autofocus :key="index" />
               </td>
             </template>
             <td v-else v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex" @click="handleClick('isDebitEdit', index)">
@@ -67,7 +68,7 @@
             <!-- 贷方金额 -->
             <template v-if="item.isCreditEdit">
               <td colspan="11">
-                <el-input v-model="item.creditAmount" @blur="onInputBlur" v-focus :key="index" />
+                <el-input v-model="item.creditAmount" @blur="onInputBlur" v-focus autofocus :key="index" />
               </td>
             </template>
             <td v-else v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex" @click="handleClick('isCreditEdit', index)">
@@ -120,14 +121,6 @@ import { addObj, editObj } from "../api/index.js";
 
 export default {
   name: "oinvoiceDetail",
-  directives: {
-    focuss: {
-      inserted(el) {
-        console.log(el)
-        el.focus()
-      }
-    }
-  },
   data() {
     return {
       form: {
@@ -375,7 +368,6 @@ export default {
       const total = this.tableList.reduce((sum, item) => {
         return sum + parseFloat(item[key] || 0)
       }, 0);
-      console.log(total)
       return this.getValue(total, index);
     },
     // 返回凭证列表

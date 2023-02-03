@@ -5,7 +5,7 @@
         <el-icon :size="40" color="#02a7f0">
           <CirclePlus />
         </el-icon>
-        <h3 >新建凭证</h3>
+        <h3>新建凭证</h3>
       </el-card>
       <!-- 我的关注 -->
       <LgtMyFocus />
