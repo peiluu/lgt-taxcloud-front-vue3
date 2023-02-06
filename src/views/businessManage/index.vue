@@ -35,9 +35,9 @@
 
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
+          <el-button v-if="scope.row.id != qyId" type="primary" link @click="handleDelete(scope.row)">删除</el-button>
           <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button v-if="scope.row.sfmr != '1'" type="primary" link @click="handleSetDefault(scope.row.id)">切换为默认</el-button>
+          <el-button v-if="scope.row.sfmr != '1'" type="primary" link @click="handleSetDefault(scope.row)">切换为默认</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+
 import cookies from "@/utils/cookies";
 import { page, delObj, updateEnterpriseStatus } from "./api/index.js";
 
@@ -68,6 +69,12 @@ export default {
   mounted() {
     this.getList();
   },
+  computed: {
+    qyId() {
+      return cookies.get('qyId')
+    }
+  },
+
   methods: {
     getList() {
       this.listLoading = true;
@@ -79,6 +86,10 @@ export default {
         // 存储主体企业信息
         cookies.set('qyId', id)
         cookies.set('qymc', qymc)
+        this.$store.commit("SET_USERINFO", {
+          qyId: id,
+          qymc
+        });
       });
     },
 
@@ -107,7 +118,7 @@ export default {
       });
     },
     // 设置为默认
-    handleSetDefault(id) {
+    handleSetDefault({ id = '' }) {
       updateEnterpriseStatus({
         id
       }).then(() => {
@@ -117,8 +128,6 @@ export default {
           type: "success",
           duration: 2000
         });
-        //  cookies.set('qyId', qyId)
-        // cookies.set('qymc', qymc)
         this.getList();
       });
     },

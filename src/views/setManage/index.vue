@@ -40,7 +40,7 @@
         <template v-slot="scope">
           <el-button type="primary" link @click="handleEnter(scope.row)">进入</el-button>
           <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
+          <el-button v-if="scope.row.id != accountSetId" type="primary" link @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -72,8 +72,8 @@ export default {
     this.getList();
   },
   computed: {
-    stat() {
-      return this.$store.getters.errorLogs
+    accountSetId() {
+      return cookies.get('accountSetId')
     }
   },
   methods: {

@@ -1,9 +1,5 @@
 <template>
 	<div id="app">
-		<!--登入动画-->
-		<!-- <transition name="rotate-fall">
-			<router-view class="app-router-view"> </router-view>
-		</transition> -->
 			<el-config-provider :locale="zhCn">
 			<router-view v-slot="{ Component }" class="app-router-view">
 				<transition>
@@ -11,17 +7,6 @@
 				</transition>
 			</router-view>
 		</el-config-provider>
-
-		<!-- <router-view v-slot="{ Component }">
-				<keep-alive>
-					<component :is="Component" />
-				</keep-alive>	
-			</router-view> -->
-		<!-- <router-view v-slot="{ Component }">
-			<keep-alive>
-				<Component :is="Component" />
-			</keep-alive>
-		</router-view> -->
 	</div>
 </template>
 <!-- eslint-disable vue/no-unused-components -->
@@ -34,7 +19,6 @@ export default {
 	components: {
 		ElConfigProvider,
 	},
-
 	data() {
 		return {
 			zhCn,
