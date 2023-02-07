@@ -14,9 +14,9 @@
     </div>
     <div class="table-tip">
       <el-icon color="#1890FF">
-        <Warning />
-      </el-icon>已选择
-      <span>{{selectionList.length}}</span>
+        <Warning /> </el-icon
+      >已选择
+      <span>{{ selectionList.length }}</span>
       项
     </div>
     <el-table
@@ -26,13 +26,20 @@
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
-      <el-table-column align="center" type="selection" label="序号" width="60" />
+      <el-table-column
+        align="center"
+        type="selection"
+        label="序号"
+        width="60"
+      />
 
       <el-table-column align="center" label="日期" prop="name" />
 
       <el-table-column align="center" label="凭证字号">
         <template v-slot="scope">
-          <el-button link type="primary" @click="goToDetail(scope.row.code)">{{ scope.row.code }}</el-button>
+          <el-button link type="primary" @click="goToDetail(scope.row.code)">{{
+            scope.row.code
+          }}</el-button>
         </template>
       </el-table-column>
       <el-table-column align="center" label="摘要" prop="name" />
@@ -45,9 +52,18 @@
 
       <el-table-column align="center" label="操作" width="200" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">编辑</el-button>
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
-          <el-button type="primary" link @click="handleEnter(scope.row)">冲销</el-button>
+          <el-button
+            type="primary"
+            link
+            @click="handleUpdate(scope.row.id, 'update')"
+            >编辑</el-button
+          >
+          <el-button type="primary" link @click="handleDelete(scope.row)"
+            >删除</el-button
+          >
+          <el-button type="primary" link @click="handleEnter(scope.row)"
+            >冲销</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -69,7 +85,6 @@ import LgtQuarterlyTab from "@/components/lgt-quarter-tab/index.vue";
 
 import { page, delObj } from "../api/index.js";
 
-
 export default {
   name: "invoiceList",
   components: { LgtQuarterlyTab },
@@ -81,15 +96,15 @@ export default {
         { code: 1001, name: "库存现金", number: "111" },
         { code: 1002, name: "银行存款", number: "111" },
         { code: 1003, name: "应付账款", number: "111" },
-        { code: 1004, name: "材料采购", number: "111" }
+        { code: 1004, name: "材料采购", number: "111" },
       ],
       total: 0,
       listLoading: false,
       listQuery: {
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
       },
-      selectionList: []
+      selectionList: [],
     };
   },
   mounted() {
@@ -98,7 +113,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true;
-      page(this.listQuery).then(response => {
+      page(this.listQuery).then((response) => {
         this.list = response.rows;
         this.total = response.total;
         this.listLoading = false;
@@ -130,8 +145,8 @@ export default {
         path: "/originalVoucherManage/invoiceDetail",
         query: {
           id,
-          updateStatus
-        }
+          updateStatus,
+        },
       });
     },
     goToDetail(code) {
@@ -139,8 +154,8 @@ export default {
         path: "/bookKeepingVoucherManage/entry",
         query: {
           code,
-          isDetail: true
-        }
+          isDetail: true,
+        },
       });
     },
 
@@ -148,14 +163,14 @@ export default {
       this.$confirm("确定将本条(批)凭证红冲吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       }).then(() => {
         delObj({ id: row.id }).then(() => {
           this.$notify({
             title: "成功",
             message: "删除成功",
             type: "success",
-            duration: 2000
+            duration: 2000,
           });
           this.getList();
         });
@@ -165,20 +180,20 @@ export default {
       this.$confirm("你确定要删除这行内容吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       }).then(() => {
         delObj({ id: row.id }).then(() => {
           this.$notify({
             title: "成功",
             message: "删除成功",
             type: "success",
-            duration: 2000
+            duration: 2000,
           });
           this.getList();
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

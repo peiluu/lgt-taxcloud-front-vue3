@@ -60,19 +60,7 @@ export default {
         { cateName: "北京模型有限公司", time: "111" },
         { cateName: "北京模型有限公司", time: "41414" },
         { cateName: "北京模型有限公司", time: "41414" },
-        { cateName: "北京模型有限公司", time: "656  " },
-        { cateName: "北京模型有限公司", time: "111" },
-        { cateName: "北京模型有限公司", time: "111" },
-        { cateName: "北京模型有限公司", time: "111" },
-        { cateName: "北京模型有限公司", time: "41414" },
-        { cateName: "北京模型有限公司", time: "41414" },
-        { cateName: "北京模型有限公司", time: "656  " },
-        { cateName: "北京模型有限公司", time: "111" },
-        { cateName: "北京模型有限公司", time: "111" },
-        { cateName: "北京模型有限公司", time: "111" },
-        { cateName: "北京模型有限公司", time: "41414" },
-        { cateName: "北京模型有限公司", time: "41414" },
-        { cateName: "北京模型有限公司", time: "656  " }
+
       ],
       listLoading: false,
       listQuery: {

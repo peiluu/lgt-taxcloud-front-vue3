@@ -1,5 +1,8 @@
 <template>
-  <el-dialog :title="textMap[props.dialogStatus]" v-model="props.dialogFormVisible">
+  <el-dialog
+    :title="textMap[props.dialogStatus]"
+    v-model="props.dialogFormVisible"
+  >
     <el-form
       :model="form"
       :rules="rules"
@@ -14,7 +17,7 @@
       <el-form-item label="科目" prop="subject">
         <el-select v-model="form.subject" placeholder="请选择">
           <el-option
-            v-for="(item) in typeList"
+            v-for="item in subjectList"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -24,18 +27,15 @@
 
       <el-form-item label="借贷" prop="type">
         <el-select v-model="form.type" placeholder="请选择">
-          <el-option
-            v-for="(item) in  typeList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
+          <el-option :value="1" label="借"></el-option>
+          <el-option :value="2" label="贷"></el-option>
         </el-select>
+
       </el-form-item>
       <el-form-item label="协助核算" prop="type">
         <el-select v-model="form.type" placeholder="请选择">
           <el-option
-            v-for="(item) in  typeList"
+            v-for="item in typeList"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -53,60 +53,62 @@
 </template>
 
 <script setup>
-import { addObj, editObj } from "../../api/index.js";
-import { reactive, defineProps, ref, defineEmits } from "vue";
+import { page } from "../../api/subject.js";
+import { reactive, defineProps, ref, defineEmits, onMounted } from "vue";
 
 const props = defineProps({
   dialogStatus: {
     type: String,
-    default: ""
+    default: "",
   },
   dialogFormVisible: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const textMap = reactive({
   update: "编辑凭证规则",
   create: "新增凭证规则",
-  detail: "凭证规则详情"
+  detail: "凭证规则详情",
 });
+
+onMounted(() => {
+  findSuject();
+});
+
 const form = reactive({});
 const rules = reactive({
-  qymc: [
+  abstract: [
     {
       required: true,
-      message: "请输入企业名称",
-      trigger: "blur"
+      message: "请输入摘要",
+      trigger: "blur",
     },
     {
       min: 1,
-      max: 20,
+      max: 100,
       message: "长度在 1 到 20 个字符",
-      trigger: "blur"
-    }
+      trigger: "blur",
+    },
   ],
-  time: [
-    {
-      required: true,
-      message: "请选择启用期间",
-      trigger: "blur"
-    }
-  ],
-  accoutingStandard: [
+  subject: [
     {
       required: true,
       message: "请选择会计准则",
-      trigger: "blur"
-    }
-  ]
+      trigger: "blur",
+    },
+  ],
+  type: [
+    {
+      required: true,
+      message: "请选择借贷方向",
+      trigger: "blur",
+    },
+  ],
 });
-const typeList = reactive([{
-  id: 1,
-  name: 1
-}]);
 
+const subjectList = reactive([]);
 const ruleForms = ref(null);
 
 const emit = defineEmits(["closeDialog"]);
@@ -115,7 +117,7 @@ const cancel = () => {
   emit("closeDialog", false);
 };
 const handleSubmit = () => {
-  ruleForms.value.validate(valid => {
+  ruleForms.value.validate((valid) => {
     if (!valid) return false;
     // 调用接口
     emit("closeDialog", true, form);
@@ -123,6 +125,16 @@ const handleSubmit = () => {
     // api(form).then(() => {
     //   emit("closeDialog", true, form);
     // });
+  });
+};
+
+// 获取科目列表
+const findSuject = () => {
+  page({
+    pageIndex: 1,
+    pageSize: 0,
+  }).then((response) => {
+    this.subjectList = response.rows;
   });
 };
 </script>

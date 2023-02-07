@@ -130,7 +130,7 @@ export default {
         }
       });
     },
-
+    // 修改状态
     updateAccountSetStatus(row) {
       updateAccountSetStatus({ id: row.id }).then(() => {
         this.$notify({
@@ -141,7 +141,6 @@ export default {
         });
         this.getList();
       });
-
     },
     handleDelete(row) {
       this.$confirm("你确定要删除这行内容吗?", "提示", {

@@ -96,17 +96,21 @@ service.interceptors.response.use(
   (error) => {
     loading.close();
     console.log("err" + error); // for debug
+    let  message = error.message
+    // token错误或者token过期，退出返回首页，清除token信息
+    if (error.response.status === 401) {
+      window.location.replace("#/login");
+      cookies.remove("token");
+      message = '登录已过期，请重新登录！'
+      return Promise.reject(error);
+    }
+
     ElMessage({
-      message: error.message,
+      message,
       type: "error",
       duration: 5 * 1000,
     });
-    // token错误或者token过期，退出返回首页，清除token信息
-    if (error.response.status === 401) {
-      window.location.replace('#/login')
-      cookies.remove("token");
-    }
-    
+
     return Promise.reject(error);
   }
 );

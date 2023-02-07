@@ -1,5 +1,4 @@
 import request from "@/utils/request";
-import { dataType } from "element-plus/es/components/table-v2/src/common";
 export function page(data) {
   return request({
     url: "/api/tax/taxsby/findEnterprise",

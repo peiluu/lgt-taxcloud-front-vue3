@@ -13,7 +13,7 @@
             </el-icon>
           </div>
         </el-card>
-        <el-card class="item" @click="addObj('/businessManage/detail')">
+        <el-card class="item " @click="addObj('/businessManage/detail')">
           <div class="item-add">
             <el-icon :size="50" color="#000">
               <CirclePlus />
@@ -27,12 +27,18 @@
     <div class="m-section">
       <h3>选择账套</h3>
       <div class="list">
-        <el-card class="item" v-for="(item) in accountSetList" :key="item.id">
-          <template #header>{{ item.accountSetName }}</template>
+        <el-card class="item item-accountset" v-for="(item) in accountSetList" :key="item.id">
+          <template #header>
+            {{ item.accountSetName }}
+            <el-icon :size="24" v-if="activeAccountSetId == item.id">
+              <CircleCheck />
+            </el-icon>
+
+          </template>
           <div class="item-name">会计准则：{{ item.kjzd }} </div>
           <div>账套启用时间：{{ item.qysj }}</div>
           <div class="item-btn"><span @click="handleEnter(item)">进入账套</span>
-            <span v-if="accountSetId != item.id" @click="handleDelete(item)">删除账套</span>
+            <span v-if="activeAccountSetId != item.id" @click="handleDelete(item)">删除账套</span>
           </div>
         </el-card>
         <el-card class="item" @click="addObj('/setManage/detail')">
@@ -61,6 +67,7 @@ export default {
   data() {
     return {
       activeQyId: '',
+      activeAccountSetId: '',
       enterpriseList: [],
       accountSetList: [],
     }
@@ -83,11 +90,11 @@ export default {
       }
     }
   },
-  computed: {
-    accountSetId() {
-      return cookies.get('accountSetId')
-    }
-  },
+  // computed: {
+  //   // accountSetId() {
+  //   //   return cookies.get('accountSetId')
+  //   // }
+  // },
   mounted() {
     this.getList()
   },
@@ -100,7 +107,7 @@ export default {
       }).then(response => {
         this.enterpriseList = response.rows;
         // 查询默认主体企业
-        const { id = '' } = response.rows.find((item => item.sfmr == 1))
+        const { id = '' } = response.rows.find((item => item.sfmr == 1)) || {}
         // 存储主体企业信息
         this.activeQyId = id
       });
@@ -128,6 +135,13 @@ export default {
         qyId: this.activeQyId
       }).then(response => {
         this.accountSetList = response.rows;
+        const { id = '', accountSetName = '' } = response.rows[0] || {}
+        this.activeAccountSetId = id
+        // if (!cookies.get('accountSetId')) {
+        //   this.saveData(id, accountSetName)
+        // }
+        this.saveData(id, accountSetName)
+
       });
     },
 
@@ -149,13 +163,20 @@ export default {
         accountSetId: id,
         accountSetName
       });
-      cookies.set('accountSetId', id);
-      cookies.set('accountSetName', accountSetName);
+      this.saveData(id, accountSetName)
       this.$router.push({
         path: "/taxclude/home",
         query: {
           id
         }
+      });
+    },
+    saveData(accountSetId, accountSetName) {
+      cookies.set('accountSetId', accountSetId);
+      cookies.set('accountSetName', accountSetName);
+      this.$store.commit("SET_USERINFO", {
+        accountSetId,
+        accountSetName
       });
     },
 
@@ -199,6 +220,14 @@ h3 {
 
     &.item-qy {
       padding-bottom: 12px;
+
+      .item-icon {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        background: #fbd700;
+        border-radius: 4px;
+      }
     }
   }
 
@@ -206,13 +235,16 @@ h3 {
     margin-bottom: 12px;
   }
 
-  .item-icon {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    background: #fbd700;
-    border-radius: 4px;
+  .item-accountset {
+    padding-bottom: 24px;
 
+    .item-icon {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      background: #fbd700;
+      border-radius: 4px;
+    }
   }
 
   .item-btn {
@@ -233,16 +265,20 @@ h3 {
     justify-content: space-between;
     align-items: center;
     margin-top: 9%;
-    ;
 
     .add-text {
       margin-top: 8px;
     }
-
   }
 
   .el-icon-circle-plus::before {
     font-size: 80px;
+  }
+
+  /deep/ .el-card__header {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
   }
 
 }
