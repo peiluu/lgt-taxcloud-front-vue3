@@ -126,7 +126,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.replace({
+      this.$router.push({
         path: "/originalVoucherManage/originalVoucherList"
       });
     },

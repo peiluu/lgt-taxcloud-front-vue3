@@ -62,24 +62,3 @@ export function addTaxInvoice (obj) {
     data: obj
   })
 }
-/**
- * @despition 添加记账规则信息
- * */
-export function addAccountingVoucher (obj) {
-  return request({
-    url: '/api/tax/invoiceAccount/addAccountingVoucher',
-    method: 'post',
-    data: obj
-  })
-}
-
-/**
- * @despition 查询记账凭证信息
- * */
-export function findAccountingVoucher (obj) {
-  return request({
-    url: '/api/tax/invoiceAccount/findAccountingVoucher',
-    method: 'post',
-    data: obj
-  })
-}

@@ -58,3 +58,14 @@ export function findMetierScene(obj) {
     data: obj,
   });
 }
+
+/**
+ * @despition 查询科目规则
+ */
+export function findTaxSubjectRule(obj) {
+  return request({
+    url: "/api/tax/meSubject/findTaxSubjectRule",
+    method: "post",
+    data: obj,
+  });
+}

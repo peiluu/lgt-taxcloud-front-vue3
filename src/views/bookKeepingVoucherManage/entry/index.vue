@@ -43,7 +43,7 @@
             </th>
           </tr>
         </thead>
-        
+
         <tbody>
           <tr v-for="(item, index) in tableList" :key="index">
             <td>
@@ -372,7 +372,7 @@ export default {
     },
     // 返回凭证列表
     back() {
-      this.$router.replace({
+      this.$router.push({
         path: "/bookKeepingVoucherManage/query",
       });
     },

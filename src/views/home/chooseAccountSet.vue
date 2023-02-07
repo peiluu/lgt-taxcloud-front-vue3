@@ -27,7 +27,7 @@
     <div class="m-section">
       <h3>选择账套</h3>
       <div class="list">
-        <el-card class="item item-accountset" v-for="(item) in accountSetList" :key="item.id">
+        <el-card class="item" v-for="(item) in accountSetList" :key="item.id">
           <template #header>
             {{ item.accountSetName }}
             <el-icon :size="24" v-if="activeAccountSetId == item.id">
@@ -233,18 +233,6 @@ h3 {
 
   .item-name {
     margin-bottom: 12px;
-  }
-
-  .item-accountset {
-    padding-bottom: 24px;
-
-    .item-icon {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      background: #fbd700;
-      border-radius: 4px;
-    }
   }
 
   .item-btn {

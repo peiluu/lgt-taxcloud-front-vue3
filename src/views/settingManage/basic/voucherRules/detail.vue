@@ -120,7 +120,6 @@ export default {
   data() {
     return {
       form: {
-        dcdirection: 1,
         status: 1,
       },
       rules: {
@@ -144,13 +143,13 @@ export default {
             trigger: "blur",
           },
         ],
-        originalType: [
-          {
-            required: true,
-            message: "请选择原始凭证类别",
-            trigger: "blur",
-          },
-        ],
+        // originalType: [
+        //   {
+        //     required: true,
+        //     message: "请选择原始凭证类别",
+        //     trigger: "blur",
+        //   },
+        // ],
       },
       id: "",
       updateStatus: "",
@@ -199,7 +198,7 @@ export default {
       });
     },
     cancel() {
-      this.$router.replace({ path: "/basic/voucherRulesList" });
+      this.$router.push({ path: "/basic/voucherRulesList" });
     },
     handleUpdate(id = "", dialogStatus = "") {
       this.dialogFormVisible = true;
@@ -226,7 +225,7 @@ export default {
         }
       });
     },
-    // 创建账套
+    // 创建
     create() {
       addObj(this.form).then(() => {
         this.dialogFormVisible = false;
@@ -239,7 +238,7 @@ export default {
         });
       });
     },
-    // 编辑账套
+    // 编辑
     update() {
       editObj(this.form).then(() => {
         this.dialogFormVisible = false;
@@ -257,8 +256,6 @@ export default {
       this.dialogFormVisible = false;
       if (updateFlag) {
         this.list = this.list.concat(data);
-
-        // this.getList();
       }
     },
     handleDelete(rowIndex) {

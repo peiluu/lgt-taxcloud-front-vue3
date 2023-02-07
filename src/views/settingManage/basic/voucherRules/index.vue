@@ -52,7 +52,6 @@
       <span>{{ selectionList.length }}</span>
       项
     </div>
-
     <el-table
       stripe
       :data="list"
@@ -99,7 +98,7 @@
             type="primary"
             link
             @click="updateVoucherRuleStatus(scope.row)"
-            >启停</el-button
+            >{{ scope.row.status == "1" ? "启停" : "启用" }}</el-button
           >
           <el-button type="primary" link @click="handleDelete(scope.row)"
             >删除</el-button
@@ -178,6 +177,7 @@ export default {
       };
       this.getList();
     },
+    // 多选
     handleSelectionChange(val) {
       this.selectionList = val;
     },
@@ -194,11 +194,6 @@ export default {
       });
     },
 
-    handleAddChange(value) {
-      this.form.subjectId =
-        value && value.length ? value[value.length - 1] : "";
-      this.$refs.cascaderRef.dropDownVisible = false;
-    },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
       this.getList();
@@ -218,7 +213,6 @@ export default {
       });
     },
 
-    handleEnter() {},
     handleDelete(row) {
       this.$confirm("你确定要删除这行内容吗?", "提示", {
         confirmButtonText: "确定",
@@ -234,7 +228,7 @@ export default {
           });
           this.getList();
         });
-      });
+      }).catch(() => {})
     },
   },
 };
@@ -244,6 +238,22 @@ export default {
   float: right;
   .el-button {
     margin: 0 0 16px 16px;
+  }
+}
+.table-tip {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  margin-top: 48px;
+  background: #e6f7ff;
+  border-radius: 4px;
+  border: 1px solid #ade0ff;
+
+  .el-icon {
+    margin-right: 4px;
+  }
+  span {
+    color: #1890ff;
   }
 }
 </style>

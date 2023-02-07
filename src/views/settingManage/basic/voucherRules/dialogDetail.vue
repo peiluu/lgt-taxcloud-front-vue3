@@ -18,19 +18,18 @@
         <el-select v-model="form.subject" placeholder="请选择">
           <el-option
             v-for="item in subjectList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
+            :key="item.subjectName"
+            :label="item.subjectName"
+            :value="item.subjectName"
           ></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="借贷" prop="type">
+      <el-form-item label="借贷" prop="type" disabled>
         <el-select v-model="form.type" placeholder="请选择">
-          <el-option :value="1" label="借"></el-option>
-          <el-option :value="2" label="贷"></el-option>
+          <el-option :value="0" label="借"></el-option>
+          <el-option :value="1" label="贷"></el-option>
         </el-select>
-
       </el-form-item>
       <el-form-item label="协助核算" prop="type">
         <el-select v-model="form.type" placeholder="请选择">
@@ -53,7 +52,7 @@
 </template>
 
 <script setup>
-import { page } from "../../api/subject.js";
+import { findTaxSubjectRule } from "../../api/voucherRule.js";
 import { reactive, defineProps, ref, defineEmits, onMounted } from "vue";
 
 const props = defineProps({
@@ -74,7 +73,7 @@ const textMap = reactive({
 });
 
 onMounted(() => {
-  findSuject();
+  getSubject();
 });
 
 const form = reactive({});
@@ -108,7 +107,7 @@ const rules = reactive({
   ],
 });
 
-const subjectList = reactive([]);
+let subjectList = reactive([]);
 const ruleForms = ref(null);
 
 const emit = defineEmits(["closeDialog"]);
@@ -128,13 +127,10 @@ const handleSubmit = () => {
   });
 };
 
-// 获取科目列表
-const findSuject = () => {
-  page({
-    pageIndex: 1,
-    pageSize: 0,
-  }).then((response) => {
-    this.subjectList = response.rows;
+// 获取科目规则
+const getSubject = () => {
+  findTaxSubjectRule().then((response) => {
+    subjectList = response.rows;
   });
 };
 </script>
