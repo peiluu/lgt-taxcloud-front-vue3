@@ -17,7 +17,7 @@ export function addObj(data) {
 
 export function delObj(data) {
   return request({
-    url: "/api/tax/taxsby/deleteEnterprise/" + data.id,
+    url: "/api/tax/taxsby/deletedVoucherRule/" + data.id,
     method: "post",
   });
 }

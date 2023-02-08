@@ -1,8 +1,5 @@
 <template>
-  <el-dialog
-    :title="textMap[props.dialogStatus]"
-    v-model="props.dialogFormVisible"
-  >
+  <el-dialog :title="textMap[props.dialogStatus]" v-model="dialogFormVisible">
     <el-form
       :model="form"
       :rules="rules"
@@ -10,35 +7,36 @@
       ref="ruleForms"
       class="dialogDetail-form"
     >
-      <el-form-item label="摘要" prop="abstract">
-        <el-input v-model="form.abstract" placeholder="请输入摘要" />
+      <el-form-item label="摘要" prop="abstracts">
+        <el-input v-model="form.abstracts" placeholder="请输入摘要" />
       </el-form-item>
 
-      <el-form-item label="科目" prop="subject">
-        <el-select v-model="form.subject" placeholder="请选择">
+      <el-form-item label="科目" prop="subjectName">
+        <el-select v-model="form.subjectName" placeholder="请选择">
           <el-option
-            v-for="item in subjectList"
-            :key="item.subjectName"
-            :label="item.subjectName"
-            :value="item.subjectName"
+            v-for="(item, index) in subjectList"
+            :key="index"
+            :label="item?.subjectName"
+            :value="item?.subjectName"
           ></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="借贷" prop="type" disabled>
-        <el-select v-model="form.type" placeholder="请选择">
+      <el-form-item label="借贷" prop="dcdirection">
+        <el-select v-model="form.dcdirection" placeholder="请选择" disabled>
           <el-option :value="0" label="借"></el-option>
           <el-option :value="1" label="贷"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="协助核算" prop="type">
-        <el-select v-model="form.type" placeholder="请选择">
-          <el-option
+      <el-form-item label="协助核算" prop="helpCal">
+        <el-select v-model="form.helpCal" placeholder="请选择">
+          <el-option :value="1" :label="2" :key="1" />
+          <!-- <el-option
             v-for="item in typeList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
+            :key="item?.id"
+            :label="item?.name"
+            :value="item?.id"
+          /> -->
         </el-select>
       </el-form-item>
     </el-form>
@@ -53,7 +51,7 @@
 
 <script setup>
 import { findTaxSubjectRule } from "../../api/voucherRule.js";
-import { reactive, defineProps, ref, defineEmits, onMounted } from "vue";
+import { reactive, defineProps, ref, defineEmits, onMounted, watch } from "vue";
 
 const props = defineProps({
   dialogStatus: {
@@ -64,6 +62,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  rowData: {
+    type: Object,
+    default: () => {},
+  },
 });
 
 const textMap = reactive({
@@ -72,13 +74,9 @@ const textMap = reactive({
   detail: "凭证规则详情",
 });
 
-onMounted(() => {
-  getSubject();
-});
-
-const form = reactive({});
+let form = reactive({});
 const rules = reactive({
-  abstract: [
+  abstracts: [
     {
       required: true,
       message: "请输入摘要",
@@ -108,9 +106,45 @@ const rules = reactive({
 });
 
 let subjectList = reactive([]);
-const ruleForms = ref(null);
+let dialogFormVisible = ref(false);
 
+const ruleForms = ref(null);
 const emit = defineEmits(["closeDialog"]);
+
+onMounted(() => {
+  getSubject();
+});
+// 监听所选科目的变化，给借贷方向赋值
+watch(
+  () => form.subjectName,
+  (newVal) => {
+    console.log(newVal);
+
+    const { dcdirection = "" } =
+      subjectList.find((item) => item?.subjectName === newVal) || {};
+    // dcdirection = newVal.dcdirection == 0 ? "借" : "贷";
+    // form.dcdirection = newVal.dcdirection;
+    // form.subject = newVal.subjectName;
+    form.dcdirection = dcdirection;
+  }
+);
+
+// 监听弹窗状态的变化
+watch(
+  () => props.dialogFormVisible,
+  (newVal) => {
+    dialogFormVisible = newVal;
+  }
+);
+
+// 监听编辑行数据的变化
+watch(
+  () => props.rowData,
+  (newVal) => {
+    console.log(newVal);
+    // form = { ...form, ...newVal };
+  }
+);
 
 const cancel = () => {
   emit("closeDialog", false);
@@ -119,7 +153,7 @@ const handleSubmit = () => {
   ruleForms.value.validate((valid) => {
     if (!valid) return false;
     // 调用接口
-    emit("closeDialog", true, form);
+    emit("closeDialog", form, true);
     // const api = props.dialogStatus === "create" ? addObj : editObj;
     // api(form).then(() => {
     //   emit("closeDialog", true, form);

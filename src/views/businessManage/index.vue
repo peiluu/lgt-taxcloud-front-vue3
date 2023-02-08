@@ -53,7 +53,7 @@ import cookies from "@/utils/cookies";
 import { page, delObj, updateEnterpriseStatus } from "./api/index.js";
 
 export default {
-  name: "setManageList",
+  name: "businessManageList",
   data() {
     return {
       form: {},

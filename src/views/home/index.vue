@@ -47,7 +47,7 @@
 import LgtMyFocus from "./components/lgt-myfocus/index.vue";
 import LgtChart from "./components/lgt-chart/index.vue";
 export default {
-  name: "home",
+  name: "taxCludeHome",
   components: {
     LgtMyFocus,
     LgtChart

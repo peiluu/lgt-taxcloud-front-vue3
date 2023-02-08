@@ -99,9 +99,9 @@ import chinaData from "@/static/china.js";
 console.log(chinaData);
 
 export default {
-  name: "setManageDetail",
+  name: "businessManageDetail",
   components: {
-    EluiChinaAreaDht,
+    // EluiChinaAreaDht,
   },
   data() {
     return {

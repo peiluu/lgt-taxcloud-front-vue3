@@ -31,14 +31,14 @@
       </el-form-item>
 
       <el-form-item label="状态" prop="status">
-        <el-select v-model="form.status" placeholder>
+        <el-select v-model="listQuery.status" placeholder>
           <el-option :value="1" label="开启" />
           <el-option :value="2" label="关闭" />
         </el-select>
       </el-form-item>
 
       <el-form-item label="辅助核算" prop="status">
-        <el-select v-model="form.status" placeholder>
+        <el-select v-model="listQuery.status" placeholder>
           <el-option :value="1" label="客户" />
           <el-option :value="2" label="供应商" />
         </el-select>
@@ -60,7 +60,6 @@
     <el-table
       stripe
       :data="list"
-      v-loading.body="listLoading"
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
@@ -122,6 +121,7 @@
       :dialogStatus="dialogStatus"
       @closeDialog="handleCloseDialog"
       :subjectCate="listQuery.subjectCate"
+      :subjectCateList="subjectCateList"
     />
   </div>
 </template>
@@ -131,7 +131,7 @@ import { page, delObj, findParentTaxSubject } from "../../api/subject.js";
 import dialogDetail from "./dialogDetail.vue";
 
 export default {
-  name: "setManageList",
+  name: "subjectList",
   components: { dialogDetail },
   data() {
     return {

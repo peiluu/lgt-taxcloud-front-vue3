@@ -133,7 +133,7 @@ import {
   updateVoucherRuleStatus,
 } from "../../api/voucherRule.js";
 export default {
-  name: "setManageList",
+  name: "voucherRulesList",
 
   data() {
     return {

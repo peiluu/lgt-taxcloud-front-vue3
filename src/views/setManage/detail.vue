@@ -189,9 +189,7 @@ export default {
   .m-title {
     margin: 0 16px 24px;
   }
-
   .m-footer {
-
     margin: 32px 0 32px 33%;
   }
 }

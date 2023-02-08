@@ -15,12 +15,12 @@
       </el-form-item>
 
       <el-form-item label="业务类别" prop="ywType">
-        <el-select v-model="listQuery.ywType" placeholder="请选择业务类别">
+        <el-select v-model="form.ywType" placeholder="请选择业务类别">
           <el-option
             v-for="item in metierSceneList"
-            :key="item.id"
-            :label="item.sceneName"
-            :value="item.id"
+            :key="item?.id"
+            :label="item?.sceneName"
+            :value="parseFloat(item?.id)"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -39,26 +39,18 @@
     </el-form>
 
     <div class="m-btns">
-      <el-button @click="handleUpdate('', 'create')" type="primary"
+      <el-button @click="handleUpdate('create', {}, 0)" type="primary"
         >科目维护</el-button
       >
     </div>
 
-    <el-table
-      stripe
-      :data="list"
-      v-loading.body="listLoading"
-      highlight-current-row
-    >
+    <el-table stripe :data="list" highlight-current-row>
       <el-table-column align="center" type="index" label="序号" width="60" />
-
-      <el-table-column align="center" label="摘要信息" prop="abstract" />
-
-      <el-table-column align="center" label="科目名称" prop="subject" />
-
+      <el-table-column align="center" label="摘要信息" prop="abstracts" />
+      <el-table-column align="center" label="科目名称" prop="subjectName" />
       <el-table-column align="center" label="借/贷">
         <template v-slot="scope">{{
-          scope.row.type === 1 ? "是" : "否"
+          scope.row.dcdirection == 0 ? "借" : "贷"
         }}</template>
       </el-table-column>
 
@@ -70,7 +62,10 @@
 
       <el-table-column align="center" label="操作" width="120" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" link @click="handleUpdate(scope, 'update')"
+          <el-button
+            type="primary"
+            link
+            @click="handleUpdate('update', scope.row, scope.$index)"
             >编辑</el-button
           >
           <el-button type="primary" link @click="handleDelete(scope.$index)"
@@ -80,7 +75,7 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination
+    <!-- <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       v-model:current-page="listQuery.pageIndex"
@@ -88,7 +83,7 @@
       :page-size="listQuery.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
-    />
+    /> -->
 
     <div class="m-footer">
       <el-button @click="cancel">取消</el-button>
@@ -104,16 +99,22 @@
       :dialogFormVisible="dialogFormVisible"
       :dialogStatus="dialogStatus"
       @closeDialog="handleCloseDialog"
+      :rowData="rowData"
     />
   </div>
 </template>
 
 <script>
-import { addObj, editObj, findMetierScene } from "../../api/voucherRule.js";
+import {
+  page,
+  addObj,
+  editObj,
+  findMetierScene,
+} from "../../api/voucherRule.js";
 import DialogDetail from "./dialogDetail.vue";
 
 export default {
-  name: "setManageDetail",
+  name: "voucherRulesDetail",
   components: {
     DialogDetail,
   },
@@ -136,20 +137,20 @@ export default {
             trigger: "blur",
           },
         ],
-        ywType : [
+        ywType: [
           {
             required: true,
             message: "请选择业务类别",
             trigger: "blur",
           },
         ],
-        // originalType: [
-        //   {
-        //     required: true,
-        //     message: "请选择原始凭证类别",
-        //     trigger: "blur",
-        //   },
-        // ],
+        originalType: [
+          {
+            required: true,
+            message: "请选择原始凭证类别",
+            trigger: "blur",
+          },
+        ],
       },
       id: "",
       updateStatus: "",
@@ -160,15 +161,15 @@ export default {
       },
       list: [],
       total: 0,
-      listLoading: false,
       listQuery: {
         pageIndex: 1,
         pageSize: 10,
       },
-
+      rowData: {},
       dialogFormVisible: false,
       dialogStatus: "",
       metierSceneList: [],
+      editIndex: 0,
     };
   },
 
@@ -183,11 +184,20 @@ export default {
     // 如果id 存在就去查询详情
     id(newV) {
       if (newV) {
-        // this.findTaxSubjectCascade(newV)
+        this.getDetail({
+          pageIndex: 1,
+          pageSize: 10,
+          id: newV,
+        });
       }
     },
   },
   methods: {
+    getDetail(params) {
+      page(params).then((response) => {
+        this.form = response.rows[0] || {};
+      });
+    },
     // 获取业务场景类别
     findMetierScene() {
       findMetierScene({
@@ -200,66 +210,80 @@ export default {
     cancel() {
       this.$router.push({ path: "/basic/voucherRulesList" });
     },
-    handleUpdate(id = "", dialogStatus = "") {
+    handleUpdate(dialogStatus = "", row = {}, editIndex = 0) {
+      this.editIndex = editIndex;
+      this.rowData = row;
       this.dialogFormVisible = true;
       this.dialogStatus = dialogStatus;
     },
-    handleSizeChange(val) {
-      this.listQuery.pageSize = val;
-      this.getList();
-    },
-    handleCurrentChange(val) {
-      this.listQuery.pageIndex = val;
-      this.getList();
-    },
+    // handleSizeChange(val) {
+    //   this.listQuery.pageSize = val;
+    // },
+    // handleCurrentChange(val) {
+    //   this.listQuery.pageIndex = val;
+    // },
 
     // 提交表单
     handleSubmit() {
       const set = this.$refs;
       set["form"].validate((valid) => {
         if (!valid) return false;
+        const params = {
+          ...this.form,
+          subjectList: this.list,
+        };
         if (this.updateStatus === "create") {
-          this.create();
-        } else {
-          this.update();
+          this.create(params);
+          return;
         }
+        this.update(params);
       });
     },
     // 创建
-    create() {
-      addObj(this.form).then(() => {
+    create(params) {
+      addObj(params).then(() => {
         this.dialogFormVisible = false;
-        this.getList();
         this.$notify({
           title: "成功",
           message: "新建成功",
           type: "success",
           duration: 2000,
         });
+        this.cancel();
       });
     },
     // 编辑
-    update() {
-      editObj(this.form).then(() => {
+    update(params) {
+      editObj(params).then(() => {
         this.dialogFormVisible = false;
-        this.getList();
         this.$notify({
           title: "成功",
           message: "更新成功",
           type: "success",
           duration: 2000,
         });
+        this.cancel();
       });
     },
-    handleCloseDialog(updateFlag, data) {
-      console.log(1);
+    // 接收弹窗数据，关闭弹窗
+    handleCloseDialog(data, saveFlag) {
       this.dialogFormVisible = false;
-      if (updateFlag) {
-        this.list = this.list.concat(data);
+      // 取消操作
+      if (!saveFlag) {
+        return;
+      }
+      // 新增科目维护
+      if (this.dialogStatus === "create") {
+        this.list = [...this.list.concat({ ...data })];
+      }
+      // 编辑科目
+      if (this.dialogStatus === "update") {
+        console.log(this);
+        this.list.splice(this.editIndex, 1, { ...data });
+        // vm.$set(this.list, this.editIndex, { ...data });
       }
     },
     handleDelete(rowIndex) {
-      console.log(rowIndex);
       this.list = this.list.filter((item, index) => index !== rowIndex);
     },
   },
