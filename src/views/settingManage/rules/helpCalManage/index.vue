@@ -1,28 +1,19 @@
 <template>
   <div>
     <div class="m-header">
-      <span>类别</span>
-      <el-tabs v-model="listQuery.subjectCate" type="card">
-        <el-tab-pane
-          v-for="item in subjectCateList"
-          :label="item.name"
-          :name="item.value"
-          :key="item.value"
-          >{{ item.name }}</el-tab-pane
-        >
-      </el-tabs>
+      <span>辅助核算设定</span>
     </div>
 
     <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="编码" prop="subjectCode">
+      <el-form-item label="编码" prop="status">
         <el-input
           @keyup.enter="getList"
           placeholder="编码"
-          v-model="listQuery.subjectCode"
+          v-model="listQuery.code"
         />
       </el-form-item>
 
-      <el-form-item label="名称" prop="name">
+      <el-form-item label="名称" prop="status">
         <el-input
           @keyup.enter="getList"
           placeholder="名称"
@@ -37,8 +28,8 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="辅助核算" prop="helpCal">
-        <el-select v-model="listQuery.helpCal" placeholder>
+      <el-form-item label="辅助核算" prop="status">
+        <el-select v-model="listQuery.status" placeholder>
           <el-option :value="1" label="客户" />
           <el-option :value="2" label="供应商" />
         </el-select>
@@ -48,16 +39,15 @@
         <el-button type="primary" icon="search" @click="getList"
           >查询</el-button
         >
-        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
 
-    <el-button @click="handleUpdate({}, 'create')" type="primary"
+    <el-button @click="handleUpdate('', 'create')" type="primary"
       >新增</el-button
     >
-    <!-- <el-button @click="handleUpdate('', 'create')" style="float: right"
+    <el-button @click="handleUpdate('', 'create')" style="float: right"
       >导出</el-button
-    > -->
+    >
     <el-table
       stripe
       :data="list"
@@ -74,7 +64,7 @@
       <el-table-column align="center" label="编码" prop="subjectCode" />
       <el-table-column align="center" label="名称" prop="subjectName" />
 
-      <el-table-column align="center" label="辅助核算" prop="helpCal" />
+      <el-table-column align="center" label="辅助核算" prop="time" />
 
       <el-table-column align="center" label="状态">
         <template v-slot="scope">
@@ -82,7 +72,7 @@
             v-model="scope.row.status"
             :active-value="1"
             :inactive-value="0"
-            @click="updateTaxSubjectStatus(scope.row)"
+            @click="updateAccountSetStatus(scope.row)"
           />
         </template>
       </el-table-column>
@@ -92,7 +82,7 @@
           <el-button
             type="primary"
             link
-            @click="handleUpdate(scope.row, 'addSubject')"
+            @click="handleUpdate(scope.row, 'addSubordinate')"
             >新增下级</el-button
           >
           <el-button type="primary" link @click="handleDelete(scope.row)"
@@ -101,7 +91,7 @@
           <el-button
             type="primary"
             link
-            @click="handleUpdate(scope.row, 'update')"
+            @click="handleUpdate(scope.row.id, 'update')"
             >修改</el-button
           >
         </template>
@@ -123,7 +113,6 @@
       @closeDialog="handleCloseDialog"
       :subjectCate="listQuery.subjectCate"
       :subjectCateList="subjectCateList"
-      :rowData="rowData"
     />
   </div>
 </template>
@@ -133,12 +122,11 @@ import {
   page,
   delObj,
   findParentTaxSubject,
-  updateTaxSubjectStatus,
-} from "../../api/subject.js";
+} from "@/views/settingManage/api/helpCalManage.js";
 import dialogDetail from "./dialogDetail.vue";
 
 export default {
-  name: "subjectList",
+  name: "HelpCalManageList",
   components: { dialogDetail },
   data() {
     return {
@@ -154,7 +142,6 @@ export default {
       dialogFormVisible: false,
       dialogStatus: "",
       deleteList: [],
-      rowData: {},
     };
   },
   watch: {
@@ -191,23 +178,11 @@ export default {
       this.getList();
     },
 
-    handleUpdate(row = {}, dialogStatus = "") {
-      this.rowData = row;
+    handleUpdate(id = "", dialogStatus = "") {
       this.dialogFormVisible = true;
       this.dialogStatus = dialogStatus;
     },
-    // 修改状态
-    updateTaxSubjectStatus(row) {
-      updateTaxSubjectStatus({ id: row.id }).then(() => {
-        this.$notify({
-          title: "成功",
-          message: "操作成功",
-          type: "success",
-          duration: 2000,
-        });
-        this.getList();
-      });
-    },
+
     handleSelectionChange(val) {
       this.deleteList = val;
     },
@@ -228,19 +203,12 @@ export default {
         });
       });
     },
-    handleCloseDialog(saveFlag) {
+    handleCloseDialog(updateFlag) {
+      console.log(1);
       this.dialogFormVisible = false;
-      if (saveFlag) {
+      if (updateFlag) {
         this.getList();
       }
-    },
-    // 重置表单
-    reset() {
-      this.listQuery = {
-        pageIndex: 1,
-        pageSize: 10,
-      };
-      this.getList();
     },
   },
 };

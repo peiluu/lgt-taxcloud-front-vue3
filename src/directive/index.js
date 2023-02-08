@@ -44,13 +44,13 @@ export default {
       //   console.log("unmounted");
       // },
     });
-    Vue.directive("text", {
-      // 当被绑定的元素插入到 DOM 中时……
-      created: function (el) {
-        console.log(11);
-        // 聚焦元素
-        el.focus();
-      },
-    });
+    // Vue.directive("text", {
+    //   // 当被绑定的元素插入到 DOM 中时……
+    //   created: function (el) {
+    //     console.log(11);
+    //     // 聚焦元素
+    //     el.focus();
+    //   },
+    // });
   },
 };

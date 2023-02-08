@@ -47,11 +47,11 @@
       <el-form-item label="辅助核算" prop="checked">
         <div class="item-box">
           <el-checkbox v-model="checked" />
-          <el-select v-model="form.helpCal" v-if="checked">
+          <el-select v-model="form.ywType" v-if="checked">
             <el-option
-              v-for="item in helpCalList"
+              v-for="item in metierSceneList"
               :key="item.id"
-              :label="item.name"
+              :label="item.sceneName"
               :value="item.id"
             ></el-option>
           </el-select>
@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { addObj, editObj, findTaxSubjectCascade } from "../../api/subject.js";
+import { addObj, editObj, findTaxSubjectCascade } from "@/views/settingManage/api/helpCalManage.js";
 import { reactive, defineProps, ref, defineEmits, onMounted, watch } from "vue";
 
 const props = defineProps({
@@ -87,20 +87,36 @@ const props = defineProps({
   subjectCateList: {
     type: Array,
   },
-  rowData: {
-    type: Object,
-    default: () => {},
-  },
 });
+// onMounted(() => {
+//   findFatherList();
+// });
+let dialogFormVisible = ref(false);
+const textMap = reactive({
+  update: "编辑企业",
+  create: "新增企业",
+  detail: "企业详情",
+});
+const form = reactive({});
 let checked = ref(false);
 const cascaderRef = ref();
-const textMap = reactive({
-  update: "编辑科目",
-  create: "新增科目",
-  addSubject: "新增下级科目",
-});
-let dialogFormVisible = ref(false);
-let form = reactive({ status: 1 });
+
+// 根据科目类别查找下属的级联科目列表
+watch(
+  () => props.subjectCate,
+  (newVal) => {
+
+    findFatherList(newVal);
+    form.subjectCate = props.subjectCate;
+  }
+);
+// 监听弹窗状态的变化
+watch(
+  () => props.dialogFormVisible,
+  (newVal) => {
+    dialogFormVisible = newVal;
+  }
+);
 
 const rules = reactive({
   subjectCode: [
@@ -132,7 +148,9 @@ const rules = reactive({
 });
 
 let sujectCascadeList = reactive([]);
-const helpCalList = reactive([{ id: 1, name: "客户" }]);
+
+const typeList = reactive([]);
+const metierSceneList = reactive([]);
 const subjectProps = reactive({
   label: "subjectName",
   value: "id",
@@ -143,41 +161,7 @@ const ruleForms = ref(null);
 
 const emit = defineEmits(["closeDialog"]);
 
-// 根据科目类别查找下属的级联科目列表
-watch(
-  () => props.subjectCate,
-  (newVal) => {
-    findFatherList(newVal);
-    form.subjectCate = props.subjectCate;
-  }
-);
-// 监听弹窗状态的变化
-watch(
-  () => props.dialogFormVisible,
-  (newVal) => {
-    dialogFormVisible = newVal;
-  }
-);
-
-// 监听编辑行数据的变化，
-watch(
-  () => props.rowData,
-  (newVal) => {
-    if (!newVal.id) return;
-    // 编辑科目
-    if (props.dialogStatus === "update") {
-      form = { ...form, ...newVal };
-    }
-    // 新增下级科目
-    if (props.dialogStatus === "addSubject") {
-      form = { ...form, pid: newVal.id };
-    }
-    // 判断有没有辅助核算
-    checked = !!newVal.helpCal;
-  }
-);
 const cancel = () => {
-  form = {};
   emit("closeDialog", false);
 };
 const handleSubmit = () => {
@@ -186,7 +170,6 @@ const handleSubmit = () => {
     // 调用接口
     const api = props.dialogStatus === "create" ? addObj : editObj;
     api(form).then(() => {
-      form = {};
       emit("closeDialog", true);
     });
   });

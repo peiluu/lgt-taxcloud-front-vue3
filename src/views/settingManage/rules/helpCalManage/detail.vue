@@ -54,8 +54,10 @@
         }}</template>
       </el-table-column>
 
-      <el-table-column align="center" label="核算协助" prop="helpCal" >
-
+      <el-table-column align="center" label="核算协助">
+        <template v-slot="scope">{{
+          scope.row.type === 1 ? "是" : "否"
+        }}</template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="120" fixed="right">
@@ -98,7 +100,6 @@
       :dialogStatus="dialogStatus"
       @closeDialog="handleCloseDialog"
       :rowData="rowData"
-      :list="list"
     />
   </div>
 </template>
@@ -195,7 +196,6 @@ export default {
     getDetail(params) {
       page(params).then((response) => {
         this.form = response.rows[0] || {};
-        this.list = JSON.parse(this.form.jsonSubject || '')
       });
     },
     // 获取业务场景类别
@@ -216,6 +216,12 @@ export default {
       this.dialogFormVisible = true;
       this.dialogStatus = dialogStatus;
     },
+    // handleSizeChange(val) {
+    //   this.listQuery.pageSize = val;
+    // },
+    // handleCurrentChange(val) {
+    //   this.listQuery.pageIndex = val;
+    // },
 
     // 提交表单
     handleSubmit() {
@@ -224,7 +230,7 @@ export default {
         if (!valid) return false;
         const params = {
           ...this.form,
-          jsonSubject: JSON.stringify(this.list)
+          subjectList: this.list,
         };
         if (this.updateStatus === "create") {
           this.create(params);
@@ -272,9 +278,7 @@ export default {
       }
       // 编辑科目
       if (this.dialogStatus === "update") {
-        console.log(this);
         this.list.splice(this.editIndex, 1, { ...data });
-        // vm.$set(this.list, this.editIndex, { ...data });
       }
     },
     handleDelete(rowIndex) {

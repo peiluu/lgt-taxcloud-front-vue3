@@ -52,6 +52,7 @@
 <script setup>
 import { findTaxSubjectRule } from "../../api/voucherRule.js";
 import { reactive, defineProps, ref, defineEmits, onMounted, watch } from "vue";
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
   dialogStatus: {
@@ -65,6 +66,10 @@ const props = defineProps({
   rowData: {
     type: Object,
     default: () => {},
+  },
+  list: {
+    type: Array,
+    default: () => [],
   },
 });
 
@@ -89,14 +94,14 @@ const rules = reactive({
       trigger: "blur",
     },
   ],
-  subject: [
+  subjectName: [
     {
       required: true,
-      message: "请选择会计准则",
+      message: "请选择科目",
       trigger: "blur",
     },
   ],
-  type: [
+  dcdirection: [
     {
       required: true,
       message: "请选择借贷方向",
@@ -114,17 +119,13 @@ const emit = defineEmits(["closeDialog"]);
 onMounted(() => {
   getSubject();
 });
+
 // 监听所选科目的变化，给借贷方向赋值
 watch(
   () => form.subjectName,
   (newVal) => {
-    console.log(newVal);
-
     const { dcdirection = "" } =
       subjectList.find((item) => item?.subjectName === newVal) || {};
-    // dcdirection = newVal.dcdirection == 0 ? "借" : "贷";
-    // form.dcdirection = newVal.dcdirection;
-    // form.subject = newVal.subjectName;
     form.dcdirection = dcdirection;
   }
 );
@@ -141,31 +142,42 @@ watch(
 watch(
   () => props.rowData,
   (newVal) => {
-    console.log(newVal);
-    // form = { ...form, ...newVal };
+    if (newVal.subjectName) {
+      console.log(1);
+      form = { ...form, ...newVal };
+    }
   }
 );
-
-const cancel = () => {
-  emit("closeDialog", false);
-};
-const handleSubmit = () => {
-  ruleForms.value.validate((valid) => {
-    if (!valid) return false;
-    // 调用接口
-    emit("closeDialog", form, true);
-    // const api = props.dialogStatus === "create" ? addObj : editObj;
-    // api(form).then(() => {
-    //   emit("closeDialog", true, form);
-    // });
-  });
-};
 
 // 获取科目规则
 const getSubject = () => {
   findTaxSubjectRule().then((response) => {
     subjectList = response.rows;
   });
+};
+
+const handleSubmit = () => {
+  ruleForms.value.validate((valid) => {
+    if (!valid) return false;
+    if (
+      props.list.findIndex((item) => item.subjectName === form.subjectName) > -1
+    ) {
+      ElMessage({
+        message: "请勿添加重复的科目",
+        type: "error",
+        duration: 5 * 1000,
+      });
+      return;
+    }
+    emit("closeDialog", form, true);
+    form = {};
+  });
+};
+
+const cancel = () => {
+  form = {};
+
+  emit("closeDialog", false);
 };
 </script>
 <style lang="scss" scoped>

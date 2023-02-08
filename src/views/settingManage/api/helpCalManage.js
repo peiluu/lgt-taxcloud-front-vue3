@@ -52,10 +52,13 @@ export function findTaxSubjectCascade (id) {
   })
 }
 
-// 修改状态
-export function updateTaxSubjectStatus(obj) {
+/**
+ * @despition 新增发票
+ * */
+export function addTaxInvoice (obj) {
   return request({
-    url: "/api/tax/meSubject/updateTaxSubjectStatus/" + obj.id,
-    method: "post",
-  });
+    url: '/api/tax/invoiceAccount/addTaxInvoice',
+    method: 'post',
+    data: obj
+  })
 }

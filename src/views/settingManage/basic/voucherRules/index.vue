@@ -43,7 +43,7 @@
       <el-button @click="handleUpdate('', 'create')" type="primary"
         >新增</el-button
       >
-      <el-button @click="handleDelete('', 'create')" type="primary"
+      <el-button @click="handleDelete('all')" type="primary"
         >批量删除</el-button
       >
     </div>
@@ -82,14 +82,18 @@
         prop="originalType"
       />
 
-      <el-table-column align="center" label="业务类别" prop="time" />
+      <el-table-column align="center" label="业务类别" prop="sceneName" />
 
-      <el-table-column align="center" label="科目管理" prop="time" />
+      <el-table-column align="center" label="科目管理">
+        <template v-slot="scope">
+          {{ getSubjectInfo(scope.row.jsonSubject) }}
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="状态">
-        <template v-slot="scope">{{
-          scope.row.status == 1 ? "已启用" : "已停用"
-        }}</template>
+        <template v-slot="scope">
+          {{ scope.row.status == 1 ? "已启用" : "已停用" }}
+        </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="300" fixed="right">
@@ -100,7 +104,7 @@
             @click="updateVoucherRuleStatus(scope.row)"
             >{{ scope.row.status == "1" ? "启停" : "启用" }}</el-button
           >
-          <el-button type="primary" link @click="handleDelete(scope.row)"
+          <el-button type="primary" link @click="handleDelete('', scope.row.id)"
             >删除</el-button
           >
           <el-button
@@ -169,6 +173,48 @@ export default {
         this.metierSceneList = response.rows;
       });
     },
+
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val;
+      this.getList();
+    },
+    handleCurrentChange(val) {
+      this.listQuery.pageIndex = val;
+      this.getList();
+    },
+
+    handleUpdate(id = "", updateStatus = "") {
+      this.$router.push({
+        path: "/basic/voucherRulesDetail",
+        query: {
+          id,
+          updateStatus,
+        },
+      });
+    },
+
+    handleDelete(flag, id) {
+      this.$confirm("你确定要删除所选内容吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          const ids =
+            flag === "all" ? this.selectionList.map((item) => item.id) : [id];
+          delObj({ ids }).then(() => {
+            this.$notify({
+              title: "成功",
+              message: "删除成功",
+              type: "success",
+              duration: 2000,
+            });
+            this.getList();
+          });
+        })
+        .catch(() => {});
+    },
+
     // 重置表单
     reset() {
       this.listQuery = {
@@ -193,42 +239,16 @@ export default {
         this.getList();
       });
     },
-
-    handleSizeChange(val) {
-      this.listQuery.pageSize = val;
-      this.getList();
-    },
-    handleCurrentChange(val) {
-      this.listQuery.pageIndex = val;
-      this.getList();
-    },
-
-    handleUpdate(id = "", updateStatus = "") {
-      this.$router.push({
-        path: "/basic/voucherRulesDetail",
-        query: {
-          id,
-          updateStatus,
-        },
+    // 根据json字符串拼接得出科目管理信息
+    getSubjectInfo(data = "") {
+      const list = JSON.parse(data);
+      let str = "";
+      list.map((item) => {
+        str = `${str}\n\n${item.dcdirection == 0 ? "借" : "贷"}：${
+          item.subjectName
+        }`;
       });
-    },
-
-    handleDelete(row) {
-      this.$confirm("你确定要删除这行内容吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        delObj({ id: row.id }).then(() => {
-          this.$notify({
-            title: "成功",
-            message: "删除成功",
-            type: "success",
-            duration: 2000,
-          });
-          this.getList();
-        });
-      }).catch(() => {})
+      return str;
     },
   },
 };
@@ -236,10 +256,12 @@ export default {
 <style lang="scss" scoped>
 .m-btns {
   float: right;
+
   .el-button {
     margin: 0 0 16px 16px;
   }
 }
+
 .table-tip {
   display: flex;
   align-items: center;
@@ -252,6 +274,7 @@ export default {
   .el-icon {
     margin-right: 4px;
   }
+
   span {
     color: #1890ff;
   }

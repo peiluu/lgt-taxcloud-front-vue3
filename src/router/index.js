@@ -137,12 +137,21 @@ export const constantRouterMap = [
         meta: { title: "规则设置", icon: "dashboard" },
         children: [
           {
-            path: "subject",
+            path: "helpCalManage",
             name: "辅助核算设定",
             component: () =>
-              import("@/views/settingManage/basic/subject/index"),
+              import("@/views/settingManage/rules/helpCalManage/index"),
+            // import("@/views/settingManage/rules/helpCalManage/index"),
             meta: { title: "辅助核算设定", icon: "dashboard" },
           },
+          // {
+          //   path: "helpCalManageDetail",
+          //   name: "辅助核算设定",
+          //   hidden: true,
+          //   component: () =>
+          //     import("@/views/settingManage/rules/helpCalManage/detail"),
+          //   meta: { title: "辅助核算设定", icon: "dashboard" },
+          // },
         ],
       },
       {
