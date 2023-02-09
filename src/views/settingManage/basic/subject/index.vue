@@ -92,7 +92,7 @@
           <el-button
             type="primary"
             link
-            @click="handleUpdate(scope.row, 'addSubject')"
+            @click="handleUpdate(scope.row, 'addSub')"
             >新增下级</el-button
           >
           <el-button type="primary" link @click="handleDelete(scope.row)"

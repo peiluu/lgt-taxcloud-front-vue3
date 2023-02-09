@@ -1,5 +1,9 @@
 <template>
-  <el-dialog :title="textMap[props.dialogStatus]" v-model="dialogFormVisible">
+  <el-dialog
+    :title="textMap[props.dialogStatus]"
+    v-model="dialogFormVisible"
+    :beforeClose="cancel"
+  >
     <el-form
       :model="form"
       :rules="rules"
@@ -143,8 +147,8 @@ watch(
   () => props.rowData,
   (newVal) => {
     if (newVal.subjectName) {
-      console.log(1);
-      form = { ...form, ...newVal };
+      // 给form.value赋值可以保证给form保持响应式
+      form = reactive({ ...form, ...newVal });
     }
   }
 );
@@ -160,6 +164,7 @@ const handleSubmit = () => {
   ruleForms.value.validate((valid) => {
     if (!valid) return false;
     if (
+      props.dialogStatus === "create" &&
       props.list.findIndex((item) => item.subjectName === form.subjectName) > -1
     ) {
       ElMessage({
@@ -176,7 +181,6 @@ const handleSubmit = () => {
 
 const cancel = () => {
   form = {};
-
   emit("closeDialog", false);
 };
 </script>

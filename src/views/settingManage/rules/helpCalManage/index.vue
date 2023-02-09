@@ -1,119 +1,87 @@
 <template>
   <div>
     <div class="m-header">
-      <span>辅助核算设定</span>
+      <h4>辅助核算设定</h4>
+    </div>
+    <div class="list">
+      <div
+        class="item"
+        v-for="item in list"
+        :key="item.id"
+        @click="handleUpdate('update', item)"
+      ></div>
+    </div>
+    <div class="item item-add">
+      <el-icon :size="50" color="#000">
+        <CirclePlus />
+      </el-icon>
     </div>
 
-    <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="编码" prop="status">
-        <el-input
-          @keyup.enter="getList"
-          placeholder="编码"
-          v-model="listQuery.code"
-        />
-      </el-form-item>
+    <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible">
+      <el-form :model="form" :rules="rules" ref="form" label-width="100px">
+        <el-form-item label="科目类别" prop="subjectCate">
+          <el-select v-model="form.subjectCate" placeholder="请选择科目类别">
+            <el-option
+              v-for="item in subjectCateList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item label="名称" prop="status">
-        <el-input
-          @keyup.enter="getList"
-          placeholder="名称"
-          v-model="listQuery.name"
-        />
-      </el-form-item>
+        <el-form-item label="父级科目" prop="pid">
+          <el-cascader
+            v-model="form.pid"
+            placeholder="请选择科目"
+            :options="sujectCascadeList"
+            clearable
+            ref="cascaderRef"
+            @change="handleChange"
+            :props="props"
+            popper-class="cascaderClass"
+          ></el-cascader>
+        </el-form-item>
 
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="listQuery.status" placeholder>
-          <el-option :value="1" label="开启" />
-          <el-option :value="2" label="关闭" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="辅助核算" prop="status">
-        <el-select v-model="listQuery.status" placeholder>
-          <el-option :value="1" label="客户" />
-          <el-option :value="2" label="供应商" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" icon="search" @click="getList"
-          >查询</el-button
+        <el-form-item label="科目代码" prop="subjectCode">
+          <el-input
+            v-model="form.subjectCode"
+            placeholder="请输入科目代码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="科目名称" prop="subjectName">
+          <el-input
+            v-model="form.subjectName"
+            placeholder="请输入科目名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="会计准则" prop="accoutingStandard">
+          <el-select
+            v-model="form.accoutingStandard"
+            placeholder="请选择会计准则"
+          >
+            <el-option
+              v-for="item in accoutingStandardList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel('form')">取 消</el-button>
+        <el-button
+          v-if="dialogStatus == 'create'"
+          type="primary"
+          @click="create('form')"
+          >确 定</el-button
         >
-      </el-form-item>
-    </el-form>
-
-    <el-button @click="handleUpdate('', 'create')" type="primary"
-      >新增</el-button
-    >
-    <el-button @click="handleUpdate('', 'create')" style="float: right"
-      >导出</el-button
-    >
-    <el-table
-      stripe
-      :data="list"
-      highlight-current-row
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column
-        align="center"
-        type="selection"
-        width="60"
-        label="选择"
-      />
-
-      <el-table-column align="center" label="编码" prop="subjectCode" />
-      <el-table-column align="center" label="名称" prop="subjectName" />
-
-      <el-table-column align="center" label="辅助核算" prop="time" />
-
-      <el-table-column align="center" label="状态">
-        <template v-slot="scope">
-          <el-switch
-            v-model="scope.row.status"
-            :active-value="1"
-            :inactive-value="0"
-            @click="updateAccountSetStatus(scope.row)"
-          />
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="操作" width="300" fixed="right">
-        <template v-slot="scope">
-          <el-button
-            type="primary"
-            link
-            @click="handleUpdate(scope.row, 'addSubordinate')"
-            >新增下级</el-button
-          >
-          <el-button type="primary" link @click="handleDelete(scope.row)"
-            >删除</el-button
-          >
-          <el-button
-            type="primary"
-            link
-            @click="handleUpdate(scope.row.id, 'update')"
-            >修改</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      v-model:current-page="listQuery.pageIndex"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="listQuery.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-    />
-    <dialogDetail
-      :dialogFormVisible="dialogFormVisible"
-      :dialogStatus="dialogStatus"
-      @closeDialog="handleCloseDialog"
-      :subjectCate="listQuery.subjectCate"
-      :subjectCateList="subjectCateList"
-    />
+        <el-button v-else type="primary" @click="update('form')"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -127,7 +95,7 @@ import dialogDetail from "./dialogDetail.vue";
 
 export default {
   name: "HelpCalManageList",
-  components: { dialogDetail },
+  // components: { dialogDetail },
   data() {
     return {
       form: {},
@@ -142,31 +110,20 @@ export default {
       dialogFormVisible: false,
       dialogStatus: "",
       deleteList: [],
+      textMap: {
+        update: '编辑',
+        create: '创建'
+      },
     };
   },
-  watch: {
-    "listQuery.subjectCate"() {
-      this.getList();
-    },
-  },
   mounted() {
-    this.findParentTaxSubject();
+    this.getList();
   },
   methods: {
-    // 查询科目类别
-    findParentTaxSubject() {
-      findParentTaxSubject().then((response) => {
-        this.subjectCateList = response;
-        this.listQuery.subjectCate = response[0]?.value;
-      });
-    },
-    // 查询科目列表
+    // 查询列表
     getList() {
-      this.listLoading = true;
       page(this.listQuery).then((response) => {
         this.list = response.rows;
-        this.total = response.total;
-        this.listLoading = false;
       });
     },
     handleSizeChange(val) {
@@ -218,17 +175,12 @@ export default {
   display: flex;
   align-items: center;
   padding-bottom: 24px;
-
-  span {
-    padding-right: 8px;
-  }
-
-  /deep/ .el-tabs__header {
-    margin: 0;
-  }
-
-  .el-tab-pane {
-    display: none;
+}
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  .item {
+    flex-basis: 25%;
   }
 }
 </style>

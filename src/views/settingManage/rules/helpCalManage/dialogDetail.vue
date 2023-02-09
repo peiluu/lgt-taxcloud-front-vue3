@@ -1,5 +1,9 @@
 <template>
-  <el-dialog :title="textMap[props.dialogStatus]" v-model="dialogFormVisible">
+  <el-dialog
+    :title="textMap[props.dialogStatus]"
+    v-model="dialogFormVisible"
+    :beforeClose="cancel"
+  >
     <el-form
       :model="form"
       :rules="rules"
@@ -68,7 +72,11 @@
 </template>
 
 <script setup>
-import { addObj, editObj, findTaxSubjectCascade } from "@/views/settingManage/api/helpCalManage.js";
+import {
+  addObj,
+  editObj,
+  findTaxSubjectCascade,
+} from "@/views/settingManage/api/helpCalManage.js";
 import { reactive, defineProps, ref, defineEmits, onMounted, watch } from "vue";
 
 const props = defineProps({
@@ -105,7 +113,6 @@ const cascaderRef = ref();
 watch(
   () => props.subjectCate,
   (newVal) => {
-
     findFatherList(newVal);
     form.subjectCate = props.subjectCate;
   }

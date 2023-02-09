@@ -1,5 +1,10 @@
 <template>
-  <el-dialog :title="textMap[props.dialogStatus]" v-model="dialogFormVisible">
+  <el-dialog
+    :title="textMap[props.dialogStatus]"
+    v-model="dialogFormVisible"
+    :beforeClose="cancel"
+    destroy-on-close
+  >
     <el-form
       :model="form"
       :rules="rules"
@@ -30,11 +35,12 @@
           @change="handleChange"
           :props="subjectProps"
           popper-class="cascaderClass"
-        ></el-cascader>
+          :disabled="props.dialogStatus !== 'create'"
+        />
       </el-form-item>
 
       <el-form-item label="科目类别" prop="subjectCate">
-        <el-select v-model="form.subjectCate" placeholder="请选择" disabled>
+        <el-select v-model="props.subjectCate" placeholder="请选择" disabled>
           <el-option
             v-for="item in subjectCateList"
             :key="item.value"
@@ -69,7 +75,8 @@
 
 <script setup>
 import { addObj, editObj, findTaxSubjectCascade } from "../../api/subject.js";
-import { reactive, defineProps, ref, defineEmits, onMounted, watch } from "vue";
+import { reactive, defineProps, ref, defineEmits, watch, onMounted } from "vue";
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
   dialogStatus: {
@@ -97,7 +104,7 @@ const cascaderRef = ref();
 const textMap = reactive({
   update: "编辑科目",
   create: "新增科目",
-  addSubject: "新增下级科目",
+  addSub: "新增下级科目",
 });
 let dialogFormVisible = ref(false);
 let form = reactive({ status: 1 });
@@ -148,7 +155,8 @@ watch(
   () => props.subjectCate,
   (newVal) => {
     findFatherList(newVal);
-    form.subjectCate = props.subjectCate;
+    // form.subjectCate = props.subjectCate;
+    // console.log(form);reactive
   }
 );
 // 监听弹窗状态的变化
@@ -158,7 +166,9 @@ watch(
     dialogFormVisible = newVal;
   }
 );
-
+onMounted(() => {
+  console.log("onMounted");
+});
 // 监听编辑行数据的变化，
 watch(
   () => props.rowData,
@@ -166,16 +176,18 @@ watch(
     if (!newVal.id) return;
     // 编辑科目
     if (props.dialogStatus === "update") {
-      form = { ...form, ...newVal };
+      form = reactive({ ...form, ...newVal });
     }
-    // 新增下级科目
-    if (props.dialogStatus === "addSubject") {
-      form = { ...form, pid: newVal.id };
+    // // 新增下级科目
+    if (props.dialogStatus === "addSub") {
+      form = reactive({ ...form, pid: newVal.id });
     }
     // 判断有没有辅助核算
-    checked = !!newVal.helpCal;
+    checked = !!newVal.helpCal && props.dialogStatus === "update";
+    // debugger;
   }
 );
+
 const cancel = () => {
   form = {};
   emit("closeDialog", false);
@@ -183,6 +195,14 @@ const cancel = () => {
 const handleSubmit = () => {
   ruleForms.value.validate((valid) => {
     if (!valid) return false;
+    if (form.pid === form.id) {
+      ElMessage({
+        message: "请勿添加重复的科目",
+        type: "error",
+        duration: 5 * 1000,
+      });
+      return false;
+    }
     // 调用接口
     const api = props.dialogStatus === "create" ? addObj : editObj;
     api(form).then(() => {
@@ -200,7 +220,6 @@ const findFatherList = (id) => {
 };
 const handleChange = (value) => {
   form.pid = value && value.length ? value[value.length - 1] : "";
-  console.log(cascaderRef);
   // cascaderRef.value.dropDownVisible = false;
 };
 </script>
