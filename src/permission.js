@@ -4,7 +4,7 @@ import NProgress from "nprogress"; // Progress 进度条
 import "nprogress/nprogress.css"; // Progress 进度条样式
 import cookies from "@/utils/cookies";
 import { setTitle } from "@/utils/util";
-0;
+
 // permission judge function
 // function hasPermission(roles, permissionRoles) {
 //   if (roles.indexOf("admin") >= 0) return true; // admin permission passed directly
@@ -18,14 +18,14 @@ router.beforeEach((to, from, next) => {
   const token = cookies.get("token");
   if (token) {
     // 设置浏览器头部标题
-    const browserHeaderTitle = to.name;
+    const browserHeaderTitle = to?.meta?.title;
     store.commit("SET_BROWSERHEADERTITLE", {
       browserHeaderTitle: browserHeaderTitle,
     });
-    // 将企业和账套信息保存在响应式vuex数据中
+    // 将企业和账套信息保存在响应式Vuex数据中
     store.commit("SET_USERINFO", {
-      qymc: cookies.get("qymc"),
       qyId: cookies.get("qyId"),
+      qymc: cookies.get("qymc"),
       accountSetId: cookies.get("accountSetId"),
       accountSetName: cookies.get("accountSetName"),
     });
@@ -67,7 +67,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // 设置浏览器头部标题
-    const browserHeaderTitle = to.name;
+    const browserHeaderTitle = to?.meta?.title;
     store.commit("SET_BROWSERHEADERTITLE", {
       browserHeaderTitle: browserHeaderTitle,
     });

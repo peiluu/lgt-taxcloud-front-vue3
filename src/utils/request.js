@@ -1,5 +1,4 @@
 import axios from "axios";
-// import qs from "qs";
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import store from "../store";
 import cookies from "@/utils/cookies";
@@ -17,12 +16,7 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     config.headers["Content-Type"] = "application/json; charset=utf-8";
-    // if (config.method === 'get' || config.method === 'post') {
-    // 	config.data = qs.stringify({
-    // 		...config.data,
-    // 	});
-    // }
-    // 加载接口时显示loading
+    // 加载接口时隐藏loading
     if (!config.hideLoading) {
       loading = ElLoading.service({
         lock: true,
@@ -35,15 +29,14 @@ service.interceptors.request.use(
     if (!/^https:\/\/|http:\/\//.test(config.url)) {
       const token = cookies.get("token");
       if (token && token !== "undefined") {
-        // 让每个请求携带token-- ['Authorization']为自定义key 请根据实际情况自行修改
+        // 让每个请求携带token-- ['Authorization']为自定义key
         config.headers["Authorization"] = "Bearer " + token;
       }
     }
     return config;
   },
   (error) => {
-    // Do something with request error
-    console.log(error); // for debug
+    console.log(error);
     Promise.reject(error);
   }
 );
@@ -58,7 +51,7 @@ service.interceptors.response.use(
     }
 
     /**
-     * statusCode为非200是抛错 可结合自己业务进行修改
+     * statusCode为非200是抛错
      */
     const res = response.data;
     if (res.statusCode !== 200) {
@@ -90,7 +83,7 @@ service.interceptors.response.use(
       }
       return Promise.reject("error");
     } else {
-      return response.data.data;
+      return res.data;
     }
   },
   (error) => {
@@ -102,7 +95,6 @@ service.interceptors.response.use(
       window.location.replace("#/login");
       cookies.remove("token");
       message = "登录息已过期,请重新登录!";
-      console.log(message)
     }
     ElMessage({
       message,

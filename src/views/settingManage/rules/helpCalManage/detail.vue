@@ -1,81 +1,89 @@
 <template>
   <div class="p-page">
-    <h3 class="m-title">{{ textMap[updateStatus] || "新增凭证规则" }}</h3>
-    <el-form
-      :model="form"
-      :inline="true"
-      :rules="rules"
-      ref="form"
-      label-width="120px"
-      class="detail-form"
-      :disabled="updateStatus === 'detail'"
-    >
-      <el-form-item label="规则名称" prop="name">
-        <el-input v-model="form.name" placeholder="请输入规则名称" />
+    <h3 class="m-title">辅助核算设定_{{ helpCalName }}</h3>
+    <el-form :model="listQuery" ref="form" :inline="true">
+      <el-form-item label="名称" prop="itemName">
+        <el-input
+          @keyup.enter="getList"
+          placeholder="名称"
+          v-model="listQuery.itemName"
+        />
       </el-form-item>
 
-      <el-form-item label="业务类别" prop="ywType">
-        <el-select v-model="form.ywType" placeholder="请选择业务类别">
-          <el-option
-            v-for="item in metierSceneList"
-            :key="item?.id"
-            :label="item?.sceneName"
-            :value="item?.id.toString()"
-          ></el-option>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="listQuery.status">
+          <el-option :value="1" label="开启"></el-option>
+          <el-option :value="2" label="关闭"></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="原始凭证类别" prop="originalType">
-        <el-select v-model="form.originalType" placeholder="请选择原始凭证类别">
-          <el-option value="发票" label="发票" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="币种" prop="bz">
-        <el-select v-model="form.bz">
-          <el-option value="人民币（RMB）" label="人民币（RMB）" />
-        </el-select>
+      <el-form-item>
+        <el-button type="primary" icon="search" @click="getList"
+          >查询</el-button
+        >
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
 
     <div class="m-btns">
-      <el-button @click="handleUpdate('create', {}, 0)" type="primary"
-        >科目维护</el-button
+      <el-button @click="handleUpdate('create', {})" type="primary"
+        >新增</el-button
       >
+      <el-button @click="handleDelete('all')" type="primary">导出</el-button>
     </div>
 
-    <el-table stripe :data="list" highlight-current-row>
-      <el-table-column align="center" type="index" label="序号" width="60" />
-      <el-table-column align="center" label="摘要信息" prop="abstracts" />
-      <el-table-column align="center" label="科目名称" prop="subjectName" />
-      <el-table-column align="center" label="借/贷">
-        <template v-slot="scope">{{
-          scope.row.dcdirection == 0 ? "借" : "贷"
-        }}</template>
-      </el-table-column>
+    <div class="table-tip">
+      <el-icon color="#1890FF"> <Warning /> </el-icon>已选择
+      <span>{{ selectionList.length }}</span>
+      项
+    </div>
+    <el-table
+      stripe
+      :data="list"
+      v-loading.body="listLoading"
+      highlight-current-row
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column
+        align="center"
+        type="selection"
+        label="序号"
+        width="60"
+      />
 
-      <el-table-column align="center" label="核算协助">
-        <template v-slot="scope">{{
-          scope.row.type === 1 ? "是" : "否"
-        }}</template>
-      </el-table-column>
+      <el-table-column align="center" label="编码" prop="helpCode" />
 
-      <el-table-column align="center" label="操作" width="120" fixed="right">
+      <el-table-column align="center" label="名称" prop="itemName" />
+
+      <el-table-column align="center" label="备注" prop="remark" />
+
+      <el-table-column align="center" label="状态">
         <template v-slot="scope">
+          <el-switch
+            v-model="scope.row.status"
+            :active-value="1"
+            :inactive-value="0"
+            @click="updateHelpCalManageStatus(scope.row)"
+          />
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="300" fixed="right">
+        <template v-slot="scope">
+          <el-button type="primary" link @click="handleDelete(scope.row.id)"
+            >删除</el-button
+          >
           <el-button
             type="primary"
             link
-            @click="handleUpdate('update', scope.row, scope.$index)"
-            >编辑</el-button
-          >
-          <el-button type="primary" link @click="handleDelete(scope.$index)"
-            >删除</el-button
+            @click="handleUpdate('update', scope.row)"
+            >修改</el-button
           >
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- <el-pagination
+    <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       v-model:current-page="listQuery.pageIndex"
@@ -83,165 +91,219 @@
       :page-size="listQuery.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
-    /> -->
-
-    <div class="m-footer">
-      <el-button @click="cancel">取消</el-button>
-      <el-button
-        v-if="updateStatus !== 'detail'"
-        type="primary"
-        @click="handleSubmit"
-        >提交</el-button
-      >
-    </div>
-
-    <DialogDetail
-      :dialogFormVisible="dialogFormVisible"
-      :dialogStatus="dialogStatus"
-      @closeDialog="handleCloseDialog"
-      :rowData="rowData"
     />
+    <!-- 详情弹窗 -->
+    <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible">
+      <el-form
+        :model="form"
+        :rules="rules"
+        ref="form"
+        label-width="100px"
+        class="dialogDetail-form"
+      >
+        <el-form-item label="编码" prop="helpCode">
+          <el-input v-model="form.helpCode" placeholder="请输入编码" />
+        </el-form-item>
+
+        <el-form-item label="名称" prop="itemName">
+          <el-input v-model="form.itemName" placeholder="请输入名称" />
+        </el-form-item>
+
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
+
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择">
+            <el-option value="1" label="开启" />
+            <el-option value="0" label="关闭" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancel()">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit()">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  page,
-  addObj,
-  editObj,
-  findMetierScene,
-} from "../../api/voucherRule.js";
-import DialogDetail from "./dialogDetail.vue";
-
+  addHelpCalManage,
+  findHelpCalManage,
+  updateHelpCalManage,
+  deleteHelpCalManage,
+  updateHelpCalManageStatus,
+} from "@/views/settingManage/api/helpCalManage.js";
 export default {
-  name: "voucherRulesDetail",
-  components: {
-    DialogDetail,
-  },
+  name: "voucherRulesList",
+
   data() {
     return {
       form: {
-        status: 1,
-      },
-      rules: {
-        name: [
-          {
-            required: true,
-            message: "请输入规则名称",
-            trigger: "blur",
-          },
-          {
-            min: 1,
-            max: 20,
-            message: "长度在 1 到 20 个字符",
-            trigger: "blur",
-          },
-        ],
-        ywType: [
-          {
-            required: true,
-            message: "请选择业务类别",
-            trigger: "blur",
-          },
-        ],
-        originalType: [
-          {
-            required: true,
-            message: "请选择原始凭证类别",
-            trigger: "blur",
-          },
-        ],
-      },
-      id: "",
-      updateStatus: "",
-      textMap: {
-        update: "编辑凭证规则",
-        create: "新增凭证规则",
-        detail: "凭证规则详情",
+        status: "1",
       },
       list: [],
       total: 0,
+      listLoading: false,
       listQuery: {
         pageIndex: 1,
         pageSize: 10,
       },
-      rowData: {},
+      selectionList: [],
+      metierSceneList: [],
+      helpCalName: "",
+      helpCateId: "",
       dialogFormVisible: false,
       dialogStatus: "",
-      metierSceneList: [],
-      editIndex: 0,
+      textMap: {
+        update: "编辑分类",
+        create: "新增分类",
+      },
+      rules: {
+        helpCode: [
+          {
+            required: true,
+            message: "请输入编码",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 30,
+            message: "长度在 1 到 20 个字符",
+            trigger: "blur",
+          },
+        ],
+        itemName: [
+          {
+            required: true,
+            message: "请输入名称",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 30,
+            message: "长度在 1 到 20 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
-
   mounted() {
-    this.findMetierScene();
-    // 查询详
-    const { id = "", updateStatus = "" } = this.$route.query;
-    this.id = id;
-    this.updateStatus = updateStatus;
-  },
-  watch: {
-    // 如果id 存在就去查询详情
-    id(newV) {
-      if (newV) {
-        this.getDetail({
-          pageIndex: 1,
-          pageSize: 10,
-          id: newV,
-        });
-      }
-    },
+    const { id = "", helpCalName = "" } = this.$route.query;
+    this.helpCateId = id;
+    this.helpCalName = helpCalName;
+    this.getList();
   },
   methods: {
-    getDetail(params) {
-      page(params).then((response) => {
-        this.form = response.rows[0] || {};
-      });
-    },
-    // 获取业务场景类别
-    findMetierScene() {
-      findMetierScene({
-        pageIndex: 1,
-        pageSize: 0,
+    // 查询列表
+    getList() {
+      findHelpCalManage({
+        ...this.listQuery,
+        helpCateId: this.helpCateId,
       }).then((response) => {
-        this.metierSceneList = response.rows;
+        this.list = response.rows;
+        this.total = response.total;
+        this.cancel()
       });
     },
-    cancel() {
-      this.$router.push({ path: "/basic/voucherRulesList" });
+
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val;
+      this.getList();
     },
-    handleUpdate(dialogStatus = "", row = {}, editIndex = 0) {
-      this.editIndex = editIndex;
-      this.rowData = row;
+    handleCurrentChange(val) {
+      this.listQuery.pageIndex = val;
+      this.getList();
+    },
+
+    handleUpdate(dialogStatus = "", row = {}) {
+      this.form = { ...this.form, ...row}
       this.dialogFormVisible = true;
       this.dialogStatus = dialogStatus;
     },
-    // handleSizeChange(val) {
-    //   this.listQuery.pageSize = val;
-    // },
-    // handleCurrentChange(val) {
-    //   this.listQuery.pageIndex = val;
-    // },
+    // 修改状态
+    updateHelpCalManageStatus(row) {
+      updateHelpCalManageStatus({ id: row.id }).then(() => {
+        this.$notify({
+          title: "成功",
+          message: "操作成功",
+          type: "success",
+          duration: 2000,
+        });
+        this.getList();
+      });
+    },
 
+    handleDelete(id) {
+      this.$confirm("你确定要删除所选内容吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          deleteHelpCalManage({ id }).then(() => {
+            this.$notify({
+              title: "成功",
+              message: "删除成功",
+              type: "success",
+              duration: 2000,
+            });
+            this.getList();
+          });
+        })
+        .catch(() => {});
+    },
+
+    // 重置表单
+    reset() {
+      this.listQuery = {
+        pageIndex: 1,
+        pageSize: 10,
+      };
+      this.getList();
+    },
+    // 多选
+    handleSelectionChange(val) {
+      this.selectionList = val;
+    },
+    // 根据json字符串拼接得出科目管理信息
+    getSubjectInfo(data = "") {
+      const list = JSON.parse(data);
+      let str = "";
+      list.map((item) => {
+        str = `${str}\n\n${item.dcdirection == 0 ? "借" : "贷"}：${
+          item.subjectName
+        }`;
+      });
+      return str;
+    },
+    cancel() {
+      this.dialogFormVisible = false;
+      this.$refs["form"].resetFields();
+      this.form = {}
+    },
     // 提交表单
     handleSubmit() {
-      const set = this.$refs;
-      set["form"].validate((valid) => {
-        if (!valid) return false;
-        const params = {
-          ...this.form,
-          subjectList: this.list,
-        };
-        if (this.updateStatus === "create") {
-          this.create(params);
+      this.$refs["form"].validate((valid) => {
+        if (!valid) return;
+        if (this.dialogStatus === "create") {
+          this.create();
           return;
         }
-        this.update(params);
+        this.update();
       });
     },
     // 创建
-    create(params) {
-      addObj(params).then(() => {
+    create() {
+      addHelpCalManage({
+        ...this.form,
+        helpCateId: this.helpCateId,
+      }).then(() => {
         this.dialogFormVisible = false;
         this.$notify({
           title: "成功",
@@ -249,12 +311,15 @@ export default {
           type: "success",
           duration: 2000,
         });
-        this.cancel();
+        this.getList();
       });
     },
     // 编辑
-    update(params) {
-      editObj(params).then(() => {
+    update() {
+      updateHelpCalManage({
+        ...this.form,
+        helpCateId: this.helpCateId,
+      }).then(() => {
         this.dialogFormVisible = false;
         this.$notify({
           title: "成功",
@@ -262,44 +327,36 @@ export default {
           type: "success",
           duration: 2000,
         });
-        this.cancel();
+        this.getList();
       });
-    },
-    // 接收弹窗数据，关闭弹窗
-    handleCloseDialog(data, saveFlag) {
-      this.dialogFormVisible = false;
-      // 取消操作
-      if (!saveFlag) {
-        return;
-      }
-      // 新增科目维护
-      if (this.dialogStatus === "create") {
-        this.list = [...this.list.concat({ ...data })];
-      }
-      // 编辑科目
-      if (this.dialogStatus === "update") {
-        this.list.splice(this.editIndex, 1, { ...data });
-      }
-    },
-    handleDelete(rowIndex) {
-      this.list = this.list.filter((item, index) => index !== rowIndex);
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.p-page {
-  .m-title {
-    margin: 0 16px 24px;
+.m-title {
+  margin-bottom: 24px;
+}
+.m-btns {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.table-tip {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: #e6f7ff;
+  border-radius: 4px;
+  border: 1px solid #ade0ff;
+
+  .el-icon {
+    margin-right: 4px;
   }
-  .m-footer {
-    margin: 32px 0 32px 33%;
-  }
-  .m-btns {
-    float: right;
-    .el-button {
-      margin: 0 0 16px 16px;
-    }
+
+  span {
+    color: #1890ff;
   }
 }
 </style>

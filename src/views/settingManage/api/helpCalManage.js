@@ -1,64 +1,70 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
-export function page (obj) {
+// 查询辅助核算设定
+export function findHelpCal(obj) {
   return request({
-    url: '/api/tax/meSubject/findTaxSubject',
-    method: 'post',
-    data: obj
-  })
+    url: "/api/tax/taxsby/findHelpCal",
+    method: "post",
+    data: obj,
+  });
+}
+// 添加辅助核算设定
+export function addHelpCal(obj) {
+  return request({
+    url: "/api/tax/taxsby/addHelpCal/" + obj.helpCalName,
+    method: "post",
+    data: obj,
+  });
+}
+// 修改辅助核算设定
+export function updateHelpCal(obj) {
+  return request({
+    url: "/api/tax/taxsby/updateHelpCal",
+    method: "post",
+    data: obj,
+  });
 }
 
-export function addObj (obj) {
+// 添加辅助核算管理
+export function addHelpCalManage(obj) {
   return request({
-    url: '/api/tax/meSubject/addTaxSubject',
-    method: 'post',
-    data: obj
-  })
+    url: "/api/tax/taxsby/addHelpCalManage",
+    method: "post",
+    data: obj,
+  });
 }
 
-export function delObj (obj) {
+// 查询辅助核算管理
+export function findHelpCalManage(obj) {
   return request({
-    url: '/api/tax/meSubject/deleteTaxSubject',
-    method: 'post',
-    data: obj
-  })
+    url: "/api/tax/taxsby/findHelpCalManage",
+    method: "post",
+    data: obj,
+  });
 }
 
-export function editObj (obj) {
+// 修改辅助核算管理
+export function updateHelpCalManage(obj) {
   return request({
-    url: '/api/tax/meSubject/updateTaxSubject',
-    method: 'post',
-    data: obj
-  })
+    url: "/api/tax/taxsby/updateHelpCalManage",
+    method: "post",
+    data: obj,
+  });
 }
 
-/**
- * @despition 查询科目类别
- */
-export function findParentTaxSubject () {
+// 修改辅助核算管理状态
+export function updateHelpCalManageStatus(obj) {
   return request({
-    url: '/api/tax/meSubject/findParentTaxSubject',
-    method: 'post'
-  })
+    url: "/api/tax/taxsby/updateHelpCalManageStatus/" + obj.id,
+    method: "post",
+    data: obj,
+  });
 }
-
-/**
- * @despition 查询科目级联信息
- * */
-export function findTaxSubjectCascade (id) {
+// 删除辅助核算管理
+export function deleteHelpCalManage(obj) {
   return request({
-    url: '/api/tax/meSubject/findTaxSubjectCascade/' + id,
-    method: 'post'
-  })
-}
-
-/**
- * @despition 新增发票
- * */
-export function addTaxInvoice (obj) {
-  return request({
-    url: '/api/tax/invoiceAccount/addTaxInvoice',
-    method: 'post',
-    data: obj
-  })
+    url: "/api/tax/taxsby/deleteHelpCalManage/" + obj.id,
+    method: "post",
+    data: obj,
+  });
 }

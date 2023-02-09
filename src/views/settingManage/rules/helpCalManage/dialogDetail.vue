@@ -77,7 +77,7 @@ import {
   editObj,
   findTaxSubjectCascade,
 } from "@/views/settingManage/api/helpCalManage.js";
-import { reactive, defineProps, ref, defineEmits, onMounted, watch } from "vue";
+import { reactive, defineProps, ref, defineEmits, onMounte, watch } from "vue";
 
 const props = defineProps({
   dialogStatus: {

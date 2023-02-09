@@ -9,89 +9,39 @@
         v-for="item in list"
         :key="item.id"
         @click="handleUpdate('update', item)"
-      ></div>
-    </div>
-    <div class="item item-add">
-      <el-icon :size="50" color="#000">
-        <CirclePlus />
-      </el-icon>
+      >
+        <el-icon :size="100"><UserFilled /></el-icon>
+        <h3>{{ item.helpCalName }}</h3>
+      </div>
+      <div class="item" @click="handleUpdate('create', {})">
+        <el-icon :size="50" color="#000">
+          <CirclePlus />
+        </el-icon>
+      </div>
     </div>
 
     <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px">
-        <el-form-item label="科目类别" prop="subjectCate">
-          <el-select v-model="form.subjectCate" placeholder="请选择科目类别">
-            <el-option
-              v-for="item in subjectCateList"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="父级科目" prop="pid">
-          <el-cascader
-            v-model="form.pid"
-            placeholder="请选择科目"
-            :options="sujectCascadeList"
-            clearable
-            ref="cascaderRef"
-            @change="handleChange"
-            :props="props"
-            popper-class="cascaderClass"
-          ></el-cascader>
-        </el-form-item>
-
-        <el-form-item label="科目代码" prop="subjectCode">
-          <el-input
-            v-model="form.subjectCode"
-            placeholder="请输入科目代码"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="科目名称" prop="subjectName">
-          <el-input
-            v-model="form.subjectName"
-            placeholder="请输入科目名称"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="会计准则" prop="accoutingStandard">
-          <el-select
-            v-model="form.accoutingStandard"
-            placeholder="请选择会计准则"
-          >
-            <el-option
-              v-for="item in accoutingStandardList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+        <el-form-item label="名称" prop="helpCalName">
+          <el-input v-model="form.helpCalName" placeholder="请输入分类名称" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel('form')">取 消</el-button>
-        <el-button
-          v-if="dialogStatus == 'create'"
-          type="primary"
-          @click="create('form')"
-          >确 定</el-button
-        >
-        <el-button v-else type="primary" @click="update('form')"
-          >确 定</el-button
-        >
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancel()">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit()">确 定</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  page,
-  delObj,
-  findParentTaxSubject,
+  findHelpCal,
+  addHelpCal,
+  updateHelpCal,
 } from "@/views/settingManage/api/helpCalManage.js";
-import dialogDetail from "./dialogDetail.vue";
 
 export default {
   name: "HelpCalManageList",
@@ -99,43 +49,53 @@ export default {
   data() {
     return {
       form: {},
-      subjectCateList: [],
       list: [],
-      total: 0,
-      listLoading: false,
-      listQuery: {
-        pageIndex: 1,
-        pageSize: 10,
-      },
       dialogFormVisible: false,
       dialogStatus: "",
-      deleteList: [],
       textMap: {
-        update: '编辑',
-        create: '创建'
+        update: "编辑分类",
+        create: "新增分类",
+      },
+      rules: {
+        helpCalName: [
+          {
+            required: true,
+            message: "请输入分类名称",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 30,
+            message: "长度在 1 到 20 个字符",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
   mounted() {
-    this.getList();
+    this.findHelpCal();
   },
   methods: {
     // 查询列表
-    getList() {
-      page(this.listQuery).then((response) => {
-        this.list = response.rows;
+    findHelpCal() {
+      findHelpCal().then((response) => {
+        this.list = response || [];
       });
     },
-    handleSizeChange(val) {
-      this.listQuery.pageSize = val;
-      this.getList();
-    },
-    handleCurrentChange(val) {
-      this.listQuery.pageIndex = val;
-      this.getList();
-    },
 
-    handleUpdate(id = "", dialogStatus = "") {
+    handleUpdate(dialogStatus = "", row = {}) {
+      if (dialogStatus === "update") {
+        this.$router.push({
+          path: "/rules/helpCalManageDetail",
+          query: {
+            id: row.id,
+            helpCalName: row.helpCalName,
+          },
+        });
+        return;
+      }
+      this.form = row;
       this.dialogFormVisible = true;
       this.dialogStatus = dialogStatus;
     },
@@ -143,29 +103,63 @@ export default {
     handleSelectionChange(val) {
       this.deleteList = val;
     },
-    handleDelete(row) {
-      this.$confirm("你确定要删除这行内容吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        delObj({ id: row.id }).then(() => {
-          this.$notify({
-            title: "成功",
-            message: "删除成功",
-            type: "success",
-            duration: 2000,
-          });
-          this.getList();
-        });
+    // 提交表单
+    handleSubmit() {
+      this.$refs["form"].validate((valid) => {
+        if (!valid) return;
+        if (this.dialogStatus === "create") {
+          this.create();
+          return;
+        }
+        this.update();
       });
     },
-    handleCloseDialog(updateFlag) {
-      console.log(1);
+    // 创建
+    create() {
+      addHelpCal(this.form).then(() => {
+        this.dialogFormVisible = false;
+        this.$notify({
+          title: "成功",
+          message: "新建成功",
+          type: "success",
+          duration: 2000,
+        });
+        this.findHelpCal();
+      });
+    },
+    // 编辑
+    update() {
+      updateHelpCal(this.form).then(() => {
+        this.dialogFormVisible = false;
+        this.$notify({
+          title: "成功",
+          message: "更新成功",
+          type: "success",
+          duration: 2000,
+        });
+        this.findHelpCal();
+      });
+    },
+    // handleDelete(row) {
+    //   this.$confirm("你确定要删除这行内容吗?", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    //   }).then(() => {
+    //     delObj({ id: row.id }).then(() => {
+    //       this.$notify({
+    //         title: "成功",
+    //         message: "删除成功",
+    //         type: "success",
+    //         duration: 2000,
+    //       });
+    //       this.getList();
+    //     });
+    //   });
+    // },
+    cancel() {
       this.dialogFormVisible = false;
-      if (updateFlag) {
-        this.getList();
-      }
+      this.$refs["form"].resetFields();
     },
   },
 };
@@ -180,7 +174,17 @@ export default {
   display: flex;
   flex-wrap: wrap;
   .item {
-    flex-basis: 25%;
+    flex-basis: 10%;
+    padding: 1% 0;
+    margin-right: 3%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px #ccc dashed;
+  }
+  h3 {
+    margin-top: 24px;
   }
 }
 </style>
