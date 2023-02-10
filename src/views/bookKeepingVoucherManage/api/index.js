@@ -1,59 +1,39 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
-export function page(data) {
-  return request({
-    url: '/api/tax/meSubject/findTaxAccountingRule',
-    method: 'post',
-    data
-  })
+// 查询记账凭证
+export function page(obj) {
+  return fetch({
+    url: "/api/tax/taxsby/findAccountVoucher",
+    method: "post",
+    data: obj,
+  });
 }
 
-export function addObj(data) {
-  return request({
-    url: '/api/tax/meSubject/addTaxAccountingRule',
-    method: 'post',
-    data
-  })
+// 录入记账凭证
+export function addObj(obj) {
+  return fetch({
+    url: "/api/tax/taxsby/addAccountVoucher",
+    method: "post",
+    data: obj,
+  });
 }
 
-export function delObj(data) {
-  return request({
-    url: '/api/tax/meSubject/deleteTaxAccountingRule',
-    method: 'post',
-    data
-  })
+// 删除记账凭证
+export function delObj(obj) {
+  return fetch({
+    url: "/api/tax/taxsby/deleteAccountVoucher",
+    method: "post",
+    data: obj,
+  });
 }
 
+// 修改记账凭证
 export function editObj(obj) {
-  return request({
-    url: '/api/tax/meSubject/updateTaxAccountingRule',
-    method: 'post',
-    data: obj
-  })
-}
-/**
- * @despition 查询科目类别
- */
-export function findParentTaxSubject() {
   return fetch({
-    url: '/api/tax/meSubject/findParentTaxSubject',
-    method: 'post'
-  })
-}
-/**
- * @despition 查询科目级联信息
- * */
-export function findTaxSubjectCascade(id) {
-  return fetch({
-    url: '/api/tax/meSubject/findTaxSubjectCascade/' + id,
-    method: 'post'
-  })
+    url: "/api/tax/taxsby/updateAccountVoucher",
+    method: "post",
+    data: obj,
+  });
 }
 
-export function findMetierScene(obj) {
-  return fetch({
-    url: '/api/tax/meSubject/findTaxMetierScene',
-    method: 'post',
-    data: obj
-  })
-}
+

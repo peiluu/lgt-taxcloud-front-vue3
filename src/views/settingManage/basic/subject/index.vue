@@ -43,7 +43,7 @@
             v-for="item in helpCalList"
             :key="item.id"
             :label="item.helpCalName"
-            :value="item.id"
+            :value="item.helpCalName"
           />
         </el-select>
       </el-form-item>

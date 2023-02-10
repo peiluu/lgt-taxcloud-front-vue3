@@ -38,7 +38,7 @@
             v-for="item in props.helpCalList"
             :key="item.id"
             :label="item.helpCalName"
-            :value="item.id"
+            :value="item.helpCalName"
           />
         </el-select>
       </el-form-item>

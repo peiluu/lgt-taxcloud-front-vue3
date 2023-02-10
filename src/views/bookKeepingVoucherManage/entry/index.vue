@@ -1,20 +1,35 @@
 <template>
   <el-form :model="form" :rules="rules" ref="form" label-width="100px" inline>
     <h2>记账凭证</h2>
-    <el-form-item label="凭证记" prop="code">
-      <el-select v-model="form.status">
+    <el-form-item label="凭证记" prop="mark">
+      <!-- <el-select v-model="form.status">
         <el-option :value="1" />
-      </el-select>
-      <el-input-number v-model="form.code" style="margin: 0 8px" :min="1" />号
+      </el-select> -->
+      记
+      <el-input
+        type="number"
+        v-model="form.mark"
+        style="margin: 0 8px"
+        :min="1"
+      />号
     </el-form-item>
 
     <el-form-item prop="quarter">
-      <el-select v-model="form.quarter">
-        <el-option v-for="item in quarterlyList" :key="item.value" :value="item.value" :label="item.label" />
+      <el-select v-model="form.quarter" disabled>
+        <el-option
+          v-for="item in quarterlyList"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+        />
       </el-select>
     </el-form-item>
     <el-form-item label="日期" prop="date">
-      <el-date-picker v-model="dateValue" value-format="YYYY-MM-DD" placeholder="选择日期" />
+      <el-date-picker
+        v-model="dateValue"
+        value-format="YYYY-MM-DD"
+        placeholder="选择日期"
+      />
     </el-form-item>
 
     <div class="m-table">
@@ -53,25 +68,52 @@
             <td>
               <template v-if="isDetail">{{ item.subject }}</template>
               <el-select v-else v-model="item.subject" style="margin: 0 8px">
-                <el-option v-for="(subItem, subIndex) in subjectList" :key="subIndex" :value="subItem.value" :label="subItem.name" />
+                <el-option
+                  v-for="(subItem, subIndex) in subjectList"
+                  :key="subIndex"
+                  :value="subItem.value"
+                  :label="subItem.name"
+                />
               </el-select>
             </td>
             <!-- 借方金额 -->
             <template v-if="item.isDebitEdit">
               <td colspan="11">
-                <el-input v-model="item.debitAmount" @blur="onInputBlur" v-focus autofocus :key="index" />
+                <el-input
+                  v-model="item.debitAmount"
+                  @blur="onInputBlur"
+                  v-focus
+                  autofocus
+                  :key="index"
+                />
               </td>
             </template>
-            <td v-else v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex" @click="handleClick('isDebitEdit', index)">
+            <td
+              v-else
+              v-for="(debitItem, subIndex) in debitUnitMap"
+              :key="subIndex"
+              @click="handleClick('isDebitEdit', index)"
+            >
               {{ getValue(item.debitAmount, subIndex) }}
             </td>
             <!-- 贷方金额 -->
             <template v-if="item.isCreditEdit">
               <td colspan="11">
-                <el-input v-model="item.creditAmount" @blur="onInputBlur" v-focus autofocus :key="index" />
+                <el-input
+                  v-model="item.creditAmount"
+                  @blur="onInputBlur"
+                  v-focus
+                  autofocus
+                  :key="index"
+                />
               </td>
             </template>
-            <td v-else v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex" @click="handleClick('isCreditEdit', index)">
+            <td
+              v-else
+              v-for="(creditItem, subIndex) in creditUnitMap"
+              :key="subIndex"
+              @click="handleClick('isCreditEdit', index)"
+            >
               {{ getValue(item.creditAmount, subIndex) }}
             </td>
           </tr>
@@ -89,34 +131,54 @@
           </tr>
         </tbody>
       </table>
-
     </div>
 
     <div :class="{ 'table-footer': true, disabled: isDetail }">
       <div v-if="!isDetail">创建人：admin</div>
       <div>
-        <el-button v-if="isDetail" link type="primary" size="large">原始单据</el-button>
-        <el-button v-else link type="primary" size="large" @click="showDialog(true)">添加原始单据</el-button>
+        <el-button v-if="isDetail" link type="primary" size="large"
+          >原始单据</el-button
+        >
+        <el-button
+          v-else
+          link
+          type="primary"
+          size="large"
+          @click="showDialog(true)"
+          >添加原始单据</el-button
+        >
         <span>已添加 2 张</span>
       </div>
     </div>
-    <el-dialog center title="选择添加的原始单据类型" v-model="dialogTableVisible" width="20%">
+    <el-dialog
+      center
+      title="选择添加的原始单据类型"
+      v-model="dialogTableVisible"
+      width="20%"
+    >
       <!-- :disabled="isDetail" -->
-      <el-button type="primary" @click="addOriginalVoucher('invoice')">发票</el-button>
-      <el-button type="primary" @click="addOriginalVoucher('other')">其他</el-button>
+      <el-button type="primary" @click="addOriginalVoucher('invoice')"
+        >发票</el-button
+      >
+      <el-button type="primary" @click="addOriginalVoucher('other')"
+        >其他</el-button
+      >
       <el-button @click="showDialog(false)">取消</el-button>
     </el-dialog>
 
     <div class="m-footer">
       <el-button @click="back">返回</el-button>
       <!-- :disabled="isDetail" -->
-      <el-button v-if="!isDetail" type="primary" @click="handleSubmit">提交</el-button>
+      <el-button v-if="!isDetail" type="primary" @click="handleSubmit"
+        >提交</el-button
+      >
     </div>
   </el-form>
 </template>
 
 <script>
 import { getQuarterlyList } from "@/utils/util";
+import { unitList } from "@/const";
 import { addObj, editObj } from "../api/index.js";
 
 export default {
@@ -274,7 +336,7 @@ export default {
       ],
     };
   },
-  created() { },
+  created() {},
 
   mounted() {
     // 查询详情
@@ -285,7 +347,9 @@ export default {
   },
   computed: {
     quarterlyList() {
-      return getQuarterlyList(2);
+      const list = getQuarterlyList(2);
+      // this.form.quarter = list[list.length - 1];
+      return list;
     },
     dateValue() {
       const date = new Date();
@@ -300,6 +364,9 @@ export default {
         (day > 9 ? day : "0" + day)
       );
     },
+    unitList() {
+      return unitList;
+    },
   },
   watch: {
     // 如果id 存在就去查询详情
@@ -312,13 +379,13 @@ export default {
   methods: {
     // 增加一行
     addLine() {
-      this.tableList.push({})
+      this.tableList.push({});
     },
     // 删除一行
     deleteLine() {
       // 至少保留一行
-      if (this.tableList.length <= 1) return
-      this.tableList.splice(this.tableList.length - 1, 1)
+      if (this.tableList.length <= 1) return;
+      this.tableList.splice(this.tableList.length - 1, 1);
     },
 
     // 单元格点击事件，
@@ -326,15 +393,15 @@ export default {
       // 查看详情时单元格点击无效
       if (this.isDetail) return;
       // 取借方或贷方的另一个
-      const otherKey = key === 'isDebitEdit' ? 'isCreditEdit' : 'isDebitEdit'
+      const otherKey = key === "isDebitEdit" ? "isCreditEdit" : "isDebitEdit";
       this.tableList = this.tableList.map((subItem, subIndex) => {
         return {
           // 点击的当前行的借方或贷方的编辑属性设置成true，其余的重置为false
           ...subItem,
           [key]: index === subIndex,
-          [otherKey]: false
-        }
-      })
+          [otherKey]: false,
+        };
+      });
     },
     // 金额输入框失去焦点
     onInputBlur() {
@@ -343,8 +410,8 @@ export default {
           ...subItem,
           isDebitEdit: false,
           isCreditEdit: false,
-        }
-      })
+        };
+      });
     },
 
     // 获取单元格的值，按金额单位划分
@@ -352,21 +419,20 @@ export default {
       const arr = (amount + "").split(".");
       // 小数点前，将字符串翻转
       const reverseArr = arr[0].split("").reverse();
-      let result = '';
+      let result = "";
       // 几位数
       if (9 - reverseArr.length <= index && index < 9) {
-        result = reverseArr[9 - index]
-
+        result = reverseArr[9 - index];
       } else if (arr[1] && arr[1].length) {
         // 小数点后，正向连续取值
         result = arr[1][index - 9];
       }
-      return isNaN(result) ? '' : result
+      return isNaN(result) ? "" : result;
     },
     // 计算合计
     getTotalValue(key, index) {
       const total = this.tableList.reduce((sum, item) => {
-        return sum + parseFloat(item[key] || 0)
+        return sum + parseFloat(item[key] || 0);
       }, 0);
       return this.getValue(total, index);
     },
@@ -378,13 +444,16 @@ export default {
     },
     // 添加原始单据
     addOriginalVoucher(type) {
-      const path = type === 'invoice' ? '/originalVoucherManage/invoiceDetail' : '/originalVoucherManage/originalVouchereDetail';
+      const path =
+        type === "invoice"
+          ? "/originalVoucherManage/invoiceDetail"
+          : "/originalVoucherManage/originalVouchereDetail";
       this.$router.push({
-        path
+        path,
       });
     },
     showDialog(flag) {
-      this.dialogTableVisible = flag
+      this.dialogTableVisible = flag;
     },
 
     // 提交表单
@@ -480,11 +549,10 @@ table tr td {
   word-break: break-all;
 }
 
-
 .m-table {
   display: flex;
 
-  >div:first-of-type {
+  > div:first-of-type {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -494,7 +562,6 @@ table tr td {
       margin-top: 4px;
       cursor: pointer;
     }
-
   }
 }
 

@@ -285,23 +285,4 @@ export default {
 .m-footer {
   margin: 32px 0 32px 33%;
 }
-
-.cascaderClass {
-  .el-radio__inner {
-    top: -18px;
-    left: -19px;
-    border-radius: 0;
-    border: 0;
-    width: 170px;
-    height: 34px;
-    background-color: transparent;
-    cursor: pointer;
-    box-sizing: border-box;
-    position: absolute;
-  }
-
-  .el-radio__input.is-checked .el-radio__inner {
-    background: transparent;
-  }
-}
 </style>
