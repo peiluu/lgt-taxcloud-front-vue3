@@ -27,7 +27,7 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="listQuery.status">
           <el-option :value="1" label="开启"></el-option>
-          <el-option :value="2" label="关闭"></el-option>
+          <el-option :value="0" label="关闭"></el-option>
         </el-select>
       </el-form-item>
 
@@ -43,7 +43,7 @@
       <el-button @click="handleUpdate('', 'create')" type="primary"
         >新增</el-button
       >
-      <el-button @click="handleDelete('all')" type="primary"
+      <el-button @click="handleDelete('all')" type="primary" :disabled="selectionList.length<= 0"
         >批量删除</el-button
       >
     </div>

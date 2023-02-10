@@ -29,7 +29,7 @@
         <el-cascader
           v-model="form.pid"
           placeholder="请选择科目"
-          :options="sujectCascadeList"
+          :options="props.sujectCascadeList"
           clearable
           :ref="cascaderRef"
           @change="handleChange"
@@ -55,9 +55,9 @@
           <el-checkbox v-model="checked" />
           <el-select v-model="form.helpCal" v-if="checked">
             <el-option
-              v-for="item in helpCalList"
+              v-for="item in props.helpCalList"
               :key="item.id"
-              :label="item.name"
+              :label="item.helpCalName"
               :value="item.id"
             ></el-option>
           </el-select>
@@ -97,6 +97,12 @@ const props = defineProps({
   rowData: {
     type: Object,
     default: () => {},
+  },
+  helpCalList: {
+    type: Array,
+  },
+  sujectCascadeList: {
+    type: Array,
   },
 });
 let checked = ref(false);
@@ -138,8 +144,6 @@ const rules = reactive({
   ],
 });
 
-let sujectCascadeList = reactive([]);
-const helpCalList = reactive([{ id: 1, name: "客户" }]);
 const subjectProps = reactive({
   label: "subjectName",
   value: "id",
@@ -150,43 +154,28 @@ const ruleForms = ref(null);
 
 const emit = defineEmits(["closeDialog"]);
 
-// 根据科目类别查找下属的级联科目列表
-watch(
-  () => props.subjectCate,
-  (newVal) => {
-    findFatherList(newVal);
-    // form.subjectCate = props.subjectCate;
-    // console.log(form);reactive
-  }
-);
 // 监听弹窗状态的变化
 watch(
   () => props.dialogFormVisible,
   (newVal) => {
     dialogFormVisible = newVal;
+    // 添加固定的科目分类
+    form = reactive({ ...form, subjectCate: props.subjectCate });
+    // 编辑科目
+    if (props.dialogStatus === "update") {
+      form = reactive({ ...form, ...props.rowData });
+    }
+    // 新增下级科目
+    if (props.dialogStatus === "addSub") {
+      form = reactive({ ...form, pid: props.rowData.id });
+    }
+    // 判断有没有辅助核算
+    checked = ref(!!props.rowData.helpCal && props.dialogStatus === "update");
   }
 );
 onMounted(() => {
   console.log("onMounted");
 });
-// 监听编辑行数据的变化，
-watch(
-  () => props.rowData,
-  (newVal) => {
-    if (!newVal.id) return;
-    // 编辑科目
-    if (props.dialogStatus === "update") {
-      form = reactive({ ...form, ...newVal });
-    }
-    // // 新增下级科目
-    if (props.dialogStatus === "addSub") {
-      form = reactive({ ...form, pid: newVal.id });
-    }
-    // 判断有没有辅助核算
-    checked = !!newVal.helpCal && props.dialogStatus === "update";
-    // debugger;
-  }
-);
 
 const cancel = () => {
   form = {};
@@ -204,7 +193,7 @@ const handleSubmit = () => {
       return false;
     }
     // 调用接口
-    const api = props.dialogStatus === "create" ? addObj : editObj;
+    const api = props.dialogStatus === "update" ? editObj : addObj;
     api(form).then(() => {
       form = {};
       emit("closeDialog", true);
@@ -212,12 +201,6 @@ const handleSubmit = () => {
   });
 };
 
-// 查找级联列表
-const findFatherList = (id) => {
-  findTaxSubjectCascade(id).then((response) => {
-    sujectCascadeList = response;
-  });
-};
 const handleChange = (value) => {
   form.pid = value && value.length ? value[value.length - 1] : "";
   // cascaderRef.value.dropDownVisible = false;

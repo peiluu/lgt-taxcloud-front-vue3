@@ -24,6 +24,14 @@ export function updateHelpCal(obj) {
     data: obj,
   });
 }
+// 删除辅助核算设定
+export function deleteHelpCal(obj) {
+  return request({
+    url: "/api/tax/taxsby/deleteHelpCal/" + obj.id,
+    method: "post",
+    data: obj,
+  });
+}
 
 // 添加辅助核算管理
 export function addHelpCalManage(obj) {

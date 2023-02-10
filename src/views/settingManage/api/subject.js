@@ -45,9 +45,9 @@ export function findParentTaxSubject () {
 /**
  * @despition 查询科目级联信息
  * */
-export function findTaxSubjectCascade (id) {
+export function findTaxSubjectCascade (obj) {
   return request({
-    url: '/api/tax/meSubject/findTaxSubjectCascade/' + id,
+    url: '/api/tax/meSubject/findTaxSubjectCascade/' + obj.id,
     method: 'post'
   })
 }

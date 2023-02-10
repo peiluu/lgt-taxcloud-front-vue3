@@ -1,6 +1,9 @@
 <template>
   <div class="p-page">
-    <h3 class="m-title">辅助核算设定_{{ helpCalName }}</h3>
+    <div class="m-title">
+      <el-icon @click="goBack"><ArrowLeft /></el-icon>
+      <h3>辅助核算设定_{{ helpCalName }}</h3>
+    </div>
     <el-form :model="listQuery" ref="form" :inline="true">
       <el-form-item label="名称" prop="itemName">
         <el-input
@@ -115,8 +118,8 @@
 
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择">
-            <el-option value="1" label="开启" />
-            <el-option value="0" label="关闭" />
+            <el-option :value="1" label="开启" />
+            <el-option :value="0" label="关闭" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -144,7 +147,7 @@ export default {
   data() {
     return {
       form: {
-        status: "1",
+        status: 1,
       },
       list: [],
       total: 0,
@@ -190,6 +193,26 @@ export default {
             trigger: "blur",
           },
         ],
+        remark: [
+          {
+            required: true,
+            message: "请输入备注",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 30,
+            message: "长度在 1 到 20 个字符",
+            trigger: "blur",
+          },
+        ],
+        status: [
+          {
+            required: true,
+            message: "请输入选择状态",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
@@ -208,7 +231,7 @@ export default {
       }).then((response) => {
         this.list = response.rows;
         this.total = response.total;
-        this.cancel()
+        this.cancel();
       });
     },
 
@@ -222,7 +245,7 @@ export default {
     },
 
     handleUpdate(dialogStatus = "", row = {}) {
-      this.form = { ...this.form, ...row}
+      this.form = { ...this.form, ...row };
       this.dialogFormVisible = true;
       this.dialogStatus = dialogStatus;
     },
@@ -285,7 +308,7 @@ export default {
     cancel() {
       this.dialogFormVisible = false;
       this.$refs["form"].resetFields();
-      this.form = {}
+      this.form = {};
     },
     // 提交表单
     handleSubmit() {
@@ -330,12 +353,21 @@ export default {
         this.getList();
       });
     },
+    goBack() {
+      this.$router.replace({ path: "/rules/helpCalManage" });
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .m-title {
+  display: flex;
+  align-items: center;
   margin-bottom: 24px;
+  .el-icon {
+    cursor: pointer;
+    margin-right: 4px;
+  }
 }
 .m-btns {
   display: flex;

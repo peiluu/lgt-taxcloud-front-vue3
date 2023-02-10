@@ -34,13 +34,12 @@
       </el-form-item>
       <el-form-item label="协助核算" prop="helpCal">
         <el-select v-model="form.helpCal" placeholder="请选择">
-          <el-option :value="1" :label="2" :key="1" />
-          <!-- <el-option
-            v-for="item in typeList"
-            :key="item?.id"
-            :label="item?.name"
-            :value="item?.id"
-          /> -->
+          <el-option
+            v-for="item in props.helpCalList"
+            :key="item.id"
+            :label="item.helpCalName"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
     </el-form>
@@ -72,6 +71,10 @@ const props = defineProps({
     default: () => {},
   },
   list: {
+    type: Array,
+    default: () => [],
+  },
+  helpCalList: {
     type: Array,
     default: () => [],
   },
@@ -139,17 +142,10 @@ watch(
   () => props.dialogFormVisible,
   (newVal) => {
     dialogFormVisible = newVal;
-  }
-);
-
-// 监听编辑行数据的变化
-watch(
-  () => props.rowData,
-  (newVal) => {
-    if (newVal.subjectName) {
-      // 给form.value赋值可以保证给form保持响应式
-      form = reactive({ ...form, ...newVal });
-    }
+    form =
+      props.dialogStatus === "update"
+        ? reactive({ ...form, ...props.rowData })
+        : reactive({});
   }
 );
 

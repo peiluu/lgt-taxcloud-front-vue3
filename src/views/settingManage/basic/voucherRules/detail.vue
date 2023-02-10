@@ -36,10 +36,35 @@
           <el-option value="人民币（RMB）" label="人民币（RMB）" />
         </el-select>
       </el-form-item>
+
+      <el-form-item label="状态" prop="status" v-if="updateStatus === 'detail'">
+        <el-select v-model="form.status">
+          <el-option :value="1" label="已开启"></el-option>
+          <el-option :value="0" label="已停用"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="创建时间"
+        prop="createTime"
+        v-if="updateStatus === 'detail' && form.createTime"
+      >
+        <el-input v-model="form.createTime" />
+      </el-form-item>
+
+      <el-form-item
+        label="更新时间"
+        prop="updateTime"
+        v-if="updateStatus === 'detail' && form.createTime"
+      >
+        <el-input v-model="form.updateTime" />
+      </el-form-item>
     </el-form>
 
     <div class="m-btns">
-      <el-button @click="handleUpdate('create', {}, 0)" type="primary"
+      <el-button
+        v-if="updateStatus !== 'detail'"
+        @click="handleUpdate('create', {}, 0)"
+        type="primary"
         >科目维护</el-button
       >
     </div>
@@ -54,11 +79,16 @@
         }}</template>
       </el-table-column>
 
-      <el-table-column align="center" label="核算协助" prop="helpCal" >
-
+      <el-table-column align="center" label="核算协助" prop="helpCal">
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="120" fixed="right">
+      <el-table-column
+        v-if="updateStatus !== 'detail'"
+        align="center"
+        label="操作"
+        width="120"
+        fixed="right"
+      >
         <template v-slot="scope">
           <el-button
             type="primary"
@@ -98,6 +128,7 @@
       :dialogStatus="dialogStatus"
       @closeDialog="handleCloseDialog"
       :rowData="rowData"
+      :helpCalList="helpCalList"
       :list="list"
     />
   </div>
@@ -110,6 +141,8 @@ import {
   editObj,
   findMetierScene,
 } from "../../api/voucherRule.js";
+import { findHelpCal } from "../../api/helpCalManage.js";
+
 import DialogDetail from "./dialogDetail.vue";
 
 export default {
@@ -169,11 +202,13 @@ export default {
       dialogStatus: "",
       metierSceneList: [],
       editIndex: 0,
+      helpCalList: [],
     };
   },
 
   mounted() {
     this.findMetierScene();
+    this.findHelpCal();
     // 查询详
     const { id = "", updateStatus = "" } = this.$route.query;
     this.id = id;
@@ -195,7 +230,13 @@ export default {
     getDetail(params) {
       page(params).then((response) => {
         this.form = response.rows[0] || {};
-        this.list = JSON.parse(this.form.jsonSubject || '')
+        this.list = JSON.parse(this.form.jsonSubject || "");
+      });
+    },
+    // 查询辅助核算列表
+    findHelpCal() {
+      findHelpCal().then((response) => {
+        this.helpCalList = response || [];
       });
     },
     // 获取业务场景类别
@@ -224,7 +265,7 @@ export default {
         if (!valid) return false;
         const params = {
           ...this.form,
-          jsonSubject: JSON.stringify(this.list)
+          jsonSubject: JSON.stringify(this.list),
         };
         if (this.updateStatus === "create") {
           this.create(params);

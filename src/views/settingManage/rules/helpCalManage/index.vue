@@ -41,6 +41,7 @@ import {
   findHelpCal,
   addHelpCal,
   updateHelpCal,
+  deleteHelpCal,
 } from "@/views/settingManage/api/helpCalManage.js";
 
 export default {
@@ -74,11 +75,11 @@ export default {
     };
   },
   mounted() {
-    this.findHelpCal();
+    this.getList();
   },
   methods: {
     // 查询列表
-    findHelpCal() {
+    getList() {
       findHelpCal().then((response) => {
         this.list = response || [];
       });
@@ -124,7 +125,7 @@ export default {
           type: "success",
           duration: 2000,
         });
-        this.findHelpCal();
+        this.getList();
       });
     },
     // 编辑
@@ -137,26 +138,26 @@ export default {
           type: "success",
           duration: 2000,
         });
-        this.findHelpCal();
+        this.getList();
       });
     },
-    // handleDelete(row) {
-    //   this.$confirm("你确定要删除这行内容吗?", "提示", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //     type: "warning",
-    //   }).then(() => {
-    //     delObj({ id: row.id }).then(() => {
-    //       this.$notify({
-    //         title: "成功",
-    //         message: "删除成功",
-    //         type: "success",
-    //         duration: 2000,
-    //       });
-    //       this.getList();
-    //     });
-    //   });
-    // },
+    handleDelete(row) {
+      this.$confirm("你确定要删除这行内容吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        deleteHelpCal({ id: row.id }).then(() => {
+          this.$notify({
+            title: "成功",
+            message: "删除成功",
+            type: "success",
+            duration: 2000,
+          });
+          this.getList();
+        });
+      });
+    },
     cancel() {
       this.dialogFormVisible = false;
       this.$refs["form"].resetFields();

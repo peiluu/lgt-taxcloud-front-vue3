@@ -38,9 +38,13 @@
       </el-form-item>
 
       <el-form-item label="辅助核算" prop="helpCal">
-        <el-select v-model="listQuery.helpCal" placeholder>
-          <el-option :value="1" label="客户" />
-          <el-option :value="2" label="供应商" />
+        <el-select v-model="listQuery.helpCal" placeholder="请选择">
+          <el-option
+            v-for="item in helpCalList"
+            :key="item.id"
+            :label="item.helpCalName"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
 
@@ -124,6 +128,8 @@
       :subjectCate="listQuery.subjectCate"
       :subjectCateList="subjectCateList"
       :rowData="rowData"
+      :helpCalList="helpCalList"
+      :sujectCascadeList="sujectCascadeList"
     />
   </div>
 </template>
@@ -134,7 +140,9 @@ import {
   delObj,
   findParentTaxSubject,
   updateTaxSubjectStatus,
+  findTaxSubjectCascade,
 } from "../../api/subject.js";
+import { findHelpCal } from "../../api/helpCalManage.js";
 import dialogDetail from "./dialogDetail.vue";
 
 export default {
@@ -155,6 +163,8 @@ export default {
       dialogStatus: "",
       deleteList: [],
       rowData: {},
+      helpCalList: [],
+      sujectCascadeList: [],
     };
   },
   watch: {
@@ -164,6 +174,7 @@ export default {
   },
   mounted() {
     this.findParentTaxSubject();
+    this.findHelpCal();
   },
   methods: {
     // 查询科目类别
@@ -173,6 +184,13 @@ export default {
         this.listQuery.subjectCate = response[0]?.value;
       });
     },
+    // 查询辅助核算列表
+    findHelpCal() {
+      findHelpCal().then((response) => {
+        this.helpCalList = response || [];
+      });
+    },
+
     // 查询科目列表
     getList() {
       this.listLoading = true;
@@ -181,6 +199,12 @@ export default {
         this.total = response.total;
         this.listLoading = false;
       });
+      // 查询科目级联列表
+      findTaxSubjectCascade({ id: this.listQuery.subjectCate }).then(
+        (response) => {
+          this.sujectCascadeList = response;
+        }
+      );
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
@@ -239,6 +263,7 @@ export default {
       this.listQuery = {
         pageIndex: 1,
         pageSize: 10,
+        subjectCate: this.listQuery.subjectCate
       };
       this.getList();
     },

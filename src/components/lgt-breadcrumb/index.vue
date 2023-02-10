@@ -31,8 +31,9 @@ export default {
 	},
 	methods: {
 		getBreadcrumb() {
-			const matched = this.$route.matched.filter(item => item.name);
+			const matched = this.$route.matched.filter(item => item.meta.title);
 			this.levelList = matched;
+
 		},
 	},
 };
