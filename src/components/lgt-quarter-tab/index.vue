@@ -8,8 +8,8 @@
       <el-tab-pane
         v-for="item in currentList"
         :label="item.label"
-        :name="item.value"
-        :key="item.value"
+        :name="item.time"
+        :key="item.time"
       >{{item.label}}</el-tab-pane>
     </el-tabs>
 
@@ -64,7 +64,7 @@ export default {
       // 目前的展示列表
       this.currentList = [...list.splice(list.length - 4, 4)];
       this.$nextTick(() => {
-        this.currnentItem = this.currentList[3].value;
+        this.currnentItem = this.currentList[3].time;
       });
     }
   }

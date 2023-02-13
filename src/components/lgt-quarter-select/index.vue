@@ -19,7 +19,9 @@
     </el-form-item>
 
     <el-form-item>
-      <el-button type="primary" icon="search" @click="$emit('query',form)">查询</el-button>
+      <el-button type="primary" icon="search" @click="$emit('query', form)"
+        >查询</el-button
+      >
     </el-form-item>
 
     <el-form-item style="float: right">
@@ -43,24 +45,24 @@ export default {
   name: "lgtQuarterlySelect",
   props: {
     formLabel: {
-      type: String
+      type: String,
     },
     showPeriodsSelect: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
-      form: {}
+      form: {},
     };
   },
   computed: {
     quarterlyList() {
       return getQuarterlyList(2);
-    }
+    },
   },
   mounted() {},
-  methods: {}
+  methods: {},
 };
 </script>
 <style lang="scss" scoped>

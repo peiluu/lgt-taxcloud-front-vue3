@@ -1,36 +1,61 @@
 <template>
-  <el-form :model="form" :rules="rules" ref="form" label-width="100px" inline>
+  <el-form
+    :model="form"
+    :rules="rules"
+    ref="form"
+    label-width="100px"
+    inline
+    :disabled="isDetail"
+    class="p-entry-voucher"
+  >
     <h2>记账凭证</h2>
-    <el-form-item label="凭证记" prop="mark">
-      <!-- <el-select v-model="form.status">
-        <el-option :value="1" />
-      </el-select> -->
-      记
-      <el-input
-        type="number"
-        v-model="form.mark"
-        style="margin: 0 8px"
-        :min="1"
-      />号
-    </el-form-item>
+    <div class="form-header">
+      <el-form-item label="凭证记" prop="mark">
+        <div class="formitem">
+          <span>记</span>
+          <el-input
+            :width="100"
+            type="number"
+            v-model="form.mark"
+            :min="1"
+            :disabled="updateStatus == 'update'"
+          />
+          <span>号</span>
+        </div>
+      </el-form-item>
+      <el-form-item label="业务场景" prop="sceneId">
+        <el-select
+          v-model="form.sceneId"
+          filterable
+          placeholder="请选择业务场景"
+        >
+          <el-option
+            v-for="item in metierSceneList"
+            :key="item?.id"
+            :label="item?.sceneName"
+            :value="item?.id.toString()"
+          ></el-option>
+        </el-select>
+      </el-form-item>
 
-    <el-form-item prop="quarter">
-      <el-select v-model="form.quarter" disabled>
-        <el-option
-          v-for="item in quarterlyList"
-          :key="item.value"
-          :value="item.value"
-          :label="item.label"
+      <!-- <el-form-item prop="quarter">
+        <el-select v-model="form.quarter" disabled>
+          <el-option
+            v-for="item in quarterlyList"
+            :key="item.value"
+            :value="item.value"
+            :label="item.label"
+          />
+        </el-select>
+      </el-form-item> -->
+      <el-form-item label="日期" prop="time">
+        <el-date-picker
+          v-model="form.time"
+          value-format="YYYY-MM-DD"
+          placeholder="选择日期"
         />
-      </el-select>
-    </el-form-item>
-    <el-form-item label="日期" prop="date">
-      <el-date-picker
-        v-model="dateValue"
-        value-format="YYYY-MM-DD"
-        placeholder="选择日期"
-      />
-    </el-form-item>
+      </el-form-item>
+    </div>
 
     <div class="m-table">
       <div v-if="!isDetail">
@@ -41,7 +66,9 @@
           <Delete @click="deleteLine" color="red" />
         </el-icon>
       </div>
+
       <table>
+        <!-- 表头 -->
         <thead>
           <tr>
             <th rowspan="2" width="300">摘要</th>
@@ -50,83 +77,91 @@
             <th colspan="11">贷方金额</th>
           </tr>
           <tr>
-            <th v-for="item in debitUnitMap" :key="item.label">
+            <th v-for="item in unitList" :key="item.label">
               {{ item.label }}
             </th>
-            <th v-for="item in creditUnitMap" :key="item.label">
+            <th v-for="item in unitList" :key="item.label">
               {{ item.label }}
             </th>
           </tr>
         </thead>
-
+        <!-- 表行 -->
         <tbody>
+          <!-- 循环列表数据 -->
           <tr v-for="(item, index) in tableList" :key="index">
             <td>
-              <template v-if="isDetail">{{ item.abstract }}</template>
-              <el-input v-else v-model="item.abstract" />
+              <!-- 查询详情和输入表单展示不同的效果 -->
+              <template v-if="isDetail">{{ item.summary }}</template>
+              <el-input v-else v-model="item.summary" placeholder="请输入" />
             </td>
             <td>
               <template v-if="isDetail">{{ item.subject }}</template>
-              <el-select v-else v-model="item.subject" style="margin: 0 8px">
+              <el-select
+                v-else
+                v-model="item.subjectId"
+                filterable
+                style="margin: 0 8px"
+              >
                 <el-option
-                  v-for="(subItem, subIndex) in subjectList"
-                  :key="subIndex"
-                  :value="subItem.value"
-                  :label="subItem.name"
+                  v-for="subItem in subjectList"
+                  :key="subItem.id"
+                  :value="subItem.id"
+                  :label="`${subItem.subjectCode}: ${subItem.cascadeSubjectName}`"
                 />
               </el-select>
             </td>
-            <!-- 借方金额 -->
+            <!-- 借方金额 - 编辑中状态 -->
             <template v-if="item.isDebitEdit">
               <td colspan="11">
                 <el-input
-                  v-model="item.debitAmount"
+                  v-model="item.debitPrice"
                   @blur="onInputBlur"
                   v-focus
-                  autofocus
                   :key="index"
                 />
               </td>
             </template>
+            <!-- 借方金额 - 展示状态 -->
             <td
               v-else
-              v-for="(debitItem, subIndex) in debitUnitMap"
+              v-for="(debitItem, subIndex) in unitList"
               :key="subIndex"
               @click="handleClick('isDebitEdit', index)"
             >
-              {{ getValue(item.debitAmount, subIndex) }}
+              {{ getValue(item.debitPrice, subIndex) }}
             </td>
-            <!-- 贷方金额 -->
+
+            <!-- 贷方金额 - 编辑中状态 -->
             <template v-if="item.isCreditEdit">
               <td colspan="11">
                 <el-input
-                  v-model="item.creditAmount"
+                  v-model="item.creditPrice"
                   @blur="onInputBlur"
                   v-focus
-                  autofocus
                   :key="index"
                 />
               </td>
             </template>
+            <!-- 贷方金额 - 展示中状态 -->
             <td
               v-else
-              v-for="(creditItem, subIndex) in creditUnitMap"
+              v-for="(creditItem, subIndex) in unitList"
               :key="subIndex"
               @click="handleClick('isCreditEdit', index)"
             >
-              {{ getValue(item.creditAmount, subIndex) }}
+              {{ getValue(item.creditPrice, subIndex) }}
             </td>
           </tr>
 
           <!-- 合计行 -->
           <tr>
             <td colspan="2">合计：</td>
-            <td v-for="(debitItem, subIndex) in debitUnitMap" :key="subIndex">
-              {{ getTotalValue("debitAmount", subIndex) }}
+            <td v-for="(debitItem, subIndex) in unitList" :key="subIndex">
+              {{ getTotalValue("debitPrice", subIndex) }}
             </td>
 
-            <td v-for="(creditItem, subIndex) in creditUnitMap" :key="subIndex">
-              {{ getTotalValue("creditAmount", subIndex) }}
+            <td v-for="(creditItem, subIndex) in unitList" :key="subIndex">
+              {{ getTotalValue("creditPrice", subIndex) }}
             </td>
           </tr>
         </tbody>
@@ -134,7 +169,7 @@
     </div>
 
     <div :class="{ 'table-footer': true, disabled: isDetail }">
-      <div v-if="!isDetail">创建人：admin</div>
+      <div v-if="!isDetail">创建人：{{ userName }}</div>
       <div>
         <el-button v-if="isDetail" link type="primary" size="large"
           >原始单据</el-button
@@ -167,7 +202,7 @@
     </el-dialog>
 
     <div class="m-footer">
-      <el-button @click="back">返回</el-button>
+      <el-button @click="goBack">返回</el-button>
       <!-- :disabled="isDetail" -->
       <el-button v-if="!isDetail" type="primary" @click="handleSubmit"
         >提交</el-button
@@ -179,170 +214,92 @@
 <script>
 import { getQuarterlyList } from "@/utils/util";
 import { unitList } from "@/const";
-import { addObj, editObj } from "../api/index.js";
+import cookies from "@/utils/cookies";
+import {
+  page,
+  addObj,
+  editObj,
+  findTaxMetierScene,
+  findTaxSubject,
+} from "../api/index.js";
+import "./index.scss";
 
 export default {
   name: "oinvoiceDetail",
   data() {
     return {
       form: {
-        dcdirection: 1,
-        status: 1,
+        time: "",
       },
       // 是否是查看详情
       isDetail: false,
       dialogTableVisible: false,
-
-      rules: {},
-      // 借方金额列表
-      debitUnitMap: [
-        {
-          label: "亿",
-          prop: "name2",
-        },
-        {
-          label: "千",
-          prop: "name2",
-        },
-        {
-          label: "百",
-          prop: "name2",
-          value: 1,
-        },
-        {
-          label: "十",
-          prop: "name2",
-        },
-        {
-          label: "万",
-          prop: "name2",
-        },
-        {
-          label: "千",
-          prop: "name2",
-        },
-        {
-          label: "百",
-          prop: "name2",
-        },
-        {
-          label: "十",
-          prop: "name2",
-        },
-        {
-          label: "元",
-          prop: "name2",
-        },
-        {
-          label: "角",
-          prop: "name2",
-        },
-        {
-          label: "分",
-          prop: "name2",
-        },
-      ],
-      // 贷方金额列表
-      creditUnitMap: [
-        {
-          label: "亿",
-          prop: "name2",
-        },
-        {
-          label: "千",
-          prop: "name2",
-        },
-        {
-          label: "百",
-          prop: "name2",
-          value: 1,
-        },
-        {
-          label: "十",
-          prop: "name2",
-        },
-        {
-          label: "万",
-          prop: "name2",
-        },
-        {
-          label: "千",
-          prop: "name2",
-        },
-        {
-          label: "百",
-          prop: "name2",
-        },
-        {
-          label: "十",
-          prop: "name2",
-        },
-        {
-          label: "元",
-          prop: "name2",
-        },
-        {
-          label: "角",
-          prop: "name2",
-        },
-        {
-          label: "分",
-          prop: "name2",
-        },
-      ],
+      rules: {
+        mark: [
+          {
+            required: true,
+            message: "请输入凭证记号",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 20,
+            message: "长度在 1 到 20 个字符",
+            trigger: "blur",
+          },
+        ],
+        time: [
+          {
+            required: true,
+            message: "请选择日期",
+            trigger: "blur",
+          },
+        ],
+        sceneId: [
+          {
+            required: true,
+            message: "请选择业务场景",
+            trigger: "blur",
+          },
+        ],
+      },
       // 表格数据
       tableList: [
         {
-          index: 0,
-          id: 1,
-          subject: 11111,
-          abstract: "摘要",
-          debitAmount: 56789.11,
-          creditAmount: 124155.1111,
+          debitPrice: "", // 贷方金额
+          creditPrice: "", //借方金额
         },
         {
-          index: 1,
-          id: 2,
-          subject: "普陀区",
-          abstract: "摘要",
-          debitAmount: 56789.11,
-          creditAmount: 181515.41,
+          debitPrice: "", // 贷方金额
+          creditPrice: "", //借方金额
         },
         {
-          date: "2016-05-04",
-          id: 3,
-          subject: 11111,
-          abstract: "摘要",
-          debitAmount: 56789.11,
-          creditAmount: 11111.1111,
+          debitPrice: "", // 贷方金额
+          creditPrice: "", //借方金额
         },
         {
-          id: 3,
-          subject: 11111,
-          abstract: "摘要",
-          debitAmount: 56789.11,
-          creditAmount: 11111.1111,
+          debitPrice: "", // 贷方金额
+          creditPrice: "", //借方金额
         },
       ],
-      subjectList: [
-        {
-          name: "库存现金",
-          value: 111,
-        },
-        {
-          name: "其他项目",
-          value: 222,
-        },
-      ],
+      updateStatus: "",
+      subjectList: [],
+      metierSceneList: [],
+      id: '',
     };
   },
   created() {},
 
   mounted() {
     // 查询详情
-    const { id = "", isDetail = false } = this.$route.query;
+    const { id = "", updateStatus = "" } = this.$route.query;
     this.id = id;
-    this.isDetail = isDetail;
+    this.isDetail = updateStatus === "detail";
+    this.updateStatus = updateStatus;
+    this.form.time = this.dateValue;
+    this.findTaxMetierScene();
+    this.findTaxSubject();
+    // this.$set(this.form, "time", this.dateValue);
     // this.$set(this.form, "date", this.dateValue);
   },
   computed: {
@@ -350,6 +307,9 @@ export default {
       const list = getQuarterlyList(2);
       // this.form.quarter = list[list.length - 1];
       return list;
+    },
+    userName() {
+      return cookies.get("userName");
     },
     dateValue() {
       const date = new Date();
@@ -372,11 +332,39 @@ export default {
     // 如果id 存在就去查询详情
     id(newV) {
       if (newV) {
-        // this.findTaxSubjectCascade(newV)
+        this.getDetail({
+          pageIndex: 1,
+          pageSize: 10,
+          id: newV,
+        });
       }
     },
   },
   methods: {
+    getDetail(params) {
+      page(params).then((response) => {
+        this.form = response.rows[0] || {};
+      });
+    },
+    // 获取业务场景
+    findTaxMetierScene() {
+      findTaxMetierScene({
+        pageIndex: 1,
+        pageSize: 0,
+      }).then((response) => {
+        this.metierSceneList = response.rows;
+      });
+    },
+    // 获取科目列表
+    findTaxSubject() {
+      findTaxSubject({
+        pageIndex: 1,
+        pageSize: 0,
+      }).then((response) => {
+        this.subjectList = response.rows;
+      });
+    },
+
     // 增加一行
     addLine() {
       this.tableList.push({});
@@ -437,7 +425,7 @@ export default {
       return this.getValue(total, index);
     },
     // 返回凭证列表
-    back() {
+    goBack() {
       this.$router.push({
         path: "/bookKeepingVoucherManage/query",
       });
@@ -462,132 +450,55 @@ export default {
       const set = this.$refs;
       set["form"].validate((valid) => {
         if (!valid) return false;
-        if (this.updateStatus === "create") {
-          this.create();
-        } else {
-          this.update();
+        const params = {
+          ...this.form,
+          list: this.tableList.map((item) => {
+            return {
+              ...item,
+              debitPrice: parseFloat(item.debitPrice || 0),
+              creditPrice: parseFloat(item.creditPrice || 0),
+            };
+          }),
+          accountSetId: cookies.get("accountSetId") || "",
+        };
+        if (this.updateStatus === "update") {
+          this.update(params);
+          return;
         }
+        this.create(params);
       });
     },
     // 创建
-    create() {
-      addObj(this.form).then(() => {
-        this.dialogFormVisible = false;
-        this.getList();
+    create(params) {
+      addObj(params).then(() => {
         this.$notify({
           title: "成功",
           message: "新建成功",
           type: "success",
           duration: 2000,
         });
+        this.goBack();
       });
     },
     // 编辑
-    update() {
-      editObj(this.form).then(() => {
-        this.dialogFormVisible = false;
-        this.getList();
+    update(params) {
+      editObj(params).then(() => {
         this.$notify({
           title: "成功",
           message: "更新成功",
           type: "success",
           duration: 2000,
         });
+        this.goBack();
       });
     },
   },
 };
 </script>
-<style lang="scss" scoped>
-.m-title {
-  margin: 0 16px 24px;
-}
-
-h2 {
-  padding-bottom: 24px;
-  text-align: center;
-}
-
-s .m-footer {
-  margin: 48px 0 32px 33%;
-}
-
-.el-card {
-  margin-bottom: 16px;
-
-  &:first-child {
-    /deep/ .el-card__body {
-      display: flex;
-      align-items: flex-end;
-
-      span {
-        padding-left: 8px;
-      }
-    }
-  }
-}
-
-table {
-  border: 1px solid #e6e6e6;
-  border-collapse: collapse;
-  border-spacing: 1px;
-  width: 100%;
-}
-
-th,
-td {
-  border: 1px solid #e6e6e6;
-  padding: 8px 16px;
-  text-align: center;
-}
-
-th {
-  background-color: #eff3f5;
-}
-
-table tr td {
-  word-break: break-all;
-}
-
-.m-table {
-  display: flex;
-
-  > div:first-of-type {
+<style lang="scss">
+.formitem {
+  /deep/ .el-form-item__content {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 4px 3% 0;
-
-    .el-icon {
-      margin-top: 4px;
-      cursor: pointer;
-    }
   }
-}
-
-.table-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 24px;
-
-  &.disabled {
-    justify-content: flex-end;
-  }
-
-  span {
-    margin-left: 4px;
-  }
-}
-
-/deep/ .el-dialog__body {
-  display: flex;
-  justify-content: center;
-}
-
-.m-footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 32px;
 }
 </style>

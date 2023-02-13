@@ -141,7 +141,7 @@ export default {
             // })
             cookies.set("uuid", res.id);
             cookies.set("token", res.accessToken);
-            cookies.set("username", this.loginForm.username);
+            cookies.set("userName", this.loginForm.username);
             // setTimeout(() => {
             this.$router.push({ path: "/chooseAccountSet" });
             // this.$router.push({ path: '/taxclude/home' })

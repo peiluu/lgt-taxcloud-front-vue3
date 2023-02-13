@@ -97,10 +97,17 @@ export const getQuarterlyList = (number) => {
   const list = [];
   // 倒推之后的第一年
   const firstYear = year - (number || 2);
+  const listMap = {
+    1: '一',
+    2: '二',
+    3: '三',
+    4: '四',
+  }
   const push = (i, j) => {
     list.push({
       label: `${i}年第${j}季度`,
       value: `${i}-${j}`,
+      time: `${i}${listMap[j]}季度`
     });
   };
   // 获取季度数

@@ -45,14 +45,28 @@
         </el-form-item>
 
         <el-form-item label="发生时间" prop="status">
-          <el-date-picker v-model="form.time" value-format="YYYY-MM-DD" placeholder="日期" />
+          <el-date-picker
+            v-model="form.time"
+            value-format="YYYY-MM-DD"
+            placeholder="日期"
+          />
         </el-form-item>
       </el-card>
     </el-form>
 
     <div class="m-footer">
-      <el-button v-if="updateStatus !== 'detail'" type="primary" @click="handleSubmit">提交生成凭证</el-button>
-      <el-button v-if="updateStatus !== 'detail'" type="primary" @click="handleSubmit">提交暂不生成凭证</el-button>
+      <el-button
+        v-if="updateStatus !== 'detail'"
+        type="primary"
+        @click="handleSubmit"
+        >提交生成凭证</el-button
+      >
+      <el-button
+        v-if="updateStatus !== 'detail'"
+        type="primary"
+        @click="handleSubmit"
+        >提交暂不生成凭证</el-button
+      >
       <el-button @click="cancel">取消</el-button>
     </div>
   </div>
@@ -67,45 +81,45 @@ export default {
     return {
       form: {
         dcdirection: 1,
-        status: 1
+        status: 1,
       },
       rules: {
         qymc: [
           {
             required: true,
             message: "请输入企业名称",
-            trigger: "blur"
+            trigger: "blur",
           },
           {
             min: 1,
             max: 20,
             message: "长度在 1 到 20 个字符",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         time: [
           {
             required: true,
             message: "请选择启用期间",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         accoutingStandard: [
           {
             required: true,
             message: "请选择会计准则",
-            trigger: "blur"
-          }
-        ]
+            trigger: "blur",
+          },
+        ],
       },
       id: "",
       updateStatus: "",
       textMap: {
         update: "编辑原始凭证",
         create: "新增原始凭证",
-        detail: "原始凭证详情"
+        detail: "原始凭证详情",
       },
-      fileList: []
+      fileList: [],
     };
   },
   created() {},
@@ -122,12 +136,12 @@ export default {
       if (newV) {
         // this.findTaxSubjectCascade(newV)
       }
-    }
+    },
   },
   methods: {
     cancel() {
       this.$router.replace({
-        path: "/originalVoucherManage/originalVoucherList"
+        path: "/originalVoucherManage/originalVoucherList",
       });
     },
     handleRemove(uploadFile) {
@@ -138,7 +152,7 @@ export default {
     // 提交表单
     handleSubmit() {
       const set = this.$refs;
-      set["form"].validate(valid => {
+      set["form"].validate((valid) => {
         if (!valid) return false;
         if (this.updateStatus === "create") {
           this.create();
@@ -156,7 +170,7 @@ export default {
           title: "成功",
           message: "新建成功",
           type: "success",
-          duration: 2000
+          duration: 2000,
         });
       });
     },
@@ -169,11 +183,11 @@ export default {
           title: "成功",
           message: "更新成功",
           type: "success",
-          duration: 2000
+          duration: 2000,
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

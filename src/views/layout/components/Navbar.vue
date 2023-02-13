@@ -17,7 +17,7 @@
       <el-icon :size="20">
         <User />
       </el-icon>
-      <span>{{ username }}</span>
+      <span>{{ userName }}</span>
       <el-button link type="primary" @click="logout">注销</el-button>
     </div>
   </el-menu>
@@ -45,8 +45,8 @@ export default {
   },
   computed: {
     ...mapGetters(["sidebar", "name", "avatar", 'userInfo']),
-    username() {
-      return cookies.get('username')
+    userName() {
+      return cookies.get('userName')
     },
     // 主体企业名称
     qymc() {

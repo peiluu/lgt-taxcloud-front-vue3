@@ -15,7 +15,7 @@
       </el-form-item>
 
       <el-form-item label="业务类别" prop="ywType">
-        <el-select v-model="form.ywType" placeholder="请选择业务类别">
+        <el-select v-model="form.ywType"  filterable placeholder="请选择业务类别">
           <el-option
             v-for="item in metierSceneList"
             :key="item?.id"
