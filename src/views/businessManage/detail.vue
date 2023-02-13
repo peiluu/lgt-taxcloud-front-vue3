@@ -152,7 +152,6 @@ export default {
           },
         ],
       },
-      id: "",
       updateStatus: "",
       // 返回选择企业和账套页面
       backToChoose: false,
@@ -192,22 +191,17 @@ export default {
       updateStatus = "",
       backToChoose = false,
     } = this.$route.query;
-    this.id = id;
     this.backToChoose = backToChoose;
     this.updateStatus = updateStatus;
     this.findTaxMetierCascade();
-  },
-  watch: {
     // 如果id 存在就去查询详情
-    id(newV) {
-      if (newV) {
-        this.getDetail({
-          pageIndex: 1,
-          pageSize: 10,
-          id: newV,
-        });
-      }
-    },
+    if (id) {
+      this.getDetail({
+        pageIndex: 1,
+        pageSize: 10,
+        id,
+      });
+    }
   },
   methods: {
     onChange(e) {

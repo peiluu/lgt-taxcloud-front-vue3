@@ -127,17 +127,13 @@ export default {
   mounted() {
     // 查询详情
     const { id = "", updateStatus = "" } = this.$route.query;
-    this.id = id;
     this.updateStatus = updateStatus;
-  },
-  watch: {
     // 如果id 存在就去查询详情
-    id(newV) {
-      if (newV) {
-        // this.findTaxSubjectCascade(newV)
-      }
-    },
+    if (id) {
+      // this.findTaxSubjectCascade(newV)
+    }
   },
+  watch: {},
   methods: {
     cancel() {
       this.$router.replace({

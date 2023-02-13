@@ -15,7 +15,7 @@ export const loadStyle = (url) => {
 export const setTitle = function (title) {
   // title = title ? `${title}` : "NxAdmin";
   // window.document.title = title + "-nxAdmin";
-    title = title ? `${title}` : "云税务师记账平台";
+  title = title ? `${title}` : "云税务师记账平台";
   window.document.title = title;
 };
 
@@ -98,16 +98,16 @@ export const getQuarterlyList = (number) => {
   // 倒推之后的第一年
   const firstYear = year - (number || 2);
   const listMap = {
-    1: '一',
-    2: '二',
-    3: '三',
-    4: '四',
-  }
+    1: "一",
+    2: "二",
+    3: "三",
+    4: "四",
+  };
   const push = (i, j) => {
     list.push({
       label: `${i}年第${j}季度`,
       value: `${i}-${j}`,
-      time: `${i}${listMap[j]}季度`
+      time: `${i}${listMap[j]}季度`,
     });
   };
   // 获取季度数
@@ -128,5 +128,29 @@ export const getQuarterlyList = (number) => {
       }
     }
   }
-  return list
+  return list;
 };
+
+/**
+ * @description 限制输入数字的位数
+ */
+export function limitNumTool(value, figure) {
+  let str =
+    (value)
+      // 转成字符串
+      .replace(/[^\d^\.]+/g, "")
+      // 把不是数字，不是小数点的过滤掉
+      .replace(/^0+(\d)/, "$1")
+      // 第一位0开头，0后面为数字，则过滤掉，取后面的数字
+      .replace(/^\./, ".") // 如果输入的第一位为小数点，则替换成 0.实现自动补全
+      .match(/^\d*(\.?\d{0,2})/g)[0] || "";
+  // 最终匹配得到结果 以数字开头，只有一个小数点，而且小数点
+  if (str.indexOf(".") > -1) {
+    // 小数后两位
+    str = str.slice(0, Number(figure) + 3);
+  } else {
+    str = str.slice(0, figure);
+  }
+
+  return str;
+}

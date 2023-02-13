@@ -42,6 +42,27 @@ export function editObj(obj) {
 }
 
 /**
+ * @desption 查询记账凭证详情
+ */
+export function findAccountVoucherDetail(id) {
+  return request({
+    url: "/api/tax/taxsby/findAccountVoucherDetail/" + id,
+    method: "post",
+  });
+}
+
+/**
+ * @desption 查询记账凭证汇总信息
+ */
+export function AccountVoucherPool(obj) {
+  return request({
+    url: "/api/tax/taxsby/AccountVoucherPool",
+    method: "post",
+    data: obj,
+  });
+}
+
+/**
  * @desption 获取行业业务场景
  */
 export function findTaxMetierScene(obj) {
@@ -51,13 +72,14 @@ export function findTaxMetierScene(obj) {
     data: obj,
   });
 }
+
 /**
  * @desption 获取科目列表
  */
-export function findTaxSubject (obj) {
+export function findTaxSubject(obj) {
   return request({
-    url: '/api/tax/meSubject/findTaxSubject',
-    method: 'post',
-    data: obj
-  })
+    url: "/api/tax/meSubject/findTaxSubject",
+    method: "post",
+    data: obj,
+  });
 }

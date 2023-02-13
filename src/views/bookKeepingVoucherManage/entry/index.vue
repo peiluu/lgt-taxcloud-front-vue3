@@ -1,44 +1,44 @@
 <template>
-  <el-form
-    :model="form"
-    :rules="rules"
-    ref="form"
-    label-width="100px"
-    inline
-    :disabled="isDetail"
-    class="p-entry-voucher"
-  >
-    <h2>记账凭证</h2>
-    <div class="form-header">
-      <el-form-item label="凭证记" prop="mark">
-        <div class="formitem">
-          <span>记</span>
-          <el-input
-            :width="100"
-            type="number"
-            v-model="form.mark"
-            :min="1"
-            :disabled="updateStatus == 'update'"
-          />
-          <span>号</span>
-        </div>
-      </el-form-item>
-      <el-form-item label="业务场景" prop="sceneId">
-        <el-select
-          v-model="form.sceneId"
-          filterable
-          placeholder="请选择业务场景"
-        >
-          <el-option
-            v-for="item in metierSceneList"
-            :key="item?.id"
-            :label="item?.sceneName"
-            :value="item?.id.toString()"
-          ></el-option>
-        </el-select>
-      </el-form-item>
+  <div class="p-entry-voucher">
+    <el-form
+      :model="form"
+      :rules="rules"
+      ref="form"
+      label-width="100px"
+      inline
+      :disabled="isDetail"
+    >
+      <h2>记账凭证</h2>
+      <div class="form-header">
+        <el-form-item label="凭证记" prop="mark">
+          <div class="formitem">
+            <span>记</span>
+            <el-input
+              :width="100"
+              type="number"
+              v-model="form.mark"
+              :min="1"
+              :disabled="updateStatus == 'update'"
+            />
+            <span>号</span>
+          </div>
+        </el-form-item>
+        <el-form-item label="业务场景" prop="sceneId">
+          <el-select
+            v-model="form.sceneId"
+            filterable
+            placeholder="请选择业务场景"
+          >
+            <el-option
+              v-for="item in metierSceneList"
+              :key="item?.id"
+              :label="item?.sceneName"
+              :value="item?.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-      <!-- <el-form-item prop="quarter">
+        <!-- <el-form-item prop="quarter">
         <el-select v-model="form.quarter" disabled>
           <el-option
             v-for="item in quarterlyList"
@@ -48,158 +48,164 @@
           />
         </el-select>
       </el-form-item> -->
-      <el-form-item label="日期" prop="time">
-        <el-date-picker
-          v-model="form.time"
-          value-format="YYYY-MM-DD"
-          placeholder="选择日期"
-        />
-      </el-form-item>
-    </div>
-
-    <div class="m-table">
-      <div v-if="!isDetail">
-        <el-icon @click="addLine" color="red">
-          <Plus />
-        </el-icon>
-        <el-icon>
-          <Delete @click="deleteLine" color="red" />
-        </el-icon>
+        <el-form-item label="日期" prop="accountingTime">
+          <el-date-picker
+            v-model="form.accountingTime"
+            value-format="YYYY-MM-DD"
+            placeholder="选择日期"
+          />
+        </el-form-item>
       </div>
 
-      <table>
-        <!-- 表头 -->
-        <thead>
-          <tr>
-            <th rowspan="2" width="300">摘要</th>
-            <th rowspan="2" width="300">会计科目</th>
-            <th colspan="11">借方金额</th>
-            <th colspan="11">贷方金额</th>
-          </tr>
-          <tr>
-            <th v-for="item in unitList" :key="item.label">
-              {{ item.label }}
-            </th>
-            <th v-for="item in unitList" :key="item.label">
-              {{ item.label }}
-            </th>
-          </tr>
-        </thead>
-        <!-- 表行 -->
-        <tbody>
-          <!-- 循环列表数据 -->
-          <tr v-for="(item, index) in tableList" :key="index">
-            <td>
-              <!-- 查询详情和输入表单展示不同的效果 -->
-              <template v-if="isDetail">{{ item.summary }}</template>
-              <el-input v-else v-model="item.summary" placeholder="请输入" />
-            </td>
-            <td>
-              <template v-if="isDetail">{{ item.subject }}</template>
-              <el-select
+      <div class="m-table">
+        <div v-if="!isDetail">
+          <el-icon @click="addLine" color="red">
+            <Plus />
+          </el-icon>
+          <el-icon>
+            <Delete @click="deleteLine" color="red" />
+          </el-icon>
+        </div>
+
+        <table>
+          <!-- 表头 -->
+          <thead>
+            <tr>
+              <th rowspan="2" width="300">摘要</th>
+              <th rowspan="2" width="300">会计科目</th>
+              <th colspan="11">借方金额</th>
+              <th colspan="11">贷方金额</th>
+            </tr>
+            <tr>
+              <th v-for="item in unitList" :key="item.label">
+                {{ item.label }}
+              </th>
+              <th v-for="item in unitList" :key="item.label">
+                {{ item.label }}
+              </th>
+            </tr>
+          </thead>
+          <!-- 表行 -->
+          <tbody>
+            <!-- 循环列表数据 -->
+            <tr v-for="(item, index) in tableList" :key="index">
+              <td>
+                <!-- 查询详情和输入表单展示不同的效果 -->
+                <!-- <template v-if="isDetail">{{ item.summary }}</template>
+                <el-input v-else v-model="item.summary" placeholder="请输入" /> -->
+                <el-input v-model="item.summary" />
+              </td>
+              <td>
+                <template v-if="isDetail">{{ item.subjectName }}</template>
+                <el-select
+                  v-else
+                  v-model="item.subjectId"
+                  filterable
+                  style="margin: 0 8px"
+                >
+                  <el-option
+                    v-for="subItem in subjectList"
+                    :key="subItem.id"
+                    :value="subItem.id"
+                    :label="`${subItem.subjectCode}: ${subItem.cascadeSubjectName}`"
+                  />
+                </el-select>
+              </td>
+              <!-- 借方金额 - 编辑中状态 -->
+              <template v-if="item.isDebitEdit">
+                <td colspan="11">
+                  <el-input
+                    v-model="item.debitPrice"
+                    @blur="onInputBlur"
+                    @input="limitNum($event, 'debitPrice', index)"
+                    v-focus
+                    :key="index"
+                  />
+                </td>
+              </template>
+              <!-- 借方金额 - 展示状态 -->
+              <td
                 v-else
-                v-model="item.subjectId"
-                filterable
-                style="margin: 0 8px"
+                v-for="(debitItem, subIndex) in unitList"
+                :key="subIndex"
+                @click="handleClick('isDebitEdit', index)"
               >
-                <el-option
-                  v-for="subItem in subjectList"
-                  :key="subItem.id"
-                  :value="subItem.id"
-                  :label="`${subItem.subjectCode}: ${subItem.cascadeSubjectName}`"
-                />
-              </el-select>
-            </td>
-            <!-- 借方金额 - 编辑中状态 -->
-            <template v-if="item.isDebitEdit">
-              <td colspan="11">
-                <el-input
-                  v-model="item.debitPrice"
-                  @blur="onInputBlur"
-                  v-focus
-                  :key="index"
-                />
+                {{ getValue(item.debitPrice, subIndex) }}
               </td>
-            </template>
-            <!-- 借方金额 - 展示状态 -->
-            <td
-              v-else
-              v-for="(debitItem, subIndex) in unitList"
-              :key="subIndex"
-              @click="handleClick('isDebitEdit', index)"
-            >
-              {{ getValue(item.debitPrice, subIndex) }}
-            </td>
 
-            <!-- 贷方金额 - 编辑中状态 -->
-            <template v-if="item.isCreditEdit">
-              <td colspan="11">
-                <el-input
-                  v-model="item.creditPrice"
-                  @blur="onInputBlur"
-                  v-focus
-                  :key="index"
-                />
+              <!-- 贷方金额 - 编辑中状态 -->
+              <template v-if="item.isCreditEdit">
+                <td colspan="11">
+                  <el-input
+                    v-model="item.creditPrice"
+                    @blur="onInputBlur"
+                    @input="limitNum($event, 'isCreditEdit', index)"
+                    v-focus
+                    :key="index"
+                  />
+                </td>
+              </template>
+              <!-- 贷方金额 - 展示中状态 -->
+              <td
+                v-else
+                v-for="(creditItem, subIndex) in unitList"
+                :key="subIndex"
+                @click="handleClick('isCreditEdit', index)"
+              >
+                {{ getValue(item.creditPrice, subIndex) }}
               </td>
-            </template>
-            <!-- 贷方金额 - 展示中状态 -->
-            <td
-              v-else
-              v-for="(creditItem, subIndex) in unitList"
-              :key="subIndex"
-              @click="handleClick('isCreditEdit', index)"
-            >
-              {{ getValue(item.creditPrice, subIndex) }}
-            </td>
-          </tr>
+            </tr>
 
-          <!-- 合计行 -->
-          <tr>
-            <td colspan="2">合计：</td>
-            <td v-for="(debitItem, subIndex) in unitList" :key="subIndex">
-              {{ getTotalValue("debitPrice", subIndex) }}
-            </td>
+            <!-- 合计行 -->
+            <tr>
+              <td colspan="2">合计：</td>
+              <td v-for="(debitItem, subIndex) in unitList" :key="subIndex">
+                {{ getTotalValue("debitPrice", subIndex) }}
+              </td>
 
-            <td v-for="(creditItem, subIndex) in unitList" :key="subIndex">
-              {{ getTotalValue("creditPrice", subIndex) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div :class="{ 'table-footer': true, disabled: isDetail }">
-      <div v-if="!isDetail">创建人：{{ userName }}</div>
-      <div>
-        <el-button v-if="isDetail" link type="primary" size="large"
-          >原始单据</el-button
-        >
-        <el-button
-          v-else
-          link
-          type="primary"
-          size="large"
-          @click="showDialog(true)"
-          >添加原始单据</el-button
-        >
-        <span>已添加 2 张</span>
+              <td v-for="(creditItem, subIndex) in unitList" :key="subIndex">
+                {{ getTotalValue("creditPrice", subIndex) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
-    <el-dialog
-      center
-      title="选择添加的原始单据类型"
-      v-model="dialogTableVisible"
-      width="20%"
-    >
-      <!-- :disabled="isDetail" -->
-      <el-button type="primary" @click="addOriginalVoucher('invoice')"
-        >发票</el-button
+
+      <div :class="{ 'table-footer': true, disabled: isDetail }">
+        <div v-if="!isDetail">
+          创建人：{{ this.form.creatorName || userName }}
+        </div>
+        <div>
+          <el-button v-if="isDetail" link type="primary" size="large"
+            >原始单据</el-button
+          >
+          <el-button
+            v-else
+            link
+            type="primary"
+            size="large"
+            @click="showDialog(true)"
+            >添加原始单据</el-button
+          >
+          <span>已添加 2 张</span>
+        </div>
+      </div>
+      <el-dialog
+        center
+        title="选择添加的原始单据类型"
+        v-model="dialogTableVisible"
+        width="20%"
       >
-      <el-button type="primary" @click="addOriginalVoucher('other')"
-        >其他</el-button
-      >
-      <el-button @click="showDialog(false)">取消</el-button>
-    </el-dialog>
+        <!-- :disabled="isDetail" -->
+        <el-button type="primary" @click="addOriginalVoucher('invoice')"
+          >发票</el-button
+        >
+        <el-button type="primary" @click="addOriginalVoucher('other')"
+          >其他</el-button
+        >
+        <el-button @click="showDialog(false)">取消</el-button>
+      </el-dialog>
+    </el-form>
 
     <div class="m-footer">
       <el-button @click="goBack">返回</el-button>
@@ -208,19 +214,19 @@
         >提交</el-button
       >
     </div>
-  </el-form>
+  </div>
 </template>
 
 <script>
-import { getQuarterlyList } from "@/utils/util";
+import { getQuarterlyList, limitNumTool } from "@/utils/util";
 import { unitList } from "@/const";
 import cookies from "@/utils/cookies";
 import {
-  page,
   addObj,
   editObj,
   findTaxMetierScene,
   findTaxSubject,
+  findAccountVoucherDetail,
 } from "../api/index.js";
 import "./index.scss";
 
@@ -229,7 +235,7 @@ export default {
   data() {
     return {
       form: {
-        time: "",
+        accountingTime: "",
       },
       // 是否是查看详情
       isDetail: false,
@@ -248,7 +254,7 @@ export default {
             trigger: "blur",
           },
         ],
-        time: [
+        accountingTime: [
           {
             required: true,
             message: "请选择日期",
@@ -285,7 +291,6 @@ export default {
       updateStatus: "",
       subjectList: [],
       metierSceneList: [],
-      id: '',
     };
   },
   created() {},
@@ -293,14 +298,15 @@ export default {
   mounted() {
     // 查询详情
     const { id = "", updateStatus = "" } = this.$route.query;
-    this.id = id;
     this.isDetail = updateStatus === "detail";
     this.updateStatus = updateStatus;
-    this.form.time = this.dateValue;
+    this.form.accountingTime = this.dateValue;
     this.findTaxMetierScene();
     this.findTaxSubject();
-    // this.$set(this.form, "time", this.dateValue);
-    // this.$set(this.form, "date", this.dateValue);
+    // 如果id 存在就去查询详情
+    if (id) {
+      this.findAccountVoucherDetail(id);
+    }
   },
   computed: {
     quarterlyList() {
@@ -328,22 +334,18 @@ export default {
       return unitList;
     },
   },
-  watch: {
-    // 如果id 存在就去查询详情
-    id(newV) {
-      if (newV) {
-        this.getDetail({
-          pageIndex: 1,
-          pageSize: 10,
-          id: newV,
-        });
-      }
-    },
-  },
+  watch: {},
   methods: {
-    getDetail(params) {
-      page(params).then((response) => {
-        this.form = response.rows[0] || {};
+    // 查询详情
+    findAccountVoucherDetail(id) {
+      findAccountVoucherDetail(id).then((response = {}) => {
+        this.form = response;
+        this.tableList = this.tableList.map((item, index) => {
+          return {
+            ...item,
+            ...response.list[index],
+          };
+        });
       });
     },
     // 获取业务场景
@@ -401,6 +403,11 @@ export default {
         };
       });
     },
+    // 限制金额的输入格式
+    limitNum(value, key, index) {
+      const money = limitNumTool(value, 10);
+      this.tableList[index][key] = money;
+    },
 
     // 获取单元格的值，按金额单位划分
     getValue(amount, index) {
@@ -424,6 +431,7 @@ export default {
       }, 0);
       return this.getValue(total, index);
     },
+
     // 返回凭证列表
     goBack() {
       this.$router.push({

@@ -1,7 +1,15 @@
 <template>
   <div class="p-page">
     <h3 class="m-title">{{ textMap[updateStatus] || "新增账套" }}</h3>
-    <el-form :model="form" :inline="true" :rules="rules" ref="form" label-width="100px" class="detail-form" :disabled="updateStatus === 'detail'">
+    <el-form
+      :model="form"
+      :inline="true"
+      :rules="rules"
+      ref="form"
+      label-width="100px"
+      class="detail-form"
+      :disabled="updateStatus === 'detail'"
+    >
       <el-form-item label="账套名称" prop="accountSetName">
         <el-input v-model="form.accountSetName" placeholder="请输入账套名称" />
       </el-form-item>
@@ -10,7 +18,12 @@
       </el-form-item>
 
       <el-form-item label="启用期间" prop="qysj">
-        <el-date-picker v-model="form.qysj" type="month" placeholder="选择日期" value-format="YYYYMM" />
+        <el-date-picker
+          v-model="form.qysj"
+          type="month"
+          placeholder="选择日期"
+          value-format="YYYYMM"
+        />
       </el-form-item>
 
       <el-form-item label="本位币" prop="bwb">
@@ -40,7 +53,12 @@
 
     <div class="m-footer">
       <el-button @click="toBack">取消</el-button>
-      <el-button v-if="updateStatus !== 'detail'" type="primary" @click="handleSubmit">提交</el-button>
+      <el-button
+        v-if="updateStatus !== 'detail'"
+        type="primary"
+        @click="handleSubmit"
+        >提交</el-button
+      >
     </div>
   </div>
 </template>
@@ -53,9 +71,9 @@ export default {
   data() {
     return {
       form: {
-        kmtx: '简易科目',
+        kmtx: "简易科目",
         status: 1,
-        kjzd: '小企业会计准则（2013年颁布）',
+        kjzd: "小企业会计准则（2013年颁布）",
         bwb: 0,
       },
       rules: {
@@ -63,39 +81,38 @@ export default {
           {
             required: true,
             message: "请输入账套名称",
-            trigger: "blur"
+            trigger: "blur",
           },
           {
             min: 1,
             max: 20,
             message: "长度在 1 到 20 个字符",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         qysj: [
           {
             required: true,
             message: "请选择启用期间",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         accoutingStandard: [
           {
             required: true,
             message: "请选择会计准则",
-            trigger: "blur"
-          }
-        ]
+            trigger: "blur",
+          },
+        ],
       },
-      id: "",
       updateStatus: "",
       // 返回选择企业和账套页面
       backToChoose: false,
       textMap: {
         update: "编辑账套",
         create: "新增账套",
-        detail: "账套详情"
-      }
+        detail: "账套详情",
+      },
     };
   },
   created() {
@@ -105,43 +122,43 @@ export default {
 
   mounted() {
     // 查询详情
-    const { id = "", updateStatus = "", backToChoose = false } = this.$route.query;
-    this.id = id;
+    const {
+      id = "",
+      updateStatus = "",
+      backToChoose = false,
+    } = this.$route.query;
     this.backToChoose = backToChoose;
     this.updateStatus = updateStatus;
-  },
-  watch: {
     // 如果id 存在就去查询详情
-    id(newV) {
-      if (newV) {
-        this.getDetail({
-          pageIndex: 1,
-          pageSize: 10,
-          id: newV
-        })
-      }
+    if (id) {
+      this.getDetail({
+        pageIndex: 1,
+        pageSize: 10,
+        id,
+      });
     }
   },
+  watch: {},
   computed: {
     // 主体企业信息
     qyInfo() {
       return {
-        qyId: cookies.get('qyId'),
-        qymc: cookies.get('qymc'),
-      }
+        qyId: cookies.get("qyId"),
+        qymc: cookies.get("qymc"),
+      };
     },
   },
   methods: {
     getDetail(params) {
-      findAccountSet(params).then(response => {
-        this.form = response.rows[0] || {}
+      findAccountSet(params).then((response) => {
+        this.form = response.rows[0] || {};
       });
     },
 
     // 提交表单
     handleSubmit() {
       const set = this.$refs;
-      set["form"].validate(valid => {
+      set["form"].validate((valid) => {
         if (!valid) return false;
         if (this.updateStatus === "create") {
           this.create();
@@ -153,15 +170,16 @@ export default {
     // 创建账套
     create() {
       addObj({
-        ...this.form, qyId: this.qyInfo.qyId,
+        ...this.form,
+        qyId: this.qyInfo.qyId,
       }).then(() => {
         this.$notify({
           title: "成功",
           message: "新建成功",
           type: "success",
-          duration: 2000
+          duration: 2000,
         });
-        this.toBack()
+        this.toBack();
       });
     },
     // 编辑账套
@@ -172,16 +190,16 @@ export default {
           title: "成功",
           message: "更新成功",
           type: "success",
-          duration: 2000
+          duration: 2000,
         });
-        this.toBack()
+        this.toBack();
       });
     },
     toBack() {
-      const path = this.backToChoose ? '/chooseAccountSet' : "/setManage/list"
+      const path = this.backToChoose ? "/chooseAccountSet" : "/setManage/list";
       this.$router.replace({ path });
     },
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
