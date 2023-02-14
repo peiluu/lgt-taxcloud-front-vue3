@@ -31,7 +31,7 @@
           placeholder="请选择科目"
           :options="props.sujectCascadeList"
           clearable
-          :ref="cascaderRef"
+          ref="cascaderRef"
           @change="handleChange"
           :props="subjectProps"
           popper-class="cascaderClass"
@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import { addObj, editObj, findTaxSubjectCascade } from "../../api/subject.js";
+import { addObj, editObj } from "../../api/subject.js";
 import { reactive, defineProps, ref, defineEmits, watch, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 
@@ -181,6 +181,7 @@ const cancel = () => {
   form = {};
   emit("closeDialog", false);
 };
+
 const handleSubmit = () => {
   ruleForms.value.validate((valid) => {
     if (!valid) return false;
@@ -202,9 +203,10 @@ const handleSubmit = () => {
 };
 
 const handleChange = (value) => {
-  form.pid = value && value.length ? value[value.length - 1] : ""
+  form.pid = value && value.length ? value[value.length - 1] : "";
+  // console.log(cascaderRef);
+  // console.log(cascaderRef1);
   cascaderRef.value.togglePopperVisible();
-  // cascaderRef.value.dropDownVisible = false;
 };
 </script>
 <style lang="scss" scoped>

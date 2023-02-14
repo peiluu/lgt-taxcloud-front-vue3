@@ -90,8 +90,6 @@
 </template>
 
 <script>
-import { EluiChinaAreaDht } from "elui-china-area-dht";
-console.log(EluiChinaAreaDht);
 
 import { page, addObj, editObj, findTaxMetierCascade } from "./api/index.js";
 import chinaData from "@/static/china.js";
@@ -264,10 +262,10 @@ export default {
         this.cascadeList = response;
       });
     },
-    handleChange(value) {
-      this.form.sshy = value && value.length ? value[value.length - 1] : "";
-      this.$refs.cascaderRef.dropDownVisible = false;
-    },
+    // handleChange(value) {
+    //   this.form.sshy = value && value.length ? value[value.length - 1] : "";
+    //   this.$refs.cascaderRef.dropDownVisible = false;
+    // },
   },
 };
 </script>
