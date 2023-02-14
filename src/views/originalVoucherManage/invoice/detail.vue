@@ -6,7 +6,7 @@
       :inline="true"
       :rules="rules"
       ref="form"
-      label-width="100px"
+      label-width="140px"
       class="detail-form"
       :disabled="updateStatus === 'detail'"
     >
@@ -22,15 +22,24 @@
             <Plus />
           </el-icon>
         </el-upload>
-        <span>支持扩展名：png .jpg..不得超过100M</span>
+        <span>支持扩展名: png .jpg..不得超过100M</span>
       </el-card>
 
       <el-card>
         <template #header>基本信息</template>
 
         <el-form-item label="原始凭证场景" prop="dcdirection">
-          <el-select v-model="form.dcdsirection">
-            <el-option :value="1" label="小规模纳税人" />
+          <el-select
+            v-model="form.ywType"
+            filterable
+            placeholder="请选择原始凭证场景"
+          >
+            <el-option
+              v-for="item in voucherRuleList"
+              :key="item?.id"
+              :label="item?.name"
+              :value="item?.id.toString()"
+            ></el-option>
           </el-select>
         </el-form-item>
 
@@ -48,9 +57,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="发票代码" prop="qymc">
+
+        <el-form-item label="发票代码" prop="code">
           <el-input v-model="form.qymc" placeholder="请输入发票代码" />
         </el-form-item>
+
         <el-form-item label="开票日期" prop="status">
           <el-date-picker
             v-model="form.time"
@@ -62,11 +73,11 @@
         <el-form-item label="发票号码" prop="qymc">
           <el-input v-model="form.qymc" placeholder="请输入发票号码" />
         </el-form-item>
-        <el-form-item label="发票状态" prop="dcdirection">
-          <el-select v-model="form.dcdsirection">
-            <el-option :value="1" label="小规模纳税人" />
+        <!-- <el-form-item label="发票状态" prop="status">
+          <el-select v-model="form.status">
+            <el-option :value="0" label="小规模纳税人" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="发票类型" prop="dcdirection">
           <el-select v-model="form.dcdsirection">
             <el-option :value="1" label="普通纸质发票" />
@@ -74,6 +85,13 @@
             <el-option :value="3" label="专用纸质发票" />
             <el-option :value="4" label="专用电子发票" />
             <el-option :value="5" label="定额发票" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="发票标志" prop="incomeFlag">
+          <el-select v-model="form.incomeFlag">
+            <el-option :value="1" label="进项票" />
+            <el-option :value="2" label="销项票" />
           </el-select>
         </el-form-item>
       </el-card>
@@ -121,7 +139,12 @@
 </template>
 
 <script>
-import { addObj, editObj, findTaxMetierScene } from "../api/index.js";
+import {
+  addObj,
+  editObj,
+  findTaxMetierScene,
+  findVoucherRule,
+} from "../api/invoice.js";
 
 export default {
   name: "oinvoiceDetail",
@@ -132,7 +155,7 @@ export default {
         status: 1,
       },
       rules: {
-        qymc: [
+        code: [
           {
             required: true,
             message: "请输入企业名称",
@@ -168,16 +191,17 @@ export default {
       },
       fileList: [],
       metierSceneList: [],
+      voucherRuleList: [],
     };
   },
   created() {},
 
   mounted() {
-    // 查询详情
+    this.findTaxMetierScene();
+    this.findVoucherRule();
     const { id = "", updateStatus = "" } = this.$route.query;
     this.updateStatus = updateStatus;
     // 如果id 存在就去查询详情
-
     if (id) {
       // this.findTaxSubjectCascade(newV)
     }
@@ -191,6 +215,16 @@ export default {
         pageSize: 0,
       }).then((response) => {
         this.metierSceneList = response.rows;
+      });
+    },
+
+    // 获取凭证规则场景
+    findVoucherRule() {
+      findVoucherRule({
+        pageIndex: 1,
+        pageSize: 0,
+      }).then((response) => {
+        this.voucherRuleList = response.rows;
       });
     },
     // 返回列表页面

@@ -231,7 +231,7 @@ import {
 import "./index.scss";
 
 export default {
-  name: "oinvoiceDetail",
+  name: "voucherEntry",
   data() {
     return {
       form: {

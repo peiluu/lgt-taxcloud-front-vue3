@@ -1,17 +1,16 @@
 /**
- * 配置编译环境和线上环境之间的切换
- *
- * baseURL: 老项目域名地址
- * khglUrl: 客户管理域名地址
- * dicUrl : 字典服务器地址
- * routerMode: 路由模式
- * imgBaseUrl: 图片所在域名地址
- * welUrl :默认欢迎页
- *
+ * @desption 配置编译环境和线上环境之间的切换
+ * @param baseURL 老项目域名地址
+ * @param khglUrl: 客户管理域名地址
+ * @param dicUrl : 字典服务器地址
+ * @param routerMode: 路由模式
+ * @param imgBaseUrl: 图片所在域名地址
+ * @param welUrl :默认欢迎页
+ * @param iconfontUrl 字体图标地址
+ * @param iconfontVersion 字体图标版本
  */
 
 let baseURL = "http://192.168.28.178:8765";
-// let baseURL = 'https://192.168.6.178:8765';
 const iconfontVersion = ["567566_r22zi6t8noas8aor"];
 const iconfontUrl = `//at.alicdn.com/t/font_$key.css`;
 const codeUrl = `${baseURL}/code`;

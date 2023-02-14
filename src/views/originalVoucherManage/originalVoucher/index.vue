@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { page, delObj } from "../api/index.js";
+import { page, delObj } from "../api/invoice.js";
 
 export default {
   name: "originalVoucherList",

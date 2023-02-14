@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Layout from "../views/layout/Layout";
 
+/***
+ * @description 页面路由配置
+ */
 export const constantRouterMap = [
   {
     path: "/",
@@ -20,16 +23,6 @@ export const constantRouterMap = [
     meta: { title: "注册" },
     hidden: true,
   },
-
-  // { path: '/404', component: () => import('@/views/errorPage/404'), hidden: true },
-  // { path: '/401', component: () => import('@/views/errorPage/401'), hidden: true },
-  // 锁屏
-  // {
-  //   path: '/lock',
-  //   hidden: true,
-  //   name: '锁屏页',
-  //   component: () => import('@/views/common/lock')
-  // },
   // 首页
   {
     path: "/taxclude",

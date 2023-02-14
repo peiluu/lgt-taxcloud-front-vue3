@@ -56,7 +56,7 @@ import { AccountVoucherPool } from "../api/index.js";
 import cookies from "@/utils/cookies";
 
 export default {
-  name: "invoiceList",
+  name: "voucherSummary",
   components: { LgtQuarterlyTab },
 
   data() {

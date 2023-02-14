@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { addObj, editObj } from "../api/index.js";
+import { addObj, editObj } from "../api/invoice.js";
 
 export default {
   name: "originalVoucherDetail",

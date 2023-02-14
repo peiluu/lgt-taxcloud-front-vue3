@@ -138,7 +138,7 @@ import cookies from "@/utils/cookies";
 import { page, delObj } from "../api/index.js";
 
 export default {
-  name: "invoiceList",
+  name: "voucherQuery",
   components: { LgtQuarterlyTab },
 
   data() {
