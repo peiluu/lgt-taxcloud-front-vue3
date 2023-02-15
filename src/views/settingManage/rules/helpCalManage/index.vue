@@ -33,6 +33,7 @@
         </div>
       </template>
     </el-dialog>
+
   </div>
 </template>
 
@@ -46,7 +47,6 @@ import {
 
 export default {
   name: "HelpCalManageList",
-  // components: { dialogDetail },
   data() {
     return {
       form: {},
