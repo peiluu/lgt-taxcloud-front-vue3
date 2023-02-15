@@ -2,7 +2,7 @@ import request from "@/utils/request";
 
 export function page(data) {
   return request({
-    url: "/api/tax/taxsby/findInvoiceInfo",
+    url: "/api/tax/taxsby/findOriginalVoucher",
     method: "post",
     data,
   });
@@ -10,7 +10,7 @@ export function page(data) {
 
 export function addObj(data) {
   return request({
-    url: "/api/tax/taxsby/addInvoiceInfo",
+    url: "/api/tax/taxsby/addOriginalVoucher",
     method: "post",
     data,
   });
@@ -18,7 +18,7 @@ export function addObj(data) {
 
 export function delObj(data) {
   return request({
-    url: "/api/tax/taxsby/deleteInvoiceInfo",
+    url: "/api/tax/taxsby/deleteOriginalVoucher",
     method: "post",
     data,
   });
@@ -26,7 +26,7 @@ export function delObj(data) {
 
 export function editObj(obj) {
   return request({
-    url: "/api/tax/taxsby/updateInvoiceInfo",
+    url: "/api/tax/taxsby/updateOriginalVoucher",
     method: "post",
     data: obj,
   });

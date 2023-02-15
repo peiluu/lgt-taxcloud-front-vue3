@@ -237,7 +237,7 @@ export const constantRouterMap = [
         path: "originalVoucherList",
         component: () =>
           import("@/views/originalVoucherManage/originalVoucher/index"),
-        meta: { title: "原始凭证管理", icon: "dashboard" },
+        meta: { title: "其他原始凭证", icon: "dashboard" },
       },
       {
         path: "originalVouchereDetail",

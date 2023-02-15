@@ -28,24 +28,29 @@
       <el-card>
         <template #header>基本信息</template>
 
-        <el-form-item label="原始凭证场景" prop="dcdirection">
+        <el-form-item label="原始凭证场景" prop="sceneId">
           <el-select
-            v-model="form.ywType"
+            v-model="form.sceneId"
             filterable
             placeholder="请选择原始凭证场景"
           >
             <el-option
-              v-for="item in voucherRuleList"
+              v-for="item in metierSceneList"
               :key="item?.id"
-              :label="item?.name"
-              :value="item?.id.toString()"
+              :label="item?.sceneName"
+              :value="item?.id"
             ></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="业务类别" prop="ywType">
+        <!-- <el-form-item label="业务类别" prop="sceneId">
+          <el-select v-model="form.incomeFlag">
+            <el-option :value="1" label="收入" />
+            <el-option :value="2" label="成本" />
+            <el-option :value="3" label="其他" />
+          </el-select>
           <el-select
-            v-model="form.ywType"
+            v-model="form.sceneId"
             filterable
             placeholder="请选择业务类别"
           >
@@ -56,35 +61,32 @@
               :value="item?.id.toString()"
             ></el-option>
           </el-select>
+        </el-form-item> -->
+
+        <el-form-item label="发票代码" prop="invoiceNo">
+          <el-input v-model="form.invoiceNo" placeholder="请输入发票代码" />
         </el-form-item>
 
-        <el-form-item label="发票代码" prop="code">
-          <el-input v-model="form.qymc" placeholder="请输入发票代码" />
-        </el-form-item>
-
-        <el-form-item label="开票日期" prop="status">
+        <el-form-item label="开票日期" prop="invoiceTime">
           <el-date-picker
-            v-model="form.time"
+            v-model="form.invoiceTime"
             value-format="YYYY-MM-DD"
             placeholder="日期"
           />
         </el-form-item>
 
-        <el-form-item label="发票号码" prop="qymc">
-          <el-input v-model="form.qymc" placeholder="请输入发票号码" />
+        <el-form-item label="发票号码" prop="invoiceNumber">
+          <el-input v-model="form.invoiceNumber" placeholder="请输入发票号码" />
         </el-form-item>
         <!-- <el-form-item label="发票状态" prop="status">
           <el-select v-model="form.status">
             <el-option :value="0" label="小规模纳税人" />
           </el-select>
         </el-form-item> -->
-        <el-form-item label="发票类型" prop="dcdirection">
-          <el-select v-model="form.dcdsirection">
-            <el-option :value="1" label="普通纸质发票" />
-            <el-option :value="2" label="普通电子发票" />
-            <el-option :value="3" label="专用纸质发票" />
-            <el-option :value="4" label="专用电子发票" />
-            <el-option :value="5" label="定额发票" />
+        <el-form-item label="发票类型" prop="invoiceType">
+          <el-select v-model="form.invoiceType">
+            <el-option :value="0" label="增值税发票" />
+            <el-option :value="2" label="普通发票" />
           </el-select>
         </el-form-item>
 
@@ -98,24 +100,27 @@
 
       <el-card>
         <template #header>供应商/客户信息</template>
-        <el-form-item label="供应商/客户名称" prop="qymc">
-          <el-input v-model="form.qymc" placeholder="请输入供应商/客户名称" />
+        <el-form-item label="供应商/客户名称" prop="supCustomer">
+          <el-input
+            v-model="form.supCustomer"
+            placeholder="请输入供应商/客户名称"
+          />
         </el-form-item>
-        <el-form-item label="纳税人识别号码" prop="qymc">
-          <el-input v-model="form.qymc" placeholder="请输入纳税人识别号码" />
+        <el-form-item label="纳税人识别号码" prop="nsrsbh">
+          <el-input v-model="form.nsrsbh" placeholder="请输入纳税人识别号码" />
         </el-form-item>
       </el-card>
 
       <el-card>
         <template #header>发票数据信息</template>
-        <el-form-item label="不含税金额" prop="qymc">
-          <el-input v-model="form.qymc" placeholder="请输入不含税金额" />
+        <el-form-item label="不含税金额" prop="price">
+          <el-input v-model="form.price" placeholder="请输入不含税金额" />
         </el-form-item>
-        <el-form-item label="税额" prop="qymc">
-          <el-input v-model="form.qymc" placeholder="请输入税额" />
+        <el-form-item label="税额" prop="tax">
+          <el-input v-model="form.tax" placeholder="请输入税额" />
         </el-form-item>
-        <el-form-item label="含税总价" prop="qymc">
-          <el-input v-model="form.qymc" placeholder="请输入含税总价" />
+        <el-form-item label="含税总价" prop="priceTax">
+          <el-input v-model="form.priceTax" placeholder="请输入含税总价" />
         </el-form-item>
       </el-card>
     </el-form>
@@ -124,13 +129,13 @@
       <el-button
         v-if="updateStatus !== 'detail'"
         type="primary"
-        @click="handleSubmit"
+        @click="handleSubmit(true)"
         >提交生成凭证</el-button
       >
       <el-button
         v-if="updateStatus !== 'detail'"
         type="primary"
-        @click="handleSubmit"
+        @click="handleSubmit(false)"
         >提交暂不生成凭证</el-button
       >
       <el-button @click="goBack">取消</el-button>
@@ -139,7 +144,10 @@
 </template>
 
 <script>
+import cookies from "@/utils/cookies";
+
 import {
+  page,
   addObj,
   editObj,
   findTaxMetierScene,
@@ -150,15 +158,20 @@ export default {
   name: "oinvoiceDetail",
   data() {
     return {
-      form: {
-        dcdirection: 1,
-        status: 1,
-      },
+      form: {},
       rules: {
-        code: [
+        sceneId: [
           {
             required: true,
-            message: "请输入企业名称",
+            message: "请选择原始凭证场景",
+            trigger: "blur",
+          },
+        ],
+
+        invoiceNo: [
+          {
+            required: true,
+            message: "请输入发票代码",
             trigger: "blur",
           },
           {
@@ -168,18 +181,87 @@ export default {
             trigger: "blur",
           },
         ],
-        time: [
+        invoiceNumber: [
           {
             required: true,
-            message: "请选择启用期间",
+            message: "请输入发票号码",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 20,
+            message: "长度在 1 到 20 个字符",
             trigger: "blur",
           },
         ],
-        accoutingStandard: [
+        invoiceTime: [
           {
             required: true,
-            message: "请选择会计准则",
+            message: "请选择发票时间",
             trigger: "blur",
+          },
+        ],
+        invoiceType: [
+          {
+            required: true,
+            message: "请选择发票类型",
+            trigger: "blur",
+          },
+        ],
+        incomeFlag: [
+          {
+            required: true,
+            message: "请选择发票标志",
+            trigger: "blur",
+          },
+        ],
+        supCustomer: [
+          {
+            required: true,
+            message: "请输入供应商/客户名称",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 20,
+            message: "长度在 1 到 30 个字符",
+            trigger: "blur",
+          },
+        ],
+        tax: [
+          {
+            required: true,
+            message: "请输入税额",
+            trigger: "blur",
+          },
+          {
+            message: "请输入纯数字",
+            trigger: "blur",
+            pattern: /\d/,
+          },
+        ],
+        price: [
+          {
+            required: true,
+            message: "请输入不含税金额",
+            trigger: "blur",
+          },
+          {
+            message: "请输入纯数字",
+            trigger: "blur",
+            pattern: /\d/,
+          },
+        ],
+        priceTax: [
+          {
+            required: true,
+            message: "请输入含税总价",
+            trigger: "blur",
+          },
+          {
+            message: "请输入纯数字",
+            trigger: "blur",
+            pattern: /\d/,
           },
         ],
       },
@@ -192,6 +274,7 @@ export default {
       fileList: [],
       metierSceneList: [],
       voucherRuleList: [],
+      connectFlag: false,
     };
   },
   created() {},
@@ -203,11 +286,20 @@ export default {
     this.updateStatus = updateStatus;
     // 如果id 存在就去查询详情
     if (id) {
-      // this.findTaxSubjectCascade(newV)
+      this.getDetail({
+        pageIndex: 1,
+        pageSize: 10,
+        id,
+      });
     }
   },
   watch: {},
   methods: {
+    getDetail(params) {
+      page(params).then((response) => {
+        this.form = response.rows[0] || {};
+      });
+    },
     // 获取业务场景
     findTaxMetierScene() {
       findTaxMetierScene({
@@ -227,8 +319,20 @@ export default {
         this.voucherRuleList = response.rows;
       });
     },
+
     // 返回列表页面
-    goBack() {
+    goBack(id) {
+      // 去关联记账凭证
+      if (this.connectFlag) {
+        this.$router.push({
+          path: "/bookKeepingVoucherManage/entry",
+          query: {
+            originalVoucherManagId: id,
+          },
+        });
+        return;
+      }
+      // 直接提交
       this.$router.replace({
         path: "/originalVoucherManage/invoiceList",
       });
@@ -239,9 +343,9 @@ export default {
     },
 
     // 提交表单
-    handleSubmit() {
-      const set = this.$refs;
-      set["form"].validate((valid) => {
+    handleSubmit(connectFlag) {
+      this.connectFlag = connectFlag;
+      this.$refs["form"].validate((valid) => {
         if (!valid) return false;
         if (this.updateStatus === "create") {
           this.create();
@@ -252,28 +356,32 @@ export default {
     },
     // 创建账套
     create() {
-      addObj(this.form).then(() => {
-        this.dialogFormVisible = false;
-        this.goBack();
+      addObj({
+        ...this.form,
+        accountSetId: cookies.get("accountSetId") || "",
+      }).then((res = {}) => {
         this.$notify({
           title: "成功",
           message: "新建成功",
           type: "success",
           duration: 2000,
         });
+        this.goBack(res.id);
       });
     },
     // 编辑账套
     update() {
-      editObj(this.form).then(() => {
-        this.dialogFormVisible = false;
-        this.goBack();
+      editObj({
+        ...this.form,
+        accountSetId: cookies.get("accountSetId") || "",
+      }).then((res = {}) => {
         this.$notify({
           title: "成功",
           message: "更新成功",
           type: "success",
           duration: 2000,
         });
+        this.goBack(res.id);
       });
     },
   },

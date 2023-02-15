@@ -1,35 +1,47 @@
 <template>
   <div class="p-page">
     <el-form :model="listQuery" ref="form" :inline="true">
-      <el-form-item label="发票号码" prop="status">
-        <el-input @keyup.enter="getList" placeholder="发票号码" v-model="listQuery.name" />
+      <el-form-item label="发票号码" prop="invoiceNumber">
+        <el-input
+          @keyup.enter="getList"
+          placeholder="发票号码"
+          v-model="listQuery.invoiceNumber"
+        />
       </el-form-item>
 
-      <el-form-item label="发票类型" prop="status">
+      <el-form-item label="发票类型" prop="invoiceType">
+        <el-select v-model="listQuery.invoiceType">
+          <el-option :value="0" label="增值税发票" />
+          <el-option :value="2" label="普通发票" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="发票日期" prop="invoiceTime">
+        <el-date-picker
+          v-model="listQuery.invoiceTime"
+          value-format="YYYY-MM-DD"
+          placeholder="发票日期"
+        />
+      </el-form-item>
+
+      <!-- <el-form-item label="发票状态" prop="status">
         <el-select v-model="listQuery.status">
           <el-option :value="1" label="开启"></el-option>
           <el-option :value="2" label="关闭"></el-option>
         </el-select>
-      </el-form-item>
-
-      <el-form-item label="发票日期" prop="status">
-        <el-date-picker v-model="form.time" value-format="YYYY-MM-DD" placeholder="发票日期" />
-      </el-form-item>
-
-      <el-form-item label="发票状态" prop="status">
-        <el-select v-model="listQuery.status">
-          <el-option :value="1" label="开启"></el-option>
-          <el-option :value="2" label="关闭"></el-option>
-        </el-select>
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item>
-        <el-button type="primary" icon="search" @click="getList">查询</el-button>
+        <el-button type="primary" icon="search" @click="getList"
+          >查询</el-button
+        >
       </el-form-item>
 
       <div>
         <el-form-item>
-          <el-button type="primary" @click="handleUpdate('', 'create')">新增</el-button>
+          <el-button type="primary" @click="handleUpdate('', 'create')"
+            >新增</el-button
+          >
         </el-form-item>
 
         <el-form-item style="float: right">
@@ -51,30 +63,61 @@
       <el-table-column align="center" type="selection" label="选择" />
       <el-table-column align="center" type="index" label="序号" width="60" />
 
-      <el-table-column align="center" label="凭证编码">
+      <!-- <el-table-column align="center" label="凭证编码">
         <template v-slot="scope">
           <el-button
             link
             type="primary"
             @click="handleUpdate(scope.row.id, 'detail')"
-          >{{scope.row.cateName}}</el-button>
+            >{{ scope.row.cateName }}</el-button
+          >
+        </template>
+      </el-table-column> -->
+      <el-table-column align="center" label="发票号码">
+        <template v-slot="scope">
+          <el-button
+            link
+            type="primary"
+            @click="handleUpdate(scope.row.id, 'detail')"
+            >{{ scope.row.invoiceNumber }}</el-button
+          >
         </template>
       </el-table-column>
-      <el-table-column align="center" label="发票日期" prop="time" />
 
-      <el-table-column align="center" label="发票类型">
-        <template v-slot="scope">{{scope.row.status === 1 ? "是" : '否'}}</template>
+      <el-table-column
+        align="center"
+        label="发票日期"
+        prop="invoiceTime"
+        width="100px"
+      />
+
+      <el-table-column align="center" label="发票类型" width="100px">
+        <template v-slot="scope">{{
+          scope.row.invoiceType === 0 ? "增值税发票" : "普通发票"
+        }}</template>
       </el-table-column>
 
-      <el-table-column align="center" label="发票代码" prop="time" />
+      <el-table-column align="center" label="发票代码" prop="invoiceNo" />
 
-      <el-table-column align="center" label="供应商名称" prop="time" />
-      <el-table-column align="center" label="不含税金额" prop="time" />
-      <el-table-column align="center" label="税额" prop="time" />
-      <el-table-column align="center" label="价税合计" prop="time" />
+      <el-table-column
+        align="center"
+        label="供应商名称"
+        prop="supCustomer"
+        width="100px"
+      />
+      <el-table-column
+        align="center"
+        label="不含税金额"
+        prop="price"
+        width="100px"
+      />
+      <el-table-column align="center" label="税额" prop="tax" />
+      <el-table-column align="center" label="价税合计" prop="priceTax" />
 
       <el-table-column align="center" label="发票状态">
-        <template v-slot="scope">{{scope.row.status === 1 ? "正常" : '异常'}}</template>
+        <template v-slot="scope">{{
+          scope.row.status === 1 ? "正常" : "异常"
+        }}</template>
       </el-table-column>
       <el-table-column align="center" label="凭证字号" prop="time" />
 
@@ -86,9 +129,18 @@
 
       <el-table-column align="center" label="操作" width="200" fixed="right">
         <template v-slot="scope">
-          <el-button type="primary" link @click="handleEnter(scope.row)">生成凭证</el-button>
-          <el-button type="primary" link @click="handleUpdate(scope.row.id, 'update')">修改</el-button>
-          <el-button type="primary" link @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" link @click="handleEnter(scope.row)"
+            >生成凭证</el-button
+          >
+          <el-button
+            type="primary"
+            link
+            @click="handleUpdate(scope.row.id, 'update')"
+            >修改</el-button
+          >
+          <el-button type="primary" link @click="handleDelete(scope.row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -113,29 +165,22 @@ export default {
   data() {
     return {
       form: {},
-      list: [
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" },
-        { cateName: "北京模型有限公司", time: "2022-12" }
-      ],
+      list: [],
       total: 0,
       listLoading: false,
       listQuery: {
         pageIndex: 1,
-        pageSize: 10
-      }
+        pageSize: 10,
+      },
     };
   },
   mounted() {
-    // this.getList()
+    this.getList();
   },
   methods: {
     getList() {
       this.listLoading = true;
-      page(this.listQuery).then(response => {
+      page(this.listQuery).then((response) => {
         this.list = response.rows;
         this.total = response.total;
         this.listLoading = false;
@@ -164,8 +209,8 @@ export default {
         path: "/originalVoucherManage/invoiceDetail",
         query: {
           id,
-          updateStatus
-        }
+          updateStatus,
+        },
       });
     },
 
@@ -174,19 +219,19 @@ export default {
       this.$confirm("你确定要删除这行内容吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       }).then(() => {
-        delObj({ id: row.id }).then(() => {
+        delObj({ ids: [row.id] }).then(() => {
           this.$notify({
             title: "成功",
             message: "删除成功",
             type: "success",
-            duration: 2000
+            duration: 2000,
           });
           this.getList();
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
